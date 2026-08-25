@@ -38,7 +38,7 @@
             </div>
             <div>
               <h1 class="font-bold text-base tracking-wide text-white">SUBSTATION CMMS</h1>
-              <p class="text-[11px] text-blue-400 font-medium">50 Units Smart PM System</p>
+              <p class="text-[11px] text-blue-400 font-medium">Smart Maintenance System</p>
             </div>
           </div>
         </div>
@@ -48,7 +48,7 @@
             <i data-lucide="layout-dashboard" class="w-4 h-4"></i> แดชบอร์ด (Dashboard)
           </button>
           <button @click="currentTab = 'assets'" :class="navClass('assets')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition">
-            <i data-lucide="layers" class="w-4 h-4"></i> ทะเบียนอุปกรณ์ (Assets 50 ตัว)
+            <i data-lucide="layers" class="w-4 h-4"></i> ทะเบียนอุปกรณ์ ({{ assets.length }} ตัว)
           </button>
           <button @click="currentTab = 'pm-form'" :class="navClass('pm-form')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition">
             <i data-lucide="clipboard-edit" class="w-4 h-4"></i> บันทึกงาน PM & แนบรูป
@@ -64,7 +64,7 @@
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span>ระบบพร้อมใช้งาน (Online)</span>
         </div>
-        <p class="text-[11px] text-slate-500">Power Maintenance Management v3.5</p>
+        <p class="text-[11px] text-slate-500">Power Maintenance Management v4.0</p>
       </div>
     </aside>
 
@@ -77,8 +77,11 @@
           <p class="text-xs text-slate-500">ระบบบริหารจัดการและประเมินสุขภาพอุปกรณ์ไฟฟ้าแรงสูง</p>
         </div>
         <div class="flex items-center gap-4">
-          <span class="text-xs bg-blue-50 text-blue-700 font-bold px-3 py-1 rounded-full border border-blue-200">
-            ระบบจัดการอุปกรณ์ (50 Assets Active)
+          <button @click="showAddAssetModal = true" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3.5 py-1.5 rounded-xl text-xs flex items-center gap-2 shadow-sm transition">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + เพิ่มอุปกรณ์ใหม่
+          </button>
+          <span class="text-xs bg-blue-50 text-blue-700 font-bold px-3 py-1.5 rounded-full border border-blue-200">
+            {{ assets.length }} อุปกรณ์พร้อมตรวจ
           </span>
         </div>
       </header>
@@ -91,9 +94,9 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
               <div>
-                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">อุปกรณ์ในระบบ</span>
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">อุปกรณ์ทั้งหมด</span>
                 <h3 class="text-2xl font-bold text-slate-800 mt-1">{{ assets.length }} ชุด</h3>
-                <span class="text-xs text-blue-600 font-medium">ครอบคลุมสถานีย่อย 1-4</span>
+                <span class="text-xs text-blue-600 font-medium">เพิ่มได้ไม่จำกัด</span>
               </div>
               <div class="p-3 bg-blue-50 text-blue-600 rounded-xl"><i data-lucide="cpu" class="w-6 h-6"></i></div>
             </div>
@@ -126,7 +129,6 @@
             </div>
           </div>
 
-          <!-- Quick Actions & Recent Records -->
           <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
             <div class="flex items-center justify-between">
               <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
@@ -141,7 +143,7 @@
                     <th class="p-3">วันที่ตรวจ</th>
                     <th class="p-3">รหัสอุปกรณ์</th>
                     <th class="p-3">ประเภท</th>
-                    <th class="p-3">สถานที่ / สถานีย่อย</th>
+                    <th class="p-3">สถานที่ / จุดติดตั้ง</th>
                     <th class="p-3">ผู้ตรวจเช็ก</th>
                     <th class="p-3">ผลการตรวจ</th>
                   </tr>
@@ -168,7 +170,7 @@
           </div>
         </section>
 
-        <!-- ================= 2. ASSETS MANAGEMENT (50 UNITS) ================= -->
+        <!-- ================= 2. ASSETS MANAGEMENT ================= -->
         <section v-if="currentTab === 'assets'" class="space-y-6">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
@@ -177,16 +179,20 @@
                 <input v-model="searchAsset" type="text" placeholder="ค้นหารหัส, ชื่ออุปกรณ์, สถานีย่อย..." class="w-full pl-9 pr-4 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm">
               </div>
               <select v-model="filterType" class="p-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm">
-                <option value="ALL">ทุกประเภทอุปกรณ์ (50 ตัว)</option>
-                <option value="Transformer">หม้อแปลงไฟฟ้า (TR: 25 ตัว)</option>
-                <option value="LBS">Load Break Switch (LBS: 25 ตัว)</option>
+                <option value="ALL">ทุกประเภทอุปกรณ์ ({{ assets.length }} ตัว)</option>
+                <option value="Transformer">หม้อแปลงไฟฟ้า (TR)</option>
+                <option value="LBS">Load Break Switch (LBS)</option>
               </select>
             </div>
-            <div class="text-xs text-slate-500">
-              แสดง <b>{{ filteredAssets.length }}</b> จากทั้งหมด <b>{{ assets.length }}</b> อุปกรณ์
+
+            <div class="flex items-center gap-3">
+              <button @click="showAddAssetModal = true" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl flex items-center gap-2 text-xs shadow-sm transition">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> เพิ่มอุปกรณ์ใหม่ (Add Asset)
+              </button>
             </div>
           </div>
 
+          <!-- Assets Table -->
           <div class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm">
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
@@ -198,7 +204,7 @@
                     <th class="p-4">พิกัดแรงดัน/กำลัง</th>
                     <th class="p-4">ผู้ผลิต / ยี่ห้อ</th>
                     <th class="p-4">ประวัติ PM</th>
-                    <th class="p-4 text-center">ดูข้อมูลรายตัว</th>
+                    <th class="p-4 text-center">จัดการ</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -209,25 +215,31 @@
                       <span class="text-slate-400 text-[11px] font-normal"><i data-lucide="map-pin" class="w-3 h-3 inline"></i> {{ a.location }}</span>
                     </td>
                     <td class="p-4"><span :class="badgeClass(a.type)">{{ a.type }}</span></td>
-                    <td class="p-4 font-mono">{{ a.rating }}</td>
-                    <td class="p-4 text-slate-600">{{ a.brand }} (SN: {{ a.serial }})</td>
+                    <td class="p-4 font-mono">{{ a.rating || '-' }}</td>
+                    <td class="p-4 text-slate-600">{{ a.brand || '-' }} (SN: {{ a.serial || '-' }})</td>
                     <td class="p-4">
                       <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full text-[11px] font-semibold">
                         <i data-lucide="clipboard-list" class="w-3 h-3"></i> {{ getAssetPmCount(a.id) }} ครั้ง
                       </span>
                     </td>
                     <td class="p-4 text-center">
-                      <button @click="viewAssetDetails(a)" class="bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 font-semibold px-3 py-1.5 rounded-lg border border-blue-200 text-xs transition flex items-center gap-1 mx-auto">
-                        <i data-lucide="eye" class="w-3.5 h-3.5"></i> ดูข้อมูล & ประวัติ
-                      </button>
+                      <div class="flex items-center justify-center gap-2">
+                        <button @click="viewAssetDetails(a)" class="bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 font-semibold px-2.5 py-1.5 rounded-lg border border-blue-200 text-xs transition flex items-center gap-1">
+                          <i data-lucide="eye" class="w-3.5 h-3.5"></i> ดูข้อมูล
+                        </button>
+                        <button @click="deleteAsset(a.id)" title="ลบอุปกรณ์" class="p-1.5 text-slate-400 hover:text-rose-600 transition">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
+            <!-- Pagination Control -->
             <div class="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs text-slate-500">
-              <div>หน้า {{ currentPage }} จาก {{ totalPages }}</div>
+              <div>หน้า {{ currentPage }} จาก {{ totalPages }} (รวม {{ filteredAssets.length }} อุปกรณ์)</div>
               <div class="flex gap-2">
                 <button :disabled="currentPage === 1" @click="currentPage--" class="px-3 py-1.5 bg-white border border-slate-300 rounded-lg disabled:opacity-40 hover:bg-slate-100">ก่อนหน้า</button>
                 <button :disabled="currentPage === totalPages" @click="currentPage++" class="px-3 py-1.5 bg-white border border-slate-300 rounded-lg disabled:opacity-40 hover:bg-slate-100">ถัดไป</button>
@@ -236,7 +248,7 @@
           </div>
         </section>
 
-        <!-- ================= 3. PM FORM & IMPORT FILE ================= -->
+        <!-- ================= 3. PM FORM & FILE IMPORT ================= -->
         <section v-if="currentTab === 'pm-form'" class="max-w-5xl mx-auto space-y-6">
           
           <!-- File Import Box -->
@@ -247,7 +259,7 @@
                   <i data-lucide="file-up" class="w-5 h-5 text-blue-600"></i> นำเข้าไฟล์ข้อมูลงาน PM เข้าสู่ระบบ (Import File)
                 </h4>
                 <p class="text-xs text-blue-700 mt-1">
-                  รองรับการอัปโหลดไฟล์ <b>Excel (.xlsx, .xls), CSV หรือ JSON</b> เพื่อดึงข้อมูลเข้าแบบฟอร์ม หรือนำเข้าประวัติจำนวนมากอัตโนมัติ
+                  รองรับการอัปโหลดไฟล์ <b>Excel (.xlsx, .xls), CSV หรือ JSON</b>
                 </p>
               </div>
               <button @click="downloadTemplate" class="text-xs bg-white text-blue-700 border border-blue-300 hover:bg-blue-100 font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
@@ -271,7 +283,7 @@
             <div class="border-b border-slate-200 pb-4 flex justify-between items-center">
               <div>
                 <h3 class="text-lg font-bold text-slate-800">แบบฟอร์มบันทึกผลการบำรุงรักษาเชิงป้องกัน (PM Checklist)</h3>
-                <p class="text-xs text-slate-500">เลือกอุปกรณ์จากรายการ 50 ตัว หรือตรวจสอบข้อมูลที่โหลดมาจากไฟล์</p>
+                <p class="text-xs text-slate-500">เลือกอุปกรณ์ กรอกพารามิเตอร์ และแนบรูปภาพหน้างาน</p>
               </div>
               <span class="bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full font-semibold border border-blue-200">Data Entry</span>
             </div>
@@ -289,7 +301,7 @@
                     <input v-model="formData.date" type="date" required class="w-full p-2.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
                   </div>
                   <div>
-                    <label class="block font-medium text-slate-700 mb-1">เลือกอุปกรณ์ (จาก 50 ตัว) *</label>
+                    <label class="block font-medium text-slate-700 mb-1">เลือกอุปกรณ์ *</label>
                     <select v-model="formData.assetId" @change="onAssetSelect" required class="w-full p-2.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
                       <option value="" disabled>-- เลือกอุปกรณ์ --</option>
                       <option v-for="a in assets" :key="a.id" :value="a.id">[{{ a.type }}] {{ a.id }} - {{ a.name }} ({{ a.location }})</option>
@@ -461,7 +473,7 @@
           </div>
         </section>
 
-        <!-- ================= 4. HISTORY & EXPORT / IMPORT ================= -->
+        <!-- ================= 4. HISTORY & EXPORT ================= -->
         <section v-if="currentTab === 'history'" class="space-y-6">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -469,21 +481,17 @@
               <p class="text-xs text-slate-500">จัดการข้อมูลประวัติ นำเข้าไฟล์ หรือส่งออกรายงาน</p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
-              <!-- Quick Import to History -->
               <label class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm transition">
                 <i data-lucide="file-up" class="w-4 h-4"></i> นำเข้าไฟล์ PM (Excel/CSV)
                 <input type="file" accept=".xlsx, .xls, .csv, .json" @change="handleImportFile" class="hidden">
               </label>
 
-              <!-- Export Excel -->
               <button @click="exportToExcel" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm">
                 <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export Excel
               </button>
-              <!-- Export PDF -->
               <button @click="exportToPDF" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm">
                 <i data-lucide="file-text" class="w-4 h-4"></i> Export PDF
               </button>
-              <!-- Clear All PM Logs -->
               <button @click="confirmClearLogs" class="bg-slate-800 hover:bg-rose-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm transition">
                 <i data-lucide="trash" class="w-4 h-4"></i> ล้างประวัติทั้งหมด
               </button>
@@ -531,7 +539,7 @@
                   <tr v-if="pmRecords.length === 0">
                     <td colspan="8" class="p-8 text-center text-slate-400">
                       <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
-                      ไม่มีข้อมูลประวัติการทำ PM ในระบบ (สามารถกดปุ่ม "นำเข้าไฟล์ PM" ด้านบนเพื่อนำเข้าข้อมูลได้)
+                      ไม่มีข้อมูลประวัติการทำ PM ในระบบ
                     </td>
                   </tr>
                 </tbody>
@@ -543,7 +551,74 @@
       </div>
     </main>
 
-    <!-- ================= MODAL: INDIVIDUAL ASSET DETAILS & PM HISTORY ================= -->
+    <!-- ================= MODAL 1: ADD / CREATE NEW ASSET ================= -->
+    <div v-if="showAddAssetModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-slate-200">
+        <div class="flex justify-between items-center border-b pb-3">
+          <h3 class="font-bold text-base text-slate-800 flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-5 h-5 text-blue-600"></i> เพิ่มอุปกรณ์ใหม่เข้าระบบ
+          </h3>
+          <button @click="showAddAssetModal = false" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <form @submit.prevent="addNewAsset" class="space-y-4 text-xs">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">รหัสอุปกรณ์ (Asset ID) *</label>
+              <input v-model="newAssetForm.id" placeholder="เช่น TR-26 หรือ LBS-26" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none uppercase font-mono">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">ประเภทอุปกรณ์ *</label>
+              <select v-model="newAssetForm.type" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="Transformer">Transformer (หม้อแปลง)</option>
+                <option value="LBS">Load Break Switch (LBS)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">ชื่ออุปกรณ์ (Asset Name) *</label>
+            <input v-model="newAssetForm.name" placeholder="เช่น หม้อแปลงสำรองโรงไฟฟ้า 2" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">สถานที่ / จุดติดตั้ง (Location) *</label>
+            <input v-model="newAssetForm.location" placeholder="เช่น Substation 1 (ลานไก)" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">พิกัดแรงดัน/กำลัง (Rating)</label>
+              <input v-model="newAssetForm.rating" placeholder="เช่น 24kV / 1000kVA" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">ยี่ห้อ / ผู้ผลิต (Brand)</label>
+              <input v-model="newAssetForm.brand" placeholder="เช่น Tirathai, ABB" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">หมายเลขเครื่อง (Serial No.)</label>
+              <input v-model="newAssetForm.serial" placeholder="เช่น SN-2026-99" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-mono">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">วันที่ติดตั้ง</label>
+              <input v-model="newAssetForm.installDate" type="date" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-2 pt-3 border-t">
+            <button type="button" @click="showAddAssetModal = false" class="px-4 py-2 border rounded-xl text-slate-600">ยกเลิก</button>
+            <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="check" class="w-4 h-4"></i> บันทึกอุปกรณ์
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= MODAL 2: INDIVIDUAL ASSET DETAILS & PM HISTORY ================= -->
     <div v-if="selectedAssetForModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div class="bg-white rounded-2xl max-w-3xl w-full p-6 space-y-5 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto custom-scrollbar">
         <div class="flex justify-between items-start border-b pb-3">
@@ -557,10 +632,10 @@
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl text-xs">
-          <div><span class="text-slate-400 block">พิกัดกำลัง/แรงดัน:</span> <span class="font-bold font-mono text-slate-800">{{ selectedAssetForModal.rating }}</span></div>
-          <div><span class="text-slate-400 block">ผู้ผลิต / ยี่ห้อ:</span> <span class="font-semibold">{{ selectedAssetForModal.brand }}</span></div>
-          <div><span class="text-slate-400 block">Serial Number:</span> <span class="font-mono">{{ selectedAssetForModal.serial }}</span></div>
-          <div><span class="text-slate-400 block">วันที่ติดตั้ง:</span> <span>{{ selectedAssetForModal.installDate }}</span></div>
+          <div><span class="text-slate-400 block">พิกัดกำลัง/แรงดัน:</span> <span class="font-bold font-mono text-slate-800">{{ selectedAssetForModal.rating || '-' }}</span></div>
+          <div><span class="text-slate-400 block">ผู้ผลิต / ยี่ห้อ:</span> <span class="font-semibold">{{ selectedAssetForModal.brand || '-' }}</span></div>
+          <div><span class="text-slate-400 block">Serial Number:</span> <span class="font-mono">{{ selectedAssetForModal.serial || '-' }}</span></div>
+          <div><span class="text-slate-400 block">วันที่ติดตั้ง:</span> <span>{{ selectedAssetForModal.installDate || '-' }}</span></div>
         </div>
 
         <div>
@@ -592,11 +667,11 @@
 
   </div>
 
-  <!-- VUE LOGIC WITH FILE IMPORT & EXPORT -->
+  <!-- VUE APPLICATION LOGIC -->
   <script>
     const { createApp, nextTick } = Vue;
 
-    function generate50Assets() {
+    function generateInitial50Assets() {
       const list = [];
       const substations = ['Substation 1 (ลานไก)', 'Substation 2 (อาคารควบคุม)', 'Substation 3 (โรงผลิต)', 'Substation 4 (สถานีจ่ายย่อย)'];
       const trBrands = ['Tirathai', 'Ekarat', 'ABB', 'Schneider', 'QTC'];
@@ -639,6 +714,7 @@
       data() {
         return {
           currentTab: 'dashboard',
+          showAddAssetModal: false,
           searchAsset: '',
           filterType: 'ALL',
           currentPage: 1,
@@ -648,7 +724,21 @@
           uploadedPhotos: [],
           importedFileName: '',
 
-          assets: generate50Assets(),
+          // รายการอุปกรณ์เริ่มต้น
+          assets: generateInitial50Assets(),
+
+          // ฟอร์มสำหรับเพิ่มอุปกรณ์ใหม่
+          newAssetForm: {
+            id: '',
+            name: '',
+            type: 'Transformer',
+            location: '',
+            rating: '',
+            brand: '',
+            serial: '',
+            installDate: new Date().toISOString().split('T')[0],
+            status: 'Active'
+          },
 
           pmRecords: [
             {
@@ -734,12 +824,61 @@
         getTabTitle() {
           const titles = {
             'dashboard': 'ระบบรายงานภาพรวมและการประเมินสุขภาพอุปกรณ์ (Dashboard)',
-            'assets': 'ทะเบียนอุปกรณ์ทั้งหมด (50 Units Transformer & LBS Database)',
+            'assets': 'ทะเบียนอุปกรณ์ทั้งหมด (Asset Database Management)',
             'pm-form': 'บันทึกข้อมูล PM / นำเข้าไฟล์ (PM Data Entry & File Import)',
             'history': 'ประวัติการบำรุงรักษาย้อนหลังและส่งออกข้อมูล (PM History & Export)'
           };
           return titles[this.currentTab];
         },
+
+        // ================= เพิ่มอุปกรณ์ใหม่เข้าระบบ =================
+        addNewAsset() {
+          const idUpper = this.newAssetForm.id.trim().toUpperCase();
+          
+          // ตรวจสอบว่ารหัสอุปกรณ์ซ้ำหรือไม่
+          if (this.assets.some(a => a.id.toUpperCase() === idUpper)) {
+            alert(`รหัสอุปกรณ์ "${idUpper}" มีอยู่ในระบบแล้ว กรุณาใช้รหัสอื่น`);
+            return;
+          }
+
+          const createdAsset = {
+            id: idUpper,
+            name: this.newAssetForm.name.trim(),
+            type: this.newAssetForm.type,
+            location: this.newAssetForm.location.trim(),
+            rating: this.newAssetForm.rating.trim(),
+            brand: this.newAssetForm.brand.trim(),
+            serial: this.newAssetForm.serial.trim(),
+            installDate: this.newAssetForm.installDate,
+            status: 'Active'
+          };
+
+          // เพิ่มเข้า Array ด้านหน้าสุด
+          this.assets.unshift(createdAsset);
+          alert(`เพิ่มอุปกรณ์ "${createdAsset.id} - ${createdAsset.name}" เรียบร้อยแล้ว`);
+
+          // Reset Form & ปิด Modal
+          this.newAssetForm = {
+            id: '',
+            name: '',
+            type: 'Transformer',
+            location: '',
+            rating: '',
+            brand: '',
+            serial: '',
+            installDate: new Date().toISOString().split('T')[0],
+            status: 'Active'
+          };
+          this.showAddAssetModal = false;
+        },
+
+        // ลบอุปกรณ์
+        deleteAsset(assetId) {
+          if (confirm(`ยืนยันการลบอุปกรณ์ ${assetId} ออกจากระบบ?`)) {
+            this.assets = this.assets.filter(a => a.id !== assetId);
+          }
+        },
+
         onAssetSelect() {
           const asset = this.assets.find(a => a.id === this.formData.assetId);
           this.selectedAssetType = asset ? asset.type : '';
@@ -761,7 +900,7 @@
           this.uploadedPhotos.splice(index, 1);
         },
 
-        // ================= FILE IMPORT SYSTEM (Excel / CSV / JSON) =================
+        // ================= FILE IMPORT SYSTEM =================
         handleImportFile(event) {
           const file = event.target.files[0];
           if (!file) return;
@@ -831,41 +970,15 @@
             addedCount++;
           });
 
-          // โหลดแถวแรกลง Form อัตโนมัติ เพื่อให้ผู้ใช้ตรวจทานได้ทันที
-          const first = rows[0];
-          const firstAssetId = first['Asset ID'] || first['รหัสอุปกรณ์'] || first['assetId'];
-          if (firstAssetId && this.assets.some(a => a.id === firstAssetId)) {
-            this.formData.assetId = firstAssetId;
-            this.onAssetSelect();
-            this.formData.date = first['Date'] || first['วันที่'] || this.formData.date;
-            this.formData.technician = first['Inspector'] || first['ผู้ตรวจ'] || this.formData.technician;
-            this.formData.remarks = first['Remarks'] || first['หมายเหตุ'] || this.formData.remarks;
-            this.formData.status = first['Status'] || first['ผลการตรวจ'] || 'Pass';
-          }
-
           alert(`นำเข้าข้อมูลสำเร็จทั้งหมด ${addedCount} รายการ และเพิ่มลงในประวัติเรียบร้อยแล้ว`);
           this.currentTab = 'history';
         },
 
-        // ดาวน์โหลด Template Excel ตัวอย่างสำหรับกรอกข้อมูล
         downloadTemplate() {
           const sampleData = [
-            {
-              'วันที่': '2026-08-25',
-              'รหัสอุปกรณ์': 'TR-01',
-              'ผู้ตรวจ': 'สมชาย พิทักษ์วงษ์',
-              'ผลการตรวจ': 'Pass',
-              'หมายเหตุ': 'ตรวจเช็กตามรอบปกติ ไม่พบจุดบกพร่อง'
-            },
-            {
-              'วันที่': '2026-08-25',
-              'รหัสอุปกรณ์': 'LBS-01',
-              'ผู้ตรวจ': 'กิตติศักดิ์ ช่างซ่อมบำรุง',
-              'ผลการตรวจ': 'Pass',
-              'หมายเหตุ': 'วัดค่า Contact Resistance ผ่านเกณฑ์'
-            }
+            { 'วันที่': '2026-08-25', 'รหัสอุปกรณ์': 'TR-01', 'ผู้ตรวจ': 'สมชาย พิทักษ์วงษ์', 'ผลการตรวจ': 'Pass', 'หมายเหตุ': 'ตรวจเช็กตามรอบปกติ' },
+            { 'วันที่': '2026-08-25', 'รหัสอุปกรณ์': 'LBS-01', 'ผู้ตรวจ': 'กิตติศักดิ์ ช่างซ่อมบำรุง', 'ผลการตรวจ': 'Pass', 'หมายเหตุ': 'วัดค่า Contact Resistance ปกติ' }
           ];
-
           const ws = XLSX.utils.json_to_sheet(sampleData);
           const wb = XLSX.utils.book_new();
           XLSX.utils.book_append_sheet(wb, ws, "PM_Template");
@@ -915,9 +1028,9 @@
             alert('ไม่มีรายการประวัติให้ล้าง');
             return;
           }
-          if (confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างประวัติการบันทึกงาน PM ทั้งหมดในระบบ? (การกระทำนี้ไม่สามารถย้อนกลับได้)')) {
+          if (confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างประวัติการบันทึกงาน PM ทั้งหมด?')) {
             this.pmRecords = [];
-            alert('ล้างประวัติการบันทึกงาน PM ทั้งหมดเรียบร้อยแล้ว');
+            alert('ล้างประวัติเรียบร้อยแล้ว');
           }
         },
         deleteSingleRecord(id) {
