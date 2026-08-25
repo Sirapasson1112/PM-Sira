@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Enterprise CMMS - Transformer & LBS Substation PM System</title>
+  <title>Enterprise CMMS - High Voltage Substation PM System</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -11,7 +11,7 @@
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- SheetJS (Excel Import/Export) -->
+  <!-- SheetJS (Excel) -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <!-- jsPDF & AutoTable -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -38,7 +38,7 @@
             </div>
             <div>
               <h1 class="font-bold text-base tracking-wide text-white">SUBSTATION CMMS</h1>
-              <p class="text-[11px] text-blue-400 font-medium">Enterprise Smart PM v5.0</p>
+              <p class="text-[11px] text-blue-400 font-medium">Enterprise PM & Diagnostics</p>
             </div>
           </div>
         </div>
@@ -51,10 +51,10 @@
             <i data-lucide="layers" class="w-4 h-4"></i> ทะเบียนอุปกรณ์ ({{ assets.length }} ตัว)
           </button>
           <button @click="currentTab = 'pm-form'" :class="navClass('pm-form')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition">
-            <i data-lucide="clipboard-edit" class="w-4 h-4"></i> บันทึกงาน PM & แนบรูป
+            <i data-lucide="clipboard-edit" class="w-4 h-4"></i> บันทึกงาน PM & วินิจฉัย
           </button>
           <button @click="currentTab = 'history'" :class="navClass('history')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition">
-            <i data-lucide="file-check-2" class="w-4 h-4"></i> ประวัติงาน & ส่งออกข้อมูล
+            <i data-lucide="file-check-2" class="w-4 h-4"></i> ประวัติงาน / ส่งออกข้อมูล
           </button>
         </nav>
       </div>
@@ -63,7 +63,7 @@
         <div class="flex items-center justify-between">
           <span class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>LocalStorage Sync</span>
+            <span>ระบบวิศวกรรมพร้อมใช้งาน</span>
           </span>
           <span class="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded text-slate-300">{{ pmRecords.length }} Records</span>
         </div>
@@ -72,23 +72,21 @@
 
     <!-- MAIN CONTENT -->
     <main class="flex-1 flex flex-col overflow-hidden">
-      <!-- Top Header -->
       <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 z-10">
         <div>
           <h2 class="text-lg font-bold text-slate-800">{{ getTabTitle() }}</h2>
-          <p class="text-xs text-slate-500">ระบบบริหารจัดการและประเมินสุขภาพอุปกรณ์ไฟฟ้าแรงสูง (Substation Preventive Maintenance)</p>
+          <p class="text-xs text-slate-500">ระบบบริหารจัดการและประเมินสุขภาพอุปกรณ์ไฟฟ้าแรงสูง (Substation Predictive Maintenance)</p>
         </div>
         <div class="flex items-center gap-3">
           <button @click="showAddAssetModal = true" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i> เพิ่มอุปกรณ์
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + เพิ่มอุปกรณ์
           </button>
           <button @click="currentTab = 'pm-form'" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition">
-            <i data-lucide="file-plus" class="w-4 h-4"></i> ออกใบงาน PM
+            <i data-lucide="file-plus" class="w-4 h-4"></i> บันทึกงาน PM ใหม่
           </button>
         </div>
       </header>
 
-      <!-- Scrollable Body Content -->
       <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar">
         
         <!-- ================= 1. DASHBOARD ================= -->
@@ -96,7 +94,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
               <div>
-                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">อุปกรณ์ในระบบ</span>
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">อุปกรณ์ทั้งหมด</span>
                 <h3 class="text-2xl font-bold text-slate-800 mt-1">{{ assets.length }} ชุด</h3>
                 <span class="text-xs text-blue-600 font-medium">TR: {{ getCountByType('Transformer') }} | LBS: {{ getCountByType('LBS') }}</span>
               </div>
@@ -105,40 +103,39 @@
             
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
               <div>
-                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">สถานะปกติ (Good AHI)</span>
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">สถานะปกติ (Grade A)</span>
                 <h3 class="text-2xl font-bold text-emerald-600 mt-1">{{ getStatusCount('Pass') }}</h3>
-                <span class="text-xs text-emerald-600 font-medium">พร้อมจ่ายกระแสไฟฟ้า 100%</span>
+                <span class="text-xs text-emerald-600 font-medium">พร้อมจ่ายไฟสมบูรณ์</span>
               </div>
               <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
             </div>
 
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
               <div>
-                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">เฝ้าระวัง (Monitor)</span>
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">เฝ้าระวัง (Grade B)</span>
                 <h3 class="text-2xl font-bold text-amber-600 mt-1">{{ getStatusCount('Pass with Condition') }}</h3>
-                <span class="text-xs text-amber-600 font-medium">พบคราบน้ำมัน/ฝุ่นสะสม</span>
+                <span class="text-xs text-amber-600 font-medium">พบคราบน้ำมัน / ซิลิกาเปลี่ยนสี</span>
               </div>
               <div class="p-3 bg-amber-50 text-amber-600 rounded-xl"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
             </div>
 
             <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
               <div>
-                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">ต้องแก้ไขด่วน (Critical)</span>
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">วิกฤต/ต้องซ่อม (Grade D)</span>
                 <h3 class="text-2xl font-bold text-rose-600 mt-1">{{ getStatusCount('Fail') }}</h3>
-                <span class="text-xs text-rose-600 font-medium">ค่าความต้านทาน/ฉนวนตก</span>
+                <span class="text-xs text-rose-600 font-medium">ค่าฉนวน/ความต้านทานเกินเกณฑ์</span>
               </div>
               <div class="p-3 bg-rose-50 text-rose-600 rounded-xl"><i data-lucide="alert-octagon" class="w-6 h-6"></i></div>
             </div>
           </div>
 
-          <!-- Substation Status & Health Summary -->
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
               <div class="flex items-center justify-between">
                 <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-                  <i data-lucide="history" class="w-4 h-4 text-blue-600"></i> รายการตรวจเช็ก PM ล่าสุด
+                  <i data-lucide="history" class="w-4 h-4 text-blue-600"></i> บันทึกงาน PM ล่าสุดพร้อมผลวินิจฉัย
                 </h3>
-                <button @click="currentTab = 'history'" class="text-xs text-blue-600 hover:underline font-semibold">ดูประวัติทั้งหมด</button>
+                <button @click="currentTab = 'history'" class="text-xs text-blue-600 hover:underline font-semibold">ดูทั้งหมด</button>
               </div>
               <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
@@ -146,17 +143,17 @@
                     <tr>
                       <th class="p-3">วันที่ตรวจ</th>
                       <th class="p-3">รหัสอุปกรณ์</th>
-                      <th class="p-3">ประเภท</th>
-                      <th class="p-3">ผู้ตรวจเช็ก</th>
+                      <th class="p-3">ประเภทงาน</th>
+                      <th class="p-3">ผู้ตรวจ / วิศวกร</th>
                       <th class="p-3">สุขภาพ (AHI)</th>
-                      <th class="p-3">ผลการตรวจ</th>
+                      <th class="p-3">ผลการประเมิน</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-slate-100">
                     <tr v-for="r in pmRecords.slice(-5).reverse()" :key="r.id" class="hover:bg-slate-50">
                       <td class="p-3 font-medium">{{ r.date }}</td>
                       <td class="p-3 font-bold text-blue-600">{{ r.assetId }}</td>
-                      <td class="p-3"><span :class="badgeClass(r.type)">{{ r.type }}</span></td>
+                      <td class="p-3 text-slate-600">{{ r.pmType }}</td>
                       <td class="p-3">{{ r.technician }}</td>
                       <td class="p-3">
                         <span class="font-bold px-2 py-0.5 rounded text-[11px]" :class="ahiClass(r.ahiGrade)">
@@ -177,23 +174,23 @@
               </div>
             </div>
 
-            <!-- Health Index Guide & Criteria -->
             <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
               <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-                <i data-lucide="gauge" class="w-4 h-4 text-indigo-600"></i> เกณฑ์มาตรฐานการบำรุงรักษา
+                <i data-lucide="gauge" class="w-4 h-4 text-indigo-600"></i> เกณฑ์มาตรฐานการทดสอบทางไฟฟ้า
               </h3>
               <div class="space-y-2.5 text-xs text-slate-600">
                 <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                  <p class="font-bold text-slate-700">หม้อแปลงไฟฟ้า (Transformer)</p>
-                  <p class="text-[11px] text-slate-500 mt-0.5">• Insulation (Megger) > 100 MΩ</p>
-                  <p class="text-[11px] text-slate-500">• Dielectric Breakdown Oil > 30 kV</p>
-                  <p class="text-[11px] text-slate-500">• Grounding Resistance < 5 Ω</p>
+                  <p class="font-bold text-slate-700">หม้อแปลงไฟฟ้า (Transformer Testing)</p>
+                  <p class="text-[11px] text-slate-500 mt-0.5">• Insulation (Megger) Pri-Gnd: > 100 MΩ</p>
+                  <p class="text-[11px] text-slate-500">• Polarization Index (PI = $R_{10min}/R_{1min}$): > 2.0</p>
+                  <p class="text-[11px] text-slate-500">• Dielectric Breakdown Oil: > 30 kV (New > 50 kV)</p>
+                  <p class="text-[11px] text-slate-500">• Winding Resistance Balance: Diff < 2%</p>
                 </div>
                 <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                  <p class="font-bold text-slate-700">Load Break Switch (LBS)</p>
-                  <p class="text-[11px] text-slate-500 mt-0.5">• Contact Resistance < 80 µΩ ทุกเฟส</p>
-                  <p class="text-[11px] text-slate-500">• SF6 Gas Pressure ในแถบเขียว (> 0.04 MPa)</p>
-                  <p class="text-[11px] text-slate-500">• Insulation Phase-to-Phase > 1000 MΩ</p>
+                  <p class="font-bold text-slate-700">Load Break Switch (LBS Testing)</p>
+                  <p class="text-[11px] text-slate-500 mt-0.5">• Contact Resistance: < 80 µΩ (Max 100 µΩ)</p>
+                  <p class="text-[11px] text-slate-500">• SF6 Gas Pressure: > 0.04 MPa (Green Zone)</p>
+                  <p class="text-[11px] text-slate-500">• Contact Synchronism Discrepancy: < 10 ms</p>
                 </div>
               </div>
             </div>
@@ -222,7 +219,6 @@
             </div>
           </div>
 
-          <!-- Assets Table -->
           <div class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm">
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
@@ -232,6 +228,7 @@
                     <th class="p-4">ชื่ออุปกรณ์ / จุดติดตั้ง</th>
                     <th class="p-4">ประเภท</th>
                     <th class="p-4">พิกัดกำลัง/แรงดัน</th>
+                    <th class="p-4">ผู้ผลิต / Serial No.</th>
                     <th class="p-4">ประวัติ PM</th>
                     <th class="p-4 text-center">จัดการ</th>
                   </tr>
@@ -245,6 +242,7 @@
                     </td>
                     <td class="p-4"><span :class="badgeClass(a.type)">{{ a.type }}</span></td>
                     <td class="p-4 font-mono">{{ a.rating || '-' }}</td>
+                    <td class="p-4 text-slate-600">{{ a.brand || '-' }} (SN: {{ a.serial || '-' }})</td>
                     <td class="p-4">
                       <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full text-[11px] font-semibold">
                         <i data-lucide="clipboard-list" class="w-3 h-3"></i> {{ getAssetPmCount(a.id) }} ครั้ง
@@ -265,7 +263,6 @@
               </table>
             </div>
 
-            <!-- Pagination Control -->
             <div class="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs text-slate-500">
               <div>หน้า {{ currentPage }} จาก {{ totalPages }} (รวม {{ filteredAssets.length }} อุปกรณ์)</div>
               <div class="flex gap-2">
@@ -276,7 +273,7 @@
           </div>
         </section>
 
-        <!-- ================= 3. PM FORM & FILE IMPORT ================= -->
+        <!-- ================= 3. PM FORM & DIAGNOSTICS ================= -->
         <section v-if="currentTab === 'pm-form'" class="max-w-5xl mx-auto space-y-6">
           
           <!-- File Import Banner -->
@@ -284,10 +281,10 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
                 <h4 class="font-bold text-blue-900 text-sm flex items-center gap-2">
-                  <i data-lucide="file-up" class="w-5 h-5 text-blue-600"></i> นำเข้าไฟล์ผลตรวจหน้างาน (Excel / CSV / JSON)
+                  <i data-lucide="file-up" class="w-5 h-5 text-blue-600"></i> นำเข้าไฟล์บันทึกผลการตรวจหน้างาน (Excel / CSV / JSON)
                 </h4>
                 <p class="text-xs text-blue-700 mt-0.5">
-                  เลือกไฟล์เพื่อโหลดข้อมูลเข้าสู่ฟอร์มและบันทึกลงระบบประวัติอัตโนมัติ
+                  รองรับการอัปโหลดตารางผลการทดสอบทางไฟฟ้าเพื่อบันทึกประวัติทันที
                 </p>
               </div>
               <button @click="downloadTemplate" class="text-xs bg-white text-blue-700 border border-blue-300 hover:bg-blue-100 font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
@@ -310,29 +307,33 @@
           <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
             <div class="border-b border-slate-200 pb-4 flex justify-between items-center">
               <div>
-                <h3 class="text-lg font-bold text-slate-800">ใบงานบันทึกผลการบำรุงรักษาเชิงป้องกัน (PM Checklist Entry)</h3>
+                <h3 class="text-lg font-bold text-slate-800">ใบงานบันทึกผลการบำรุงรักษาเชิงป้องกันและวินิจฉัย (PM Work Order)</h3>
                 <p class="text-xs text-slate-500">กรอกค่าพารามิเตอร์จริง ระบบจะช่วยวิเคราะห์เกรดสุขภาพ (AHI) อัตโนมัติ</p>
               </div>
-              <span class="bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full font-semibold border border-blue-200">Work Order Mode</span>
+              <span class="bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full font-semibold border border-blue-200">High Voltage Work Permit</span>
             </div>
 
             <form @submit.prevent="savePmRecord" class="space-y-6">
               
-              <!-- General Info & Environmental Conditions -->
+              <!-- General Info & Work Permit -->
               <div class="bg-slate-50/70 p-5 rounded-xl border border-slate-200 space-y-4">
                 <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                  <i data-lucide="info" class="w-4 h-4 text-blue-600"></i> ข้อมูลทั่วไปและสภาพแวดล้อม
+                  <i data-lucide="shield-alert" class="w-4 h-4 text-blue-600"></i> ข้อมูลใบอนุญาตทำงานและสภาวะแวดล้อม
                 </h4>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                  <div>
+                    <label class="block font-medium text-slate-700 mb-1">เลขที่ใบงาน / Work Permit No. *</label>
+                    <input v-model="formData.permitNo" type="text" placeholder="เช่น PM-HV-2026-081" required class="w-full p-2.5 bg-white border border-slate-300 rounded-lg uppercase font-mono">
+                  </div>
                   <div>
                     <label class="block font-medium text-slate-700 mb-1">วันที่เข้าตรวจเช็ก *</label>
-                    <input v-model="formData.date" type="date" required class="w-full p-2.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <input v-model="formData.date" type="date" required class="w-full p-2.5 bg-white border border-slate-300 rounded-lg">
                   </div>
                   <div>
                     <label class="block font-medium text-slate-700 mb-1">เลือกอุปกรณ์ *</label>
-                    <select v-model="formData.assetId" @change="onAssetSelect" required class="w-full p-2.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                    <select v-model="formData.assetId" @change="onAssetSelect" required class="w-full p-2.5 bg-white border border-slate-300 rounded-lg font-medium">
                       <option value="" disabled>-- เลือกอุปกรณ์ --</option>
-                      <option v-for="a in assets" :key="a.id" :value="a.id">[{{ a.type }}] {{ a.id }} - {{ a.name }} ({{ a.location }})</option>
+                      <option v-for="a in assets" :key="a.id" :value="a.id">[{{ a.type }}] {{ a.id }} - {{ a.name }}</option>
                     </select>
                   </div>
                   <div>
@@ -345,83 +346,134 @@
                     </select>
                   </div>
                   <div>
-                    <label class="block font-medium text-slate-700 mb-1">ชื่อหัวหน้าทีมตรวจเช็ก *</label>
-                    <input v-model="formData.technician" type="text" placeholder="เช่น นายวิศวกร มุ่งมั่น" required class="w-full p-2.5 bg-white border border-slate-300 rounded-lg">
+                    <label class="block font-medium text-slate-700 mb-1">อุณหภูมิแวดล้อม Ambient (°C)</label>
+                    <input v-model.number="formData.ambientTemp" type="number" placeholder="เช่น 33" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg">
                   </div>
                   <div>
-                    <label class="block font-medium text-slate-700 mb-1">วิศวกรผู้ตรวจรับรอง (Supervisor)</label>
-                    <input v-model="formData.approvedBy" type="text" placeholder="เช่น ผศ.ดร. หรือ Lead Engineer" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg">
+                    <label class="block font-medium text-slate-700 mb-1">ความชื้นสัมพัทธ์ Humidity (%RH)</label>
+                    <input v-model.number="formData.humidity" type="number" placeholder="เช่น 60" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg">
                   </div>
                   <div>
-                    <label class="block font-medium text-slate-700 mb-1">อุณหภูมิ / ความชื้น (°C / %RH)</label>
-                    <div class="flex gap-2">
-                      <input v-model.number="formData.ambientTemp" type="number" placeholder="33 °C" class="w-1/2 p-2.5 bg-white border border-slate-300 rounded-lg">
-                      <input v-model.number="formData.humidity" type="number" placeholder="60 %" class="w-1/2 p-2.5 bg-white border border-slate-300 rounded-lg">
+                    <label class="block font-medium text-slate-700 mb-1">สภาพอากาศหน้างาน</label>
+                    <select v-model="formData.weather" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg">
+                      <option value="Sunny (แดดจัด)">Sunny (แดดจัด)</option>
+                      <option value="Cloudy (มีเมฆมาก)">Cloudy (มีเมฆมาก)</option>
+                      <option value="Rainy (ฝนตก/ห้ามทดสอบ HV)">Rainy (ฝนตก/ห้ามทดสอบ HV)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block font-medium text-slate-700 mb-1">ระบบสายดิน Earth Grid (Ω)</label>
+                    <input v-model.number="formData.checks.groundGrid" type="number" step="0.1" placeholder="เกณฑ์มาตรฐาน < 5 Ω" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Transformer Detailed Parameters -->
+              <div v-if="selectedAssetType === 'Transformer'" class="p-5 bg-indigo-50/50 rounded-xl border border-indigo-200 space-y-5">
+                <div class="flex items-center justify-between border-b border-indigo-200/80 pb-2">
+                  <h4 class="font-bold text-indigo-900 text-sm flex items-center gap-2">
+                    <i data-lucide="cpu" class="w-4 h-4 text-indigo-600"></i> ผลการทดสอบหม้อแปลงไฟฟ้า (Transformer Detailed Diagnostics)
+                  </h4>
+                  <span class="text-xs bg-indigo-100 text-indigo-800 px-2.5 py-0.5 rounded-full font-medium">IEEE / IEC Standard</span>
+                </div>
+
+                <!-- 1. Physical & Protection -->
+                <div>
+                  <h5 class="font-bold text-indigo-800 text-xs mb-2">1. การตรวจสภาพทางกายภาพ & รีเลย์ป้องกัน</h5>
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                    <div>
+                      <label class="block font-medium mb-1">ตัวถังและการรั่วซึม (Tank Leaks)</label>
+                      <select v-model="formData.checks.tankLeaks" class="w-full p-2 border rounded-lg bg-white">
+                        <option value="Normal">ปกติ (ไม่พบการรั่วซึม)</option>
+                        <option value="Minor Seepage">พบมีคราบน้ำมันซึมเล็กน้อย</option>
+                        <option value="Severe Leak">พบน้ำมันหยดรั่วซึมรุนแรง</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block font-medium mb-1">ระดับน้ำมัน Conservator</label>
+                      <select v-model="formData.checks.oilLevel" class="w-full p-2 border rounded-lg bg-white">
+                        <option value="Normal">ปกติ (20°C-30°C Gauge)</option>
+                        <option value="Low">ต่ำกว่าขีดมาตรฐาน</option>
+                        <option value="High">สูงกว่าขีดมาตรฐาน</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block font-medium mb-1">สภาพ Silica Gel</label>
+                      <select v-model="formData.checks.silicaGel" class="w-full p-2 border rounded-lg bg-white">
+                        <option value="Normal">ปกติ (สีฟ้าหรือส้ม > 70%)</option>
+                        <option value="Need Replacement">เสื่อมสภาพ (เปลี่ยนเป็นสีชมพู/ขาว)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block font-medium mb-1">Buchholz & PRD Relay</label>
+                      <select v-model="formData.checks.buchholzRelay" class="w-full p-2 border rounded-lg bg-white">
+                        <option value="Normal">ทำงานปกติ (Trip & Alarm ปกติ)</option>
+                        <option value="N/A">ไม่มีติดตั้ง</option>
+                        <option value="Defective">ผิดปกติ / มีก๊าซสะสม</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. Insulation & Polarization Index -->
+                <div class="pt-2 border-t border-indigo-100">
+                  <h5 class="font-bold text-indigo-800 text-xs mb-2">2. ค่าความเป็นฉนวนและความต้านทาน (Insulation & PI Ratio)</h5>
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                    <div>
+                      <label class="block font-medium mb-1">Insulation Pri-Gnd 1 min (MΩ)</label>
+                      <input v-model.number="formData.checks.irPriGnd1m" type="number" placeholder="เกณฑ์ > 100 MΩ" class="w-full p-2 border rounded-lg bg-white" :class="formData.checks.irPriGnd1m < 100 && formData.checks.irPriGnd1m ? 'border-rose-500 bg-rose-50' : ''">
+                    </div>
+                    <div>
+                      <label class="block font-medium mb-1">Insulation Pri-Gnd 10 min (MΩ)</label>
+                      <input v-model.number="formData.checks.irPriGnd10m" type="number" placeholder="เช่น 450 MΩ" class="w-full p-2 border rounded-lg bg-white">
+                    </div>
+                    <div>
+                      <label class="block font-medium mb-1">Polarization Index (PI: R10/R1)</label>
+                      <input :value="calculatePI()" disabled class="w-full p-2 border rounded-lg bg-slate-100 font-bold text-slate-700">
+                    </div>
+                    <div>
+                      <label class="block font-medium mb-1">Insulation Sec-Gnd (MΩ)</label>
+                      <input v-model.number="formData.checks.irSecGnd" type="number" placeholder="เกณฑ์ > 50 MΩ" class="w-full p-2 border rounded-lg bg-white">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. Oil Testing & Winding Resistance -->
+                <div class="pt-2 border-t border-indigo-100">
+                  <h5 class="font-bold text-indigo-800 text-xs mb-2">3. ผลการทดสอบค่าน้ำมัน (DGA / Oil Test) & Winding Resistance</h5>
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                    <div>
+                      <label class="block font-medium mb-1">Dielectric Breakdown Voltage (kV)</label>
+                      <input v-model.number="formData.checks.oilDielectric" type="number" placeholder="เกณฑ์ > 30 kV" class="w-full p-2 border rounded-lg bg-white">
+                    </div>
+                    <div>
+                      <label class="block font-medium mb-1">ความชื้นในน้ำมัน (Moisture ppm)</label>
+                      <input v-model.number="formData.checks.oilMoisture" type="number" placeholder="เกณฑ์ < 25 ppm" class="w-full p-2 border rounded-lg bg-white">
+                    </div>
+                    <div>
+                      <label class="block font-medium mb-1">Winding Temp Gauge (°C)</label>
+                      <input v-model.number="formData.checks.windingTemp" type="number" placeholder="เช่น 65 °C" class="w-full p-2 border rounded-lg bg-white">
+                    </div>
+                    <div>
+                      <label class="block font-medium mb-1">Thermo Scan Max Temp (°C)</label>
+                      <input v-model.number="formData.checks.thermoMaxTemp" type="number" placeholder="เช่น 48.5 °C" class="w-full p-2 border rounded-lg bg-white">
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Transformer Specific Parameters -->
-              <div v-if="selectedAssetType === 'Transformer'" class="p-5 bg-indigo-50/50 rounded-xl border border-indigo-200 space-y-5">
-                <div class="flex items-center justify-between">
-                  <h4 class="font-bold text-indigo-900 text-sm flex items-center gap-2">
-                    <i data-lucide="cpu" class="w-4 h-4 text-indigo-600"></i> ผลการทดสอบหม้อแปลงไฟฟ้า (Transformer PM Criteria)
-                  </h4>
-                  <span class="text-xs bg-indigo-100 text-indigo-800 px-2.5 py-0.5 rounded-full font-medium">Smart Threshold Enabled</span>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                  <div>
-                    <label class="block font-medium mb-1">สภาพตัวถัง & รอยรั่วซึม</label>
-                    <select v-model="formData.checks.tankLeaks" class="w-full p-2 border rounded-lg bg-white">
-                      <option value="Normal">ปกติ (ไม่พบการรั่วซึม)</option>
-                      <option value="Minor Seepage">พบมีคราบน้ำมันซึมเล็กน้อย</option>
-                      <option value="Severe Leak">พบน้ำมันหยดรั่วซึมรุนแรง</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block font-medium mb-1">ระดับน้ำมัน Conservator</label>
-                    <select v-model="formData.checks.oilLevel" class="w-full p-2 border rounded-lg bg-white">
-                      <option value="Normal">ปกติ (อยู่ในเกณฑ์ Gauge)</option>
-                      <option value="Low">ต่ำกว่าระดับมาตรฐาน</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block font-medium mb-1">สภาพสารดูดความชื้น Silica Gel</label>
-                    <select v-model="formData.checks.silicaGel" class="w-full p-2 border rounded-lg bg-white">
-                      <option value="Normal">ปกติ (สีฟ้าหรือส้ม > 70%)</option>
-                      <option value="Need Replacement">เสื่อมสภาพ (เป็นสีชมพู/ขาว)</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block font-medium mb-1">Insulation Resistance Pri-Gnd (MΩ)</label>
-                    <input v-model.number="formData.checks.irPriGnd" type="number" placeholder="เกณฑ์ > 100 MΩ" class="w-full p-2 border rounded-lg bg-white" :class="formData.checks.irPriGnd < 100 && formData.checks.irPriGnd ? 'border-rose-500 bg-rose-50' : ''">
-                    <span v-if="formData.checks.irPriGnd < 100 && formData.checks.irPriGnd" class="text-[10px] text-rose-600 font-semibold">⚠️ ต่ำกว่าเกณฑ์มาตรฐาน 100 MΩ</span>
-                  </div>
-                  <div>
-                    <label class="block font-medium mb-1">Dielectric Breakdown Voltage (kV)</label>
-                    <input v-model.number="formData.checks.oilDielectric" type="number" placeholder="เกณฑ์ > 30 kV" class="w-full p-2 border rounded-lg bg-white">
-                  </div>
-                  <div>
-                    <label class="block font-medium mb-1">จุดร้อนสูงสุด Thermo Scan (°C)</label>
-                    <input v-model.number="formData.checks.thermoMaxTemp" type="number" placeholder="เช่น 48 °C" class="w-full p-2 border rounded-lg bg-white">
-                  </div>
-                </div>
-              </div>
-
-              <!-- LBS Specific Parameters -->
+              <!-- LBS Detailed Parameters -->
               <div v-if="selectedAssetType === 'LBS'" class="p-5 bg-amber-50/50 rounded-xl border border-amber-200 space-y-5">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between border-b border-amber-200/80 pb-2">
                   <h4 class="font-bold text-amber-900 text-sm flex items-center gap-2">
-                    <i data-lucide="toggle-right" class="w-4 h-4 text-amber-600"></i> ผลการทดสอบ Load Break Switch (LBS Criteria)
+                    <i data-lucide="toggle-right" class="w-4 h-4 text-amber-600"></i> ผลการทดสอบ Load Break Switch (LBS Detailed Diagnostics)
                   </h4>
-                  <span class="text-xs bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full font-medium">Smart Threshold Enabled</span>
+                  <span class="text-xs bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full font-medium">IEC 62271 Standard</span>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                   <div>
-                    <label class="block font-medium mb-1">แรงดันก๊าซ SF6 (MPa / Bar)</label>
+                    <label class="block font-medium mb-1">แรงดันก๊าซ SF6 Gas Pressure (MPa)</label>
                     <input v-model="formData.checks.sf6Pressure" type="text" placeholder="เช่น 0.05 MPa (แถบเขียว)" class="w-full p-2 border rounded-lg bg-white">
                   </div>
                   <div>
@@ -437,14 +489,30 @@
                     <input v-model.number="formData.checks.contactResC" type="number" placeholder="เกณฑ์ < 80 µΩ" class="w-full p-2 border rounded-lg bg-white" :class="formData.checks.contactResC > 80 ? 'border-rose-500 bg-rose-50' : ''">
                   </div>
                   <div>
-                    <label class="block font-medium mb-1">กลไกสับ-ปลด (Manual / Motor)</label>
+                    <label class="block font-medium mb-1">Synchronism Discrepancy (ms)</label>
+                    <input v-model.number="formData.checks.syncDiscrepancy" type="number" placeholder="เกณฑ์ < 10 ms" class="w-full p-2 border rounded-lg bg-white">
+                  </div>
+                  <div>
+                    <label class="block font-medium mb-1">ตัวนับจำนวนครั้ง (Operation Counter)</label>
+                    <input v-model.number="formData.checks.opCounter" type="number" placeholder="เช่น 342 ครั้ง" class="w-full p-2 border rounded-lg bg-white">
+                  </div>
+                  <div>
+                    <label class="block font-medium mb-1">กลไกสับ-ปลด (Mechanism)</label>
                     <select v-model="formData.checks.operationMechanism" class="w-full p-2 border rounded-lg bg-white">
-                      <option value="Smooth">คล่องตัว ทำงานสมบูรณ์ 3 เฟส</option>
-                      <option value="Stiff">มีอาการฝืด / ติดขัด</option>
+                      <option value="Smooth">คล่องตัว ทำงานสมบูรณ์ทั้ง 3 เฟส</option>
+                      <option value="Stiff">มีอาการฝืด / ต้องหล่อลื่น</option>
+                      <option value="Defective">ขัดข้อง สับ-ปลดไม่ได้</option>
                     </select>
                   </div>
                   <div>
-                    <label class="block font-medium mb-1">Insulation Res Phase-to-Phase (MΩ)</label>
+                    <label class="block font-medium mb-1">Earthing Switch & Interlock</label>
+                    <select v-model="formData.checks.earthingSwitch" class="w-full p-2 border rounded-lg bg-white">
+                      <option value="Normal">ลงดินแนบสนิท Interlock ป้องกันถูกต้อง</option>
+                      <option value="Defective">Interlock ไม่ทำงาน / ใบมีดไม่แนบ</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block font-medium mb-1">Insulation Phase-to-Phase (MΩ)</label>
                     <input v-model.number="formData.checks.lbsIR" type="number" placeholder="เกณฑ์ > 1000 MΩ" class="w-full p-2 border rounded-lg bg-white">
                   </div>
                 </div>
@@ -477,18 +545,31 @@
                 </div>
               </div>
 
-              <!-- Summary & Auto-evaluated Health Grade -->
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label class="block text-xs font-semibold text-slate-700 mb-1">สรุปสถานะผลการตรวจ *</label>
-                  <select v-model="formData.status" required class="w-full p-2.5 border rounded-xl font-bold text-xs" :class="statusSelectClass(formData.status)">
-                    <option value="Pass"> ผ่านเกณฑ์สมบูรณ์ (PASS - Grade A)</option>
-                    <option value="Pass with Condition"> ผ่านเกณฑ์แบบเฝ้าระวัง (MONITOR - Grade B)</option>
-                    <option value="Fail"> ไม่ผ่านเกณฑ์ / ต้องซ่อมด่วน (FAIL - Grade D)</option>
-                  </select>
+              <!-- Engineering Sign-off & Health Index Grading -->
+              <div class="bg-slate-50/70 p-5 rounded-xl border border-slate-200 space-y-4">
+                <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                  <i data-lucide="user-check" class="w-4 h-4 text-blue-600"></i> การลงนามรับรองผลและประเมินสุขภาพอุปกรณ์ (Engineering Sign-off)
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                  <div>
+                    <label class="block font-medium text-slate-700 mb-1">หัวหน้าทีมผู้ตรวจเช็ก (Inspector) *</label>
+                    <input v-model="formData.technician" type="text" placeholder="ระบุชื่อ-นามสกุล" required class="w-full p-2.5 bg-white border border-slate-300 rounded-lg">
+                  </div>
+                  <div>
+                    <label class="block font-medium text-slate-700 mb-1">วิศวกรผู้ตรวจรับรอง (Lead Engineer)</label>
+                    <input v-model="formData.approvedBy" type="text" placeholder="ระบุชื่อวิศวกรผู้รับรอง" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg">
+                  </div>
+                  <div>
+                    <label class="block font-medium text-slate-700 mb-1">สรุปสถานะผลการตรวจ (Overall Status) *</label>
+                    <select v-model="formData.status" required class="w-full p-2.5 border rounded-xl font-bold text-xs" :class="statusSelectClass(formData.status)">
+                      <option value="Pass"> ผ่านเกณฑ์สมบูรณ์ (PASS - Grade A)</option>
+                      <option value="Pass with Condition"> ผ่านเกณฑ์แบบเฝ้าระวัง (MONITOR - Grade B)</option>
+                      <option value="Fail"> ไม่ผ่านเกณฑ์ / ต้องซ่อมด่วน (FAIL - Grade D)</option>
+                    </select>
+                  </div>
                 </div>
-                <div class="md:col-span-2">
-                  <label class="block text-xs font-semibold text-slate-700 mb-1">ข้อเสนอแนะและแผนการซ่อมบำรุงต่อเนื่อง</label>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">ข้อเสนอแนะและแผนการซ่อมบำรุงต่อเนื่อง (Corrective Action Plan)</label>
                   <input v-model="formData.remarks" type="text" placeholder="เช่น นัดหมายเปลี่ยน Silica Gel สัปดาห์หน้า หรือกวดขันขั้วต่อ Bushing ซ้ำ" class="w-full p-2.5 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 </div>
               </div>
@@ -510,7 +591,7 @@
         <section v-if="currentTab === 'history'" class="space-y-6">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h3 class="text-base font-bold text-slate-800">ประวัติงาน PM ทั้งหมดในระบบ</h3>
+              <h3 class="text-base font-bold text-slate-800">ประวัติงาน PM และรายงานผลการตรวจเช็กทั้งหมด</h3>
               <p class="text-xs text-slate-500">จัดการข้อมูลประวัติ นำเข้าไฟล์ หรือส่งออกรายงานสำหรับฝ่ายบริหาร</p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
@@ -537,6 +618,7 @@
                 <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider">
                   <tr>
                     <th class="p-4">วันที่ตรวจ</th>
+                    <th class="p-4">Permit No.</th>
                     <th class="p-4">รหัสอุปกรณ์</th>
                     <th class="p-4">ประเภท</th>
                     <th class="p-4">ผู้ตรวจ / ผู้อนุมัติ</th>
@@ -549,6 +631,7 @@
                 <tbody class="divide-y divide-slate-100">
                   <tr v-for="r in pmRecords" :key="r.id" class="hover:bg-slate-50">
                     <td class="p-4 font-medium">{{ r.date }}</td>
+                    <td class="p-4 font-mono text-slate-600">{{ r.permitNo || '-' }}</td>
                     <td class="p-4 font-bold text-blue-600 font-mono">{{ r.assetId }}</td>
                     <td class="p-4"><span :class="badgeClass(r.type)">{{ r.type }}</span></td>
                     <td class="p-4">
@@ -577,7 +660,7 @@
                     </td>
                   </tr>
                   <tr v-if="pmRecords.length === 0">
-                    <td colspan="8" class="p-8 text-center text-slate-400">
+                    <td colspan="9" class="p-8 text-center text-slate-400">
                       <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
                       ไม่มีข้อมูลประวัติการทำ PM ในระบบ
                     </td>
@@ -647,7 +730,7 @@
       </div>
     </div>
 
-    <!-- ================= MODAL 2: ASSET DETAILS & HEALTH ================= -->
+    <!-- ================= MODAL 2: ASSET DETAILS & DIAGNOSTIC HISTORY ================= -->
     <div v-if="selectedAssetForModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div class="bg-white rounded-2xl max-w-3xl w-full p-6 space-y-5 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto custom-scrollbar">
         <div class="flex justify-between items-start border-b pb-3">
@@ -675,11 +758,12 @@
           <div v-if="getAssetRecords(selectedAssetForModal.id).length > 0" class="space-y-3">
             <div v-for="rec in getAssetRecords(selectedAssetForModal.id)" :key="rec.id" class="p-4 bg-white rounded-xl border border-slate-200 text-xs space-y-2">
               <div class="flex justify-between items-center border-b pb-2">
-                <span class="font-bold text-slate-700">วันที่ตรวจ: {{ rec.date }} (โดย: {{ rec.technician }})</span>
+                <span class="font-bold text-slate-700">วันที่ตรวจ: {{ rec.date }} (Permit: {{ rec.permitNo || '-' }})</span>
                 <span :class="statusBadge(rec.status)" class="px-2.5 py-0.5 rounded-full font-bold border text-[11px]">
                   {{ rec.status }}
                 </span>
               </div>
+              <div class="text-slate-600"><span class="font-semibold">ผู้ตรวจ:</span> {{ rec.technician }} | <span class="font-semibold">ผู้อนุมัติ:</span> {{ rec.approvedBy || '-' }}</div>
               <div class="text-slate-600"><span class="font-semibold">ข้อเสนอแนะ:</span> {{ rec.remarks || '-' }}</div>
             </div>
           </div>
@@ -696,7 +780,7 @@
 
   </div>
 
-  <!-- VUE LOGIC WITH LOCALSTORAGE PERSISTENCE -->
+  <!-- VUE APPLICATION LOGIC -->
   <script>
     const { createApp, nextTick } = Vue;
 
@@ -773,43 +857,49 @@
           pmRecords: storedRecords ? JSON.parse(storedRecords) : [
             {
               id: 101,
+              permitNo: 'PM-HV-2026-001',
               date: '2026-08-10',
               assetId: 'TR-01',
               type: 'Transformer',
               location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Annual PM (บำรุงรักษารายปี)',
               technician: 'สมชาย พิทักษ์วงษ์',
               approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
               status: 'Pass',
               ahiGrade: 'A',
-              ahiScore: 95,
-              remarks: 'สภาพน้ำมันและฉนวนสมบูรณ์ดีเยี่ยม',
-              details: { tankLeaks: 'Normal', oilLevel: 'Normal', irPriGnd: 850, oilDielectric: 45 },
+              ahiScore: 96,
+              remarks: 'ผลทดสอบ PI = 2.5, ค่าน้ำมัน Dielectric 48kV อยู่ในเกณฑ์ดีเยี่ยม',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', irPriGnd1m: 350, irPriGnd10m: 875, oilDielectric: 48, oilMoisture: 12 },
               photos: []
             },
             {
               id: 102,
+              permitNo: 'PM-HV-2026-002',
               date: '2026-08-15',
               assetId: 'LBS-01',
               type: 'LBS',
               location: 'Substation 3 (โรงผลิต)',
+              pmType: 'Half-Year PM (ราย 6 เดือน)',
               technician: 'กิตติศักดิ์ ช่างซ่อมบำรุง',
               approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
               status: 'Pass',
               ahiGrade: 'A',
               ahiScore: 92,
-              remarks: 'วัดค่า Contact Resistance ผ่านเกณฑ์ปกติ',
-              details: { sf6Pressure: '0.05 MPa', contactResA: 45, contactResB: 48, contactResC: 44 },
+              remarks: 'วัดค่า Contact Resistance < 50 µΩ และแรงดัน SF6 แถบเขียวปกติ',
+              details: { sf6Pressure: '0.05 MPa', contactResA: 45, contactResB: 48, contactResC: 44, syncDiscrepancy: 4 },
               photos: []
             }
           ],
 
           formData: {
+            permitNo: '',
             date: new Date().toISOString().split('T')[0],
             assetId: '',
             technician: '',
             approvedBy: '',
-            ambientTemp: 32,
+            ambientTemp: 33,
             humidity: 60,
+            weather: 'Sunny (แดดจัด)',
             pmType: 'Annual PM (บำรุงรักษารายปี)',
             status: 'Pass',
             remarks: '',
@@ -889,10 +979,10 @@
         },
         getTabTitle() {
           const titles = {
-            'dashboard': 'แดชบอร์ดสรุปภาพรวมและดัชนีสุขภาพ (Dashboard & Health Index)',
-            'assets': 'ทะเบียนอุปกรณ์หม้อแปลงและ Load Break Switch',
-            'pm-form': 'บันทึกข้อมูล PM / นำเข้าไฟล์ (PM Data Entry & File Import)',
-            'history': 'ประวัติการบำรุงรักษาย้อนหลังและส่งออกข้อมูล (PM History & Export)'
+            'dashboard': 'แดชบอร์ดสรุปภาพรวมและดัชนีสุขภาพอุปกรณ์ (Dashboard & AHI)',
+            'assets': 'ทะเบียนอุปกรณ์หม้อแปลงและ Load Break Switch (Asset Inventory)',
+            'pm-form': 'บันทึกข้อมูลการตรวจเช็กและวินิจฉัยทางวิศวกรรม (Diagnostics Entry)',
+            'history': 'ประวัติการบำรุงรักษาย้อนหลังและส่งออกรายงาน (PM Log & Report Export)'
           };
           return titles[this.currentTab];
         },
@@ -901,6 +991,15 @@
         },
         getStatusCount(status) {
           return this.pmRecords.filter(r => r.status === status).length;
+        },
+
+        calculatePI() {
+          const r1 = this.formData.checks.irPriGnd1m;
+          const r10 = this.formData.checks.irPriGnd10m;
+          if (r1 && r10 && r1 > 0) {
+            return (r10 / r1).toFixed(2);
+          }
+          return '-';
         },
 
         addNewAsset() {
@@ -998,6 +1097,8 @@
               }
             };
             reader.readAsArrayBuffer(file);
+          } else {
+            alert('กรุณาเลือกไฟล์ .xlsx, .xls, .csv หรือ .json เท่านั้น');
           }
         },
 
@@ -1018,10 +1119,12 @@
 
             const record = {
               id: Date.now() + index,
+              permitNo: row['Permit No.'] || row['เลขที่ใบงาน'] || `PM-IMP-${100 + index}`,
               date: row['Date'] || row['วันที่'] || new Date().toISOString().split('T')[0],
               assetId: matchedAsset.id,
               type: matchedAsset.type,
               location: matchedAsset.location,
+              pmType: row['PM Type'] || row['ประเภทงาน'] || 'Annual PM (บำรุงรักษารายปี)',
               technician: row['Inspector'] || row['ผู้ตรวจ'] || 'Technician (Imported)',
               approvedBy: row['ApprovedBy'] || row['ผู้อนุมัติ'] || '',
               status: row['Status'] || row['ผลการตรวจ'] || 'Pass',
@@ -1042,8 +1145,8 @@
 
         downloadTemplate() {
           const sampleData = [
-            { 'วันที่': '2026-08-25', 'รหัสอุปกรณ์': 'TR-01', 'ผู้ตรวจ': 'สมชาย พิทักษ์วงษ์', 'ผู้อนุมัติ': 'ดร.วิศวกรรม', 'ผลการตรวจ': 'Pass', 'หมายเหตุ': 'ตรวจเช็กตามรอบปกติ' },
-            { 'วันที่': '2026-08-25', 'รหัสอุปกรณ์': 'LBS-01', 'ผู้ตรวจ': 'กิตติศักดิ์ ช่างซ่อม', 'ผู้อนุมัติ': 'ดร.วิศวกรรม', 'ผลการตรวจ': 'Pass', 'หมายเหตุ': 'วัดค่า Contact Resistance ปกติ' }
+            { 'เลขที่ใบงาน': 'PM-HV-2026-099', 'วันที่': '2026-08-25', 'รหัสอุปกรณ์': 'TR-01', 'ประเภทงาน': 'Annual PM (บำรุงรักษารายปี)', 'ผู้ตรวจ': 'สมชาย พิทักษ์วงษ์', 'ผู้อนุมัติ': 'ดร.วิศวกรรม', 'ผลการตรวจ': 'Pass', 'หมายเหตุ': 'ตรวจเช็กตามรอบปกติ' },
+            { 'เลขที่ใบงาน': 'PM-HV-2026-100', 'วันที่': '2026-08-25', 'รหัสอุปกรณ์': 'LBS-01', 'ประเภทงาน': 'Half-Year PM (ราย 6 เดือน)', 'ผู้ตรวจ': 'กิตติศักดิ์ ช่างซ่อม', 'ผู้อนุมัติ': 'ดร.วิศวกรรม', 'ผลการตรวจ': 'Pass', 'หมายเหตุ': 'วัดค่า Contact Resistance ปกติ' }
           ];
           const ws = XLSX.utils.json_to_sheet(sampleData);
           const wb = XLSX.utils.book_new();
@@ -1062,10 +1165,12 @@
 
           const newRecord = {
             id: Date.now(),
+            permitNo: this.formData.permitNo || `PM-HV-${Date.now().toString().slice(-4)}`,
             date: this.formData.date,
             assetId: this.formData.assetId,
             type: asset.type,
             location: asset.location,
+            pmType: this.formData.pmType,
             technician: this.formData.technician,
             approvedBy: this.formData.approvedBy,
             status: this.formData.status,
@@ -1077,18 +1182,20 @@
           };
 
           this.pmRecords.unshift(newRecord);
-          alert(`บันทึกใบงาน PM สำหรับ ${newRecord.assetId} เรียบร้อยแล้ว`);
+          alert(`บันทึกใบงาน PM เลขที่ ${newRecord.permitNo} เรียบร้อยแล้ว`);
           this.resetForm();
           this.currentTab = 'history';
         },
         resetForm() {
           this.formData = {
+            permitNo: '',
             date: new Date().toISOString().split('T')[0],
             assetId: '',
             technician: '',
             approvedBy: '',
-            ambientTemp: 32,
+            ambientTemp: 33,
             humidity: 60,
+            weather: 'Sunny (แดดจัด)',
             pmType: 'Annual PM (บำรุงรักษารายปี)',
             status: 'Pass',
             remarks: '',
@@ -1125,9 +1232,11 @@
         exportToExcel() {
           const exportRows = this.pmRecords.map(r => ({
             'ID งาน PM': r.id,
+            'Permit No.': r.permitNo || '-',
             'วันที่ตรวจ': r.date,
             'รหัสอุปกรณ์': r.assetId,
             'ประเภท': r.type,
+            'ประเภทงาน PM': r.pmType,
             'สถานที่ติดตั้ง': r.location,
             'ผู้ตรวจเช็ก': r.technician,
             'ผู้อนุมัติ': r.approvedBy || '-',
@@ -1148,13 +1257,14 @@
           const doc = new jsPDF('p', 'mm', 'a4');
           
           doc.setFontSize(16);
-          doc.text("SUBSTATION PREVENTIVE MAINTENANCE REPORT", 14, 18);
+          doc.text("HIGH VOLTAGE SUBSTATION PM REPORT", 14, 18);
           doc.setFontSize(9);
           doc.setTextColor(100);
-          doc.text(`Generated: ${new Date().toLocaleString('th-TH')} | Power PM System`, 14, 25);
+          doc.text(`Generated: ${new Date().toLocaleString('th-TH')} | Engineering Diagnostics Division`, 14, 25);
 
           const tableRows = this.pmRecords.map(r => [
             r.date,
+            r.permitNo || '-',
             r.assetId,
             r.type,
             r.technician,
@@ -1164,7 +1274,7 @@
           ]);
 
           doc.autoTable({
-            head: [['Date', 'Asset ID', 'Type', 'Inspector', 'AHI', 'Status', 'Remarks']],
+            head: [['Date', 'Permit No', 'Asset ID', 'Type', 'Inspector', 'AHI', 'Status', 'Remarks']],
             body: tableRows,
             startY: 30,
             styles: { fontSize: 8 },
