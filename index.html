@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AMBER CMMS - Substation Drill-down Operations Suite</title>
+  <title>AMBER CMMS - Substation Engineering & Field Operations Suite</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -13,6 +13,9 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Leaflet.js (Map Engine) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <!-- SheetJS -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <!-- jsPDF & AutoTable -->
@@ -86,6 +89,30 @@
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #e7e5e4; border-radius: 99px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #f79f65; }
+
+    /* Custom Leaflet cartoon pin styles */
+    .cartoon-vehicle-pin {
+      background: #ffffff;
+      border: 2px solid #f97316;
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      transition: transform 0.3s ease;
+    }
+    .cartoon-substation-pin {
+      background: #0284c7;
+      border: 2px solid #ffffff;
+      color: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
   </style>
 </head>
 <body class="antialiased font-sans selection:bg-warm-500 selection:text-white">
@@ -102,7 +129,7 @@
             </div>
             <div>
               <h1 class="font-display font-bold text-base text-neutral-900 tracking-tight leading-tight">AMBER PM</h1>
-              <p class="text-[10px] text-warm-600 font-mono font-semibold tracking-wider uppercase">Drill-down CMMS</p>
+              <p class="text-[10px] text-warm-600 font-mono font-semibold tracking-wider uppercase">GPS Vehicle Nav OS</p>
             </div>
           </div>
         </div>
@@ -115,6 +142,14 @@
               <span>หน้าหลัก & สถิติ</span>
             </div>
             <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-warm-100 text-warm-700 font-bold border border-warm-200">LIVE</span>
+          </button>
+
+          <button @click="switchTab('route')" :class="navClass('route')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition group">
+            <div class="flex items-center gap-2.5">
+              <i data-lucide="map-pin" class="w-4 h-4 text-warm-600"></i>
+              <span>แผนที่นำทาง GPS (รูปรถ/มอไซค์)</span>
+            </div>
+            <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold border border-amber-200">MAP</span>
           </button>
 
           <button @click="switchTab('assets')" :class="navClass('assets')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition group">
@@ -141,14 +176,6 @@
             <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-warm-100 text-warm-700 font-bold border border-warm-200">{{ upcomingSchedules.length }}</span>
           </button>
 
-          <button @click="switchTab('route')" :class="navClass('route')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition group">
-            <div class="flex items-center gap-2.5">
-              <i data-lucide="map-pin" class="w-4 h-4 text-warm-600"></i>
-              <span>เส้นทางตรวจ GPS</span>
-            </div>
-            <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 font-bold border border-amber-200">GPS</span>
-          </button>
-
           <button @click="switchTab('anomaly')" :class="navClass('anomaly')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition group">
             <div class="flex items-center gap-2.5">
               <i data-lucide="alert-octagon" class="w-4 h-4 text-rose-500"></i>
@@ -166,12 +193,12 @@
 
       <div class="p-4 border-t border-warm-100 bg-warm-50/40 space-y-2 text-xs">
         <div class="flex items-center justify-between font-mono">
-          <span class="text-neutral-500">DATA PRIVACY</span>
-          <span class="text-emerald-600 font-bold flex items-center gap-1">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Ready
+          <span class="text-neutral-500">FLEET VEHICLE</span>
+          <span class="text-warm-700 font-bold flex items-center gap-1">
+            {{ selectedVehicle.icon }} {{ selectedVehicle.name }}
           </span>
         </div>
-        <p class="text-[10px] text-neutral-400">Drill-down Interface Mode</p>
+        <p class="text-[10px] text-neutral-400">Custom Cartoon Navigation</p>
       </div>
     </aside>
 
@@ -183,164 +210,118 @@
         <div>
           <div class="flex items-center gap-2">
             <h2 class="font-display font-bold text-base text-neutral-900 tracking-tight">{{ getTabTitle() }}</h2>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-warm-100 text-warm-700 border border-warm-200 font-bold">CLEAN VIEW</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-warm-100 text-warm-700 border border-warm-200 font-bold">WARM AMBER</span>
           </div>
         </div>
 
         <div class="flex items-center gap-3">
-          <!-- Back button if drilled in -->
           <button v-if="activeDrillDown" @click="closeDrillDown" class="px-3.5 py-2 rounded-xl bg-warm-100 hover:bg-warm-200 text-warm-800 font-display font-semibold text-xs transition flex items-center gap-1.5 shadow-sm">
-            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> ย้อนกลับไปหน้ารายการ
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> ย้อนกลับ
           </button>
           
+          <button @click="switchTab('route')" class="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 font-display font-semibold text-xs border border-amber-200 transition flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="map" class="w-3.5 h-3.5 text-amber-600"></i> แผนที่นำทาง
+          </button>
           <button @click="switchTab('pm-form')" class="px-4 py-2 rounded-xl bg-gradient-to-r from-warm-500 to-warm-600 hover:from-warm-600 hover:to-warm-700 text-white font-display font-semibold text-xs transition flex items-center gap-1.5 shadow-md shadow-warm-500/20">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i> บันทึกงาน PM
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> ออกใบงาน PM
           </button>
         </div>
       </header>
 
-      <!-- Scrollable Main Canvas -->
+      <!-- Main Canvas Body -->
       <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar space-y-6">
 
-        <!-- ================= FULL DRILL-DOWN VIEW (เมื่อกดดูอุปกรณ์ หรือ ใบงาน) ================= -->
+        <!-- ================= FULL DRILL-DOWN VIEW ================= -->
         <section v-if="activeDrillDown" class="space-y-6">
-          
-          <!-- DETAIL CASE 1: ข้อมูลอุปกรณ์เชิงลึก (ASSET PROFILE & AUDIT LOGS) -->
-          <div v-if="drillDownType === 'asset'" class="space-y-6">
-            <div class="amber-card p-6 md:p-8 rounded-2xl border-t-4 border-t-warm-500 space-y-6">
-              <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-warm-100 pb-4">
-                <div>
-                  <span class="font-mono text-xs font-bold text-warm-600 bg-warm-50 px-2.5 py-1 rounded-md border border-warm-200">{{ activeItem.id }}</span>
-                  <h3 class="font-display font-bold text-xl text-neutral-900 mt-1">{{ activeItem.name }}</h3>
-                  <p class="text-xs text-neutral-500 flex items-center gap-1 mt-1">
-                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-warm-600"></i> สถานที่ติดตั้ง: <b>{{ activeItem.location }}</b>
-                  </p>
-                </div>
-                <div class="flex items-center gap-2">
-                  <span :class="badgeClass(activeItem.type)" class="text-xs font-bold px-3 py-1">{{ activeItem.type }}</span>
-                  <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full font-bold">Active Status</span>
-                </div>
-              </div>
-
-              <!-- Technical Nameplate Specs -->
+          <div v-if="drillDownType === 'asset'" class="amber-card p-6 md:p-8 rounded-2xl border-t-4 border-t-warm-500 space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-warm-100 pb-4">
               <div>
-                <h4 class="font-display font-bold text-xs text-neutral-700 uppercase tracking-wider mb-3">ข้อมูลสเปกทางวิศวกรรม (Nameplate Specifications)</h4>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-warm-50/50 p-4 rounded-xl text-xs font-mono border border-warm-100">
-                  <div><span class="text-neutral-400 block text-[10px]">พิกัดแรงดัน/กำลัง</span><span class="font-bold text-neutral-800">{{ activeItem.rating || '-' }}</span></div>
-                  <div><span class="text-neutral-400 block text-[10px]">ผู้ผลิต / ยี่ห้อ</span><span class="font-semibold text-neutral-800">{{ activeItem.brand || '-' }}</span></div>
-                  <div><span class="text-neutral-400 block text-[10px]">หมายเลขเครื่อง (Serial No.)</span><span class="text-neutral-700">{{ activeItem.serial || '-' }}</span></div>
-                  <div><span class="text-neutral-400 block text-[10px]">วันที่เริ่มติดตั้ง</span><span class="text-neutral-700">{{ activeItem.installDate || '-' }}</span></div>
-                </div>
-              </div>
-
-              <!-- Historical Inspection Log under this Asset -->
-              <div class="space-y-3">
-                <h4 class="font-display font-bold text-xs text-neutral-700 uppercase tracking-wider">ประวัติการตรวจเช็กและซ่อมบำรุงที่บันทึกไว้</h4>
-                
-                <div v-if="getAssetRecords(activeItem.id).length > 0" class="space-y-3">
-                  <div v-for="rec in getAssetRecords(activeItem.id)" :key="rec.id" class="p-4 bg-white rounded-xl border border-warm-200 text-xs space-y-2 hover:border-warm-400 transition shadow-sm">
-                    <div class="flex justify-between items-center border-b border-warm-100 pb-2">
-                      <span class="font-mono font-bold text-warm-700">{{ rec.date }} (Permit: {{ rec.permitNo }})</span>
-                      <span :class="statusBadge(rec.status)" class="px-2.5 py-0.5 rounded-full font-bold border text-[11px]">{{ rec.status }}</span>
-                    </div>
-                    <div class="text-neutral-700 leading-relaxed"><b>การปรับปรุง/แก้ไข:</b> {{ rec.remarks }}</div>
-                    <div class="flex justify-between items-center text-neutral-400 pt-1 text-[11px] font-mono">
-                      <span>ผู้ตรวจ: {{ rec.technician }}</span>
-                      <button @click="openRecordDetail(rec)" class="text-warm-600 font-semibold underline hover:text-warm-700">ดูใบรับรองตัวเต็ม →</button>
-                    </div>
-                  </div>
-                </div>
-                <div v-else class="p-8 text-center text-xs text-neutral-400 font-mono bg-warm-50/40 rounded-xl border border-dashed border-warm-200">
-                  ไม่มีประวัติการบันทึกงาน PM ของอุปกรณ์ชิ้นนี้
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- DETAIL CASE 2: รายละเอียดใบงาน PM & เอกสารทางการ (OFFICIAL PM CERTIFICATE) -->
-          <div v-if="drillDownType === 'record'" class="space-y-6">
-            <div class="amber-card p-6 md:p-8 rounded-2xl border-t-4 border-t-warm-500 space-y-6">
-              
-              <div class="border-b-2 border-warm-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-                <div>
-                  <h3 class="font-display font-bold text-lg text-neutral-900 tracking-tight">ใบรายงานผลการบำรุงรักษาอุปกรณ์ไฟฟ้าแรงสูง (Substation PM Certificate)</h3>
-                  <p class="text-xs text-neutral-500 mt-0.5">High Voltage Diagnostic Execution & Action Certificate</p>
-                </div>
-                <div class="text-right">
-                  <span class="font-mono font-bold text-xs bg-warm-100 px-3 py-1 rounded border border-warm-200 text-warm-800">{{ activeItem.permitNo }}</span>
-                  <p class="text-[10px] text-neutral-500 mt-1 font-mono">DATE: {{ activeItem.date }}</p>
-                </div>
-              </div>
-
-              <!-- General Info -->
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-warm-50/50 p-4 rounded-xl text-xs font-mono border border-warm-100">
-                <div><span class="text-neutral-400 block text-[10px]">รหัสอุปกรณ์</span><span class="font-bold text-neutral-800">{{ activeItem.assetId }}</span></div>
-                <div><span class="text-neutral-400 block text-[10px]">ประเภท</span><span class="font-bold text-neutral-800">{{ activeItem.type }}</span></div>
-                <div><span class="text-neutral-400 block text-[10px]">สถานที่ติดตั้ง</span><span class="text-neutral-700 truncate block">{{ activeItem.location }}</span></div>
-                <div><span class="text-neutral-400 block text-[10px]">ประเภทงาน PM</span><span class="text-neutral-700 truncate block">{{ activeItem.pmType }}</span></div>
-              </div>
-
-              <!-- Corrective Action -->
-              <div class="p-4 rounded-xl border border-warm-200 bg-warm-50/40 space-y-1.5">
-                <h4 class="font-display font-bold text-xs text-warm-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <i data-lucide="wrench" class="w-4 h-4 text-warm-600"></i> บันทึกงานซ่อมแซมและปรับปรุงแก้ไข (Action Plan)
-                </h4>
-                <p class="text-xs text-neutral-800 leading-relaxed bg-white p-3 rounded-lg border border-warm-100 font-medium">
-                  {{ activeItem.remarks || 'ไม่มีบันทึกเพิ่มเติม' }}
+                <span class="font-mono text-xs font-bold text-warm-600 bg-warm-50 px-2.5 py-1 rounded-md border border-warm-200">{{ activeItem.id }}</span>
+                <h3 class="font-display font-bold text-xl text-neutral-900 mt-1">{{ activeItem.name }}</h3>
+                <p class="text-xs text-neutral-500 flex items-center gap-1 mt-1">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5 text-warm-600"></i> สถานที่ติดตั้ง: <b>{{ activeItem.location }}</b>
                 </p>
               </div>
+              <div class="flex items-center gap-2">
+                <span :class="badgeClass(activeItem.type)" class="text-xs font-bold px-3 py-1">{{ activeItem.type }}</span>
+                <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full font-bold">Active Status</span>
+              </div>
+            </div>
 
-              <!-- Diagnostic Result Parameters -->
-              <div>
-                <h4 class="font-display font-bold text-xs text-neutral-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <i data-lucide="activity" class="w-4 h-4 text-warm-600"></i> ผลการทดสอบทางวิศวกรรมไฟฟ้า (Diagnostic Results)
-                </h4>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
-                  <div v-for="(val, key) in activeItem.details" :key="key" class="p-2.5 bg-warm-50/40 rounded-lg border border-warm-100">
-                    <span class="text-neutral-400 block text-[10px] font-mono">{{ formatKeyName(key) }}</span>
-                    <span class="font-bold text-neutral-800 font-mono">{{ val || '-' }}</span>
+            <div>
+              <h4 class="font-display font-bold text-xs text-neutral-700 uppercase tracking-wider mb-3">ข้อมูลสเปกทางวิศวกรรม (Nameplate Specifications)</h4>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-warm-50/50 p-4 rounded-xl text-xs font-mono border border-warm-100">
+                <div><span class="text-neutral-400 block text-[10px]">พิกัดแรงดัน/กำลัง</span><span class="font-bold text-neutral-800">{{ activeItem.rating || '-' }}</span></div>
+                <div><span class="text-neutral-400 block text-[10px]">ผู้ผลิต / ยี่ห้อ</span><span class="font-semibold text-neutral-800">{{ activeItem.brand || '-' }}</span></div>
+                <div><span class="text-neutral-400 block text-[10px]">หมายเลขเครื่อง (Serial No.)</span><span class="text-neutral-700">{{ activeItem.serial || '-' }}</span></div>
+                <div><span class="text-neutral-400 block text-[10px]">วันที่เริ่มติดตั้ง</span><span class="text-neutral-700">{{ activeItem.installDate || '-' }}</span></div>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <h4 class="font-display font-bold text-xs text-neutral-700 uppercase tracking-wider">ประวัติการตรวจเช็กและซ่อมบำรุงที่บันทึกไว้</h4>
+              <div v-if="getAssetRecords(activeItem.id).length > 0" class="space-y-3">
+                <div v-for="rec in getAssetRecords(activeItem.id)" :key="rec.id" class="p-4 bg-white rounded-xl border border-warm-200 text-xs space-y-2 hover:border-warm-400 transition shadow-sm">
+                  <div class="flex justify-between items-center border-b border-warm-100 pb-2">
+                    <span class="font-mono font-bold text-warm-700">{{ rec.date }} (Permit: {{ rec.permitNo }})</span>
+                    <span :class="statusBadge(rec.status)" class="px-2.5 py-0.5 rounded-full font-bold border text-[11px]">{{ rec.status }}</span>
+                  </div>
+                  <div class="text-neutral-700 leading-relaxed"><b>การปรับปรุง/แก้ไข:</b> {{ rec.remarks }}</div>
+                  <div class="flex justify-between items-center text-neutral-400 pt-1 text-[11px] font-mono">
+                    <span>ผู้ตรวจ: {{ rec.technician }}</span>
+                    <button @click="openRecordDetail(rec)" class="text-warm-600 font-semibold underline hover:text-warm-700">ดูใบรับรองตัวเต็ม →</button>
                   </div>
                 </div>
               </div>
-
-              <!-- Sign-off -->
-              <div class="grid grid-cols-3 gap-4 pt-4 border-t border-warm-100 text-center text-xs">
-                <div class="p-3 bg-warm-50/50 rounded-xl border border-warm-100">
-                  <p class="text-[10px] text-neutral-400">ผู้ตรวจเช็กภาคสนาม</p>
-                  <p class="font-bold text-neutral-800 mt-4">{{ activeItem.technician }}</p>
-                  <p class="text-[9px] text-neutral-500 font-mono mt-0.5">Field Inspector</p>
-                </div>
-                <div class="p-3 bg-warm-50/50 rounded-xl border border-warm-100">
-                  <p class="text-[10px] text-neutral-400">วิศวกรผู้รับรองความปลอดภัย</p>
-                  <p class="font-bold text-neutral-800 mt-4">{{ activeItem.approvedBy || 'ดร.วิศวกรรม ระบบไฟ' }}</p>
-                  <p class="text-[9px] text-neutral-500 font-mono mt-0.5">Lead Engineer</p>
-                </div>
-                <div class="p-3 bg-warm-50/50 rounded-xl border border-warm-100">
-                  <p class="text-[10px] text-neutral-400">ผลการประเมินสุขภาพ (AHI)</p>
-                  <p class="font-bold text-emerald-600 mt-4">Grade {{ activeItem.ahiGrade || 'A' }} ({{ activeItem.ahiScore || 95 }}%)</p>
-                  <p class="text-[9px] text-emerald-700 font-mono mt-0.5">STATUS: PASS</p>
-                </div>
+              <div v-else class="p-8 text-center text-xs text-neutral-400 font-mono bg-warm-50/40 rounded-xl border border-dashed border-warm-200">
+                ไม่มีประวัติการบันทึกงาน PM ของอุปกรณ์ชิ้นนี้
               </div>
-
-              <!-- Action button -->
-              <div class="flex justify-between items-center pt-2 border-t border-warm-100">
-                <button @click="window.print()" class="px-4 py-2 bg-warm-50 hover:bg-warm-100 text-warm-800 border border-warm-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition">
-                  <i data-lucide="printer" class="w-4 h-4"></i> พิมพ์ใบรับรองนี้
-                </button>
-                <button @click="closeDrillDown" class="px-5 py-2 bg-neutral-800 text-white rounded-xl text-xs font-semibold hover:bg-neutral-900 transition">
-                  ปิดหน้ารายละเอียด
-                </button>
-              </div>
-
             </div>
           </div>
 
+          <div v-if="drillDownType === 'record'" class="amber-card p-6 md:p-8 rounded-2xl border-t-4 border-t-warm-500 space-y-6">
+            <div class="border-b-2 border-warm-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+              <div>
+                <h3 class="font-display font-bold text-lg text-neutral-900 tracking-tight">ใบรายงานผลการบำรุงรักษาอุปกรณ์ไฟฟ้าแรงสูง (Substation PM Certificate)</h3>
+                <p class="text-xs text-neutral-500 mt-0.5">High Voltage Diagnostic Execution & Action Certificate</p>
+              </div>
+              <div class="text-right">
+                <span class="font-mono font-bold text-xs bg-warm-100 px-3 py-1 rounded border border-warm-200 text-warm-800">{{ activeItem.permitNo }}</span>
+                <p class="text-[10px] text-neutral-500 mt-1 font-mono">DATE: {{ activeItem.date }}</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-warm-50/50 p-4 rounded-xl text-xs font-mono border border-warm-100">
+              <div><span class="text-neutral-400 block text-[10px]">รหัสอุปกรณ์</span><span class="font-bold text-neutral-800">{{ activeItem.assetId }}</span></div>
+              <div><span class="text-neutral-400 block text-[10px]">ประเภท</span><span class="font-bold text-neutral-800">{{ activeItem.type }}</span></div>
+              <div><span class="text-neutral-400 block text-[10px]">สถานที่ติดตั้ง</span><span class="text-neutral-700 truncate block">{{ activeItem.location }}</span></div>
+              <div><span class="text-neutral-400 block text-[10px]">ประเภทงาน PM</span><span class="text-neutral-700 truncate block">{{ activeItem.pmType }}</span></div>
+            </div>
+
+            <div class="p-4 rounded-xl border border-warm-200 bg-warm-50/40 space-y-1.5">
+              <h4 class="font-display font-bold text-xs text-warm-900 uppercase tracking-wider flex items-center gap-1.5">
+                <i data-lucide="wrench" class="w-4 h-4 text-warm-600"></i> บันทึกงานซ่อมแซมและปรับปรุงแก้ไข (Action Plan)
+              </h4>
+              <p class="text-xs text-neutral-800 leading-relaxed bg-white p-3 rounded-lg border border-warm-100 font-medium">
+                {{ activeItem.remarks || 'ไม่มีบันทึกเพิ่มเติม' }}
+              </p>
+            </div>
+
+            <div class="flex justify-between items-center pt-2 border-t border-warm-100">
+              <button @click="window.print()" class="px-4 py-2 bg-warm-50 hover:bg-warm-100 text-warm-800 border border-warm-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition">
+                <i data-lucide="printer" class="w-4 h-4"></i> พิมพ์ใบรับรองนี้
+              </button>
+              <button @click="closeDrillDown" class="px-5 py-2 bg-neutral-800 text-white rounded-xl text-xs font-semibold hover:bg-neutral-900 transition">
+                ปิดหน้ารายละเอียด
+              </button>
+            </div>
+          </div>
         </section>
 
-        <!-- ================= LIST / OVERVIEW MODE (ยังไม่โชว์ข้อมูลลึก ผู้ใช้ต้องกดเข้าไปดู) ================= -->
+        <!-- ================= LIST / OVERVIEW MODE ================= -->
         <template v-else>
 
-          <!-- 1. TAB: DASHBOARD (ภาพรวมมินิมอล) -->
+          <!-- 1. TAB: DASHBOARD -->
           <section v-if="currentTab === 'dashboard'" class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               <div @click="switchTab('assets')" class="amber-card amber-card-hover p-5 rounded-2xl cursor-pointer border-l-4 border-l-warm-500">
@@ -361,13 +342,13 @@
                 <p class="text-[11px] text-emerald-600 mt-1 font-semibold">คลิกเพื่อเลือกดูประวัติ →</p>
               </div>
 
-              <div @click="switchTab('history')" class="amber-card amber-card-hover p-5 rounded-2xl cursor-pointer border-l-4 border-l-amber-500">
+              <div @click="switchTab('route')" class="amber-card amber-card-hover p-5 rounded-2xl cursor-pointer border-l-4 border-l-amber-500">
                 <div class="flex items-center justify-between text-neutral-400">
-                  <span class="text-xs font-mono uppercase font-bold text-amber-700">เฝ้าระวัง (Grade B)</span>
-                  <div class="p-2 bg-amber-50 text-amber-600 rounded-xl"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
+                  <span class="text-xs font-mono uppercase font-bold text-amber-700">แผนที่นำทาง GPS</span>
+                  <div class="p-2 bg-amber-50 text-amber-600 rounded-xl"><i data-lucide="map" class="w-5 h-5"></i></div>
                 </div>
-                <h3 class="font-display font-bold text-3xl text-amber-600 mt-2">{{ getStatusCount('Pass with Condition') }} เคส</h3>
-                <p class="text-[11px] text-amber-600 mt-1 font-semibold">คลิกเพื่อดูจุดเฝ้าระวัง →</p>
+                <h3 class="font-display font-bold text-3xl text-amber-600 mt-2">{{ selectedVehicle.icon }} {{ selectedVehicle.name }}</h3>
+                <p class="text-[11px] text-amber-600 mt-1 font-semibold">คลิกเพื่อเปิดแผนที่รถ/มอไซค์ →</p>
               </div>
 
               <div @click="switchTab('anomaly')" class="amber-card amber-card-hover p-5 rounded-2xl cursor-pointer border-l-4 border-l-rose-500">
@@ -380,7 +361,6 @@
               </div>
             </div>
 
-            <!-- Minimal Chart Row -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div class="lg:col-span-2 amber-card p-6 rounded-2xl space-y-4">
                 <div class="flex items-center justify-between border-b border-warm-100 pb-3">
@@ -407,7 +387,56 @@
             </div>
           </section>
 
-          <!-- 2. TAB: ASSET DIRECTORY (การ์ดมินิมอล รอให้คลิกเข้าไปดู) -->
+          <!-- 2. TAB: INTERACTIVE MAP & CARTOON VEHICLE GPS NAVIGATION -->
+          <section v-if="currentTab === 'route'" class="space-y-6">
+            <div class="amber-card p-5 rounded-2xl space-y-4">
+              <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-warm-100 pb-3">
+                <div>
+                  <h3 class="font-display font-bold text-base text-neutral-900 flex items-center gap-2">
+                    <i data-lucide="navigation" class="w-5 h-5 text-warm-600"></i> เลือกไอคอนยานพาหนะการ์ตูนตรวจงานภาคสนาม
+                  </h3>
+                  <p class="text-xs text-neutral-500">เลือกไอคอนรถยนต์ หรือ มอเตอร์ไซค์ เพื่อจำลองการขับตรวจเช็กตามสถานีย่อย</p>
+                </div>
+
+                <button @click="startVehicleSimulation" class="px-4 py-2 bg-gradient-to-r from-warm-500 to-warm-600 hover:from-warm-600 hover:to-warm-700 text-white rounded-xl text-xs font-display font-semibold flex items-center gap-2 shadow-md transition">
+                  <i data-lucide="play" class="w-4 h-4"></i> {{ isSimulating ? 'กำลังเคลื่อนที่...' : 'จำลองการขับรถตรวจงาน' }}
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div v-for="v in vehicleOptions" :key="v.id" @click="selectVehicle(v)" :class="selectedVehicle.id === v.id ? 'border-warm-500 bg-warm-50 shadow-sm' : 'border-neutral-200 bg-white'" class="p-3.5 rounded-xl border-2 cursor-pointer transition flex items-center gap-3">
+                  <span class="text-2xl">{{ v.icon }}</span>
+                  <div>
+                    <h4 class="font-display font-bold text-xs text-neutral-900">{{ v.name }}</h4>
+                    <p class="text-[10px] text-neutral-400">{{ v.desc }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="amber-card p-4 rounded-2xl space-y-3">
+              <div class="flex justify-between items-center text-xs font-mono text-neutral-500 px-2">
+                <span>ACTIVE FLEET: <b>{{ selectedVehicle.icon }} {{ selectedVehicle.name }}</b></span>
+                <span>พิกัดปัจจุบัน: <b>{{ currentVehiclePos[0].toFixed(4) }}, {{ currentVehiclePos[1].toFixed(4) }}</b></span>
+              </div>
+              <div id="substationMap" class="w-full h-96 rounded-xl border border-warm-200 overflow-hidden shadow-inner"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div v-for="cp in routeCheckpoints" :key="cp.order" class="amber-card p-4 rounded-xl space-y-2 border-t-4" :class="cp.status === 'Completed' ? 'border-t-emerald-500' : 'border-t-warm-500'">
+                <div class="flex justify-between items-center">
+                  <span class="font-bold text-xs text-neutral-800">จุดตรวจที่ {{ cp.order }}: {{ cp.locationName }}</span>
+                  <span class="text-xs font-mono font-bold text-warm-700">+{{ cp.distanceKm }} กม.</span>
+                </div>
+                <p class="text-xs text-neutral-500">อุปกรณ์: {{ cp.assetsCount }} ตัว ({{ cp.assetTypes }})</p>
+                <a :href="`https://www.google.com/maps/dir/?api=1&destination=${cp.lat},${cp.lng}`" target="_blank" class="w-full py-1.5 bg-warm-50 hover:bg-warm-100 text-warm-800 border border-warm-200 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i> เปิด Google Maps จริง
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <!-- 3. TAB: ASSET DIRECTORY -->
           <section v-if="currentTab === 'assets'" class="space-y-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
@@ -426,7 +455,6 @@
               </div>
             </div>
 
-            <!-- Minimal Asset Cards (กดเข้าไปดู) -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div v-for="a in paginatedAssets" :key="a.id" @click="openAssetDetail(a)" class="amber-card amber-card-hover p-5 rounded-2xl cursor-pointer space-y-3 group">
                 <div class="flex items-start justify-between">
@@ -447,7 +475,6 @@
               </div>
             </div>
 
-            <!-- Pagination -->
             <div class="p-4 amber-card rounded-2xl flex items-center justify-between text-xs font-mono text-neutral-500">
               <div>หน้า {{ currentPage }} จาก {{ totalPages }}</div>
               <div class="flex gap-2">
@@ -457,7 +484,7 @@
             </div>
           </section>
 
-          <!-- 3. TAB: HISTORY DIRECTORY (รายการสรุปใบงาน รอให้คลิกเปิดดู) -->
+          <!-- 4. TAB: HISTORY DIRECTORY -->
           <section v-if="currentTab === 'history'" class="space-y-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
@@ -474,7 +501,6 @@
               </div>
             </div>
 
-            <!-- Clean Table with Click-to-Open -->
             <div class="amber-card rounded-2xl overflow-hidden">
               <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
@@ -519,7 +545,7 @@
             </div>
           </section>
 
-          <!-- 4. TAB: PM SCHEDULER -->
+          <!-- 5. TAB: PM SCHEDULER -->
           <section v-if="currentTab === 'schedule'" class="space-y-6">
             <div class="amber-card p-6 rounded-2xl space-y-4">
               <h3 class="font-display font-bold text-base text-neutral-900">ตารางแผนการบำรุงรักษาเชิงป้องกัน (PM Scheduler)</h3>
@@ -533,25 +559,6 @@
                   <button @click="startPmFromSchedule(sch)" class="px-3.5 py-2 rounded-xl bg-warm-500 hover:bg-warm-600 text-white font-semibold text-xs transition flex items-center gap-1">
                     <i data-lucide="play" class="w-3.5 h-3.5"></i> เปิดใบงาน
                   </button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- 5. TAB: ROUTE PLANNER -->
-          <section v-if="currentTab === 'route'" class="space-y-6">
-            <div class="amber-card p-6 rounded-2xl space-y-4">
-              <h3 class="font-display font-bold text-base text-neutral-900">เส้นทางตรวจอุปกรณ์ภาคสนาม (Field GPS)</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div v-for="cp in routeCheckpoints" :key="cp.order" class="p-4 bg-warm-50/50 rounded-xl border border-warm-200 space-y-2">
-                  <div class="flex justify-between items-center">
-                    <span class="font-bold text-sm text-neutral-900">จุดตรวจที่ {{ cp.order }}: {{ cp.locationName }}</span>
-                    <span class="text-xs font-mono text-warm-700 font-bold">+{{ cp.distanceKm }} กม.</span>
-                  </div>
-                  <p class="text-xs text-neutral-500">อุปกรณ์: {{ cp.assetsCount }} ตัว ({{ cp.assetTypes }})</p>
-                  <a :href="`https://www.google.com/maps/dir/?api=1&destination=${cp.lat},${cp.lng}`" target="_blank" class="w-full py-2 bg-warm-500 hover:bg-warm-600 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition">
-                    <i data-lucide="navigation" class="w-3.5 h-3.5"></i> เปิด Google Maps นำทาง
-                  </a>
                 </div>
               </div>
             </div>
@@ -694,24 +701,39 @@
         return {
           currentTab: 'dashboard',
           activeDrillDown: false,
-          drillDownType: '', // 'asset' or 'record'
+          drillDownType: '',
           activeItem: null,
           searchAsset: '',
           filterType: 'ALL',
           currentPage: 1,
           itemsPerPage: 9,
           charts: {},
+          map: null,
+          vehicleMarker: null,
+          routeLine: null,
+          isSimulating: false,
+
+          vehicleOptions: [
+            { id: 'sedan', name: 'รถเก๋งตรวจการ', icon: '🚗', desc: 'ตรวจเช็กด่วนในเมือง' },
+            { id: 'moto', name: 'มอเตอร์ไซค์ช่าง', icon: '🛵', desc: 'คล่องตัว ซอยแคบ' },
+            { id: 'pickup', name: 'รถกระบะเครื่องมือ', icon: '🛻', desc: 'บรรทุกเครื่องทดสอบ HV' },
+            { id: 'van', name: 'รถตู้แล็บเคลื่อนที่', icon: '🚐', desc: 'ทีมวิศวกรตรวจแล็บ' }
+          ],
+          selectedVehicle: { id: 'sedan', name: 'รถเก๋งตรวจการ', icon: '🚗', desc: 'ตรวจเช็กด่วนในเมือง' },
+          currentVehiclePos: [13.7563, 100.5018],
 
           assets: storedAssets ? JSON.parse(storedAssets) : generateInitial50Assets(),
 
           upcomingSchedules: [
-            { id: 1, dueDate: '2026-08-28', assetId: 'TR-04', assetName: 'หม้อแปลงไฟฟ้ากำลัง Unit 4', location: 'Substation 1 (ลานไก)', pmType: 'Annual PM', assignedTeam: 'ทีมวิศวกรไฟฟ้า A', daysLeft: 3 },
-            { id: 2, dueDate: '2026-08-30', assetId: 'LBS-06', assetName: 'Load Break Switch Feeder 6', location: 'Substation 3 (โรงผลิต)', pmType: 'Half-Year PM', assignedTeam: 'ทีมบำรุงรักษา B', daysLeft: 5 }
+            { id: 1, dueDate: '2026-08-28', assetId: 'TR-04', assetName: 'หม้อแปลงไฟฟ้ากำลัง Unit 4', location: 'Substation 1 (ลานไก)', pmType: 'Annual PM' },
+            { id: 2, dueDate: '2026-08-30', assetId: 'LBS-06', assetName: 'Load Break Switch Feeder 6', location: 'Substation 3 (โรงผลิต)', pmType: 'Half-Year PM' }
           ],
 
           routeCheckpoints: [
             { order: 1, locationName: 'Substation 1 (ลานไกหลัก)', lat: 13.7563, lng: 100.5018, distanceKm: 0.0, assetsCount: 14, assetTypes: 'TR & LBS', status: 'Completed' },
-            { order: 2, locationName: 'Substation 2 (อาคารควบคุมกลาง)', lat: 13.7620, lng: 100.5125, distanceKm: 1.4, assetsCount: 12, assetTypes: 'Dry TR & LBS', status: 'Pending' }
+            { order: 2, locationName: 'Substation 2 (อาคารควบคุมกลาง)', lat: 13.7630, lng: 100.5135, distanceKm: 1.4, assetsCount: 12, assetTypes: 'Dry TR & LBS', status: 'Pending' },
+            { order: 3, locationName: 'Substation 3 (โรงผลิต Line 1)', lat: 13.7715, lng: 100.5220, distanceKm: 1.8, assetsCount: 14, assetTypes: 'Oil TR & SF6 LBS', status: 'Pending' },
+            { order: 4, locationName: 'Substation 4 (สถานีจ่ายย่อยใต้ดิน)', lat: 13.7800, lng: 100.5360, distanceKm: 2.1, assetsCount: 10, assetTypes: 'LBS Feeder', status: 'Pending' }
           ],
 
           anomalies: [
@@ -728,6 +750,7 @@
             }
           ],
 
+          // 30 Comprehensive Realistic Field Records
           pmRecords: storedRecords ? JSON.parse(storedRecords) : [
             {
               id: 101,
@@ -747,6 +770,22 @@
             },
             {
               id: 102,
+              permitNo: 'PM-HV-2026-002',
+              date: '2026-08-02',
+              assetId: 'TR-02',
+              type: 'Transformer',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Half-Year PM',
+              technician: 'กิตติศักดิ์ ช่างซ่อมบำรุง',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 95,
+              remarks: 'ตรวจสอบระดับน้ำมันปกติ ทำความสะอาดตู้ Control ค่าวัดความร้อนเทอร์โมสแกนจุดต่อขั้วต่อ LV อยู่ที่ 45°C ปกติ',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 310, irPriGnd10m: 710, oilDielectric: 45, oilMoisture: 14, dgaC2H2: 0.1, thermoMaxTemp: 45.0 }
+            },
+            {
+              id: 103,
               permitNo: 'CM-HV-2026-003',
               date: '2026-08-03',
               assetId: 'TR-03',
@@ -762,7 +801,199 @@
               details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 280, irPriGnd10m: 620, oilDielectric: 42, oilMoisture: 18, dgaC2H2: 0.2, thermoMaxTemp: 52.0 }
             },
             {
-              id: 103,
+              id: 104,
+              permitNo: 'PM-HV-2026-004',
+              date: '2026-08-04',
+              assetId: 'TR-04',
+              type: 'Transformer',
+              location: 'Substation 3 (โรงผลิต)',
+              pmType: 'Annual PM',
+              technician: 'ประสิทธิ์ ช่างฝีมือ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 96,
+              remarks: 'ทดสอบระบบเตือน Buchholz Relay และ Pressure Relief Valve ทำงานตัดวงจรตามมาตรฐาน ค่าความต้านทานสายดิน 1.4 โอห์ม',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 390, irPriGnd10m: 890, oilDielectric: 47, oilMoisture: 11, dgaC2H2: 0.1, thermoMaxTemp: 46.5 }
+            },
+            {
+              id: 105,
+              permitNo: 'PM-HV-2026-005',
+              date: '2026-08-05',
+              assetId: 'TR-05',
+              type: 'Transformer',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Thermography PM',
+              technician: 'ชานนท์ สุขุมวิท',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 94,
+              remarks: 'สแกนความร้อนด้วยกล้องอินฟราเรด ไม่พบจุดร้อนผิดปกติ (Hotspot) อุณหภูมิขั้วต่อเฉลี่ย 47.8°C สภาพตัวถังแห้งสะอาด',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 320, irPriGnd10m: 720, oilDielectric: 44, oilMoisture: 15, dgaC2H2: 0.1, thermoMaxTemp: 47.8 }
+            },
+            {
+              id: 106,
+              permitNo: 'PM-HV-2026-006',
+              date: '2026-08-06',
+              assetId: 'TR-06',
+              type: 'Transformer',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Half-Year PM',
+              technician: 'สมชาย พิทักษ์วงษ์',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 97,
+              remarks: 'หม้อแปลง Dry-Type ทำความสะอาดคราบฝุ่นบนขดลวด Epoxy ตรวจสอบพัดลมระบายอากาศ 4 ตัว ทำงานอัตโนมัติสมบูรณ์',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 1100, irPriGnd10m: 2900, oilDielectric: 0, oilMoisture: 0, dgaC2H2: 0.0, thermoMaxTemp: 43.5 }
+            },
+            {
+              id: 107,
+              permitNo: 'CM-HV-2026-007',
+              date: '2026-08-07',
+              assetId: 'TR-07',
+              type: 'Transformer',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Corrective PM',
+              technician: 'ประสิทธิ์ ช่างฝีมือ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass with Condition',
+              ahiGrade: 'B',
+              ahiScore: 78,
+              remarks: 'ดำเนินการปรับปรุง: แก้ไขรอยรั่วซึมปะเก็น Flange Bushing H1 ขันกวดตาม Torque แล้ว เฝ้าระวังคราบซึมซ้ำใน 1 เดือน',
+              details: { tankLeaks: 'Minor Seepage', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 150, irPriGnd10m: 320, oilDielectric: 36, oilMoisture: 22, dgaC2H2: 0.8, thermoMaxTemp: 64.5 }
+            },
+            {
+              id: 108,
+              permitNo: 'PM-DGA-2026-008',
+              date: '2026-08-08',
+              assetId: 'TR-08',
+              type: 'Transformer',
+              location: 'Substation 3 (โรงผลิต)',
+              pmType: 'DGA Oil Test',
+              technician: 'ธีรศักดิ์ กล้าหาญ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 93,
+              remarks: 'ผลทดสอบก๊าซในน้ำมัน DGA อยู่ในเกณฑ์ปกติ ก๊าซมีเทน CH4 = 15 ppm, ไฮโดรเจน H2 = 25 ppm ไม่พบสัญญาณการเสื่อมสภาพ',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 340, irPriGnd10m: 780, oilDielectric: 46, oilMoisture: 13, dgaC2H2: 0.1, thermoMaxTemp: 49.0 }
+            },
+            {
+              id: 109,
+              permitNo: 'PM-HV-2026-009',
+              date: '2026-08-09',
+              assetId: 'TR-09',
+              type: 'Transformer',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Annual PM',
+              technician: 'กิตติศักดิ์ ช่างซ่อมบำรุง',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 96,
+              remarks: 'ตรวจวัดค่า Winding Resistance ทั้ง 3 เฟส สมดุลดีเยี่ยม ค่าเบี่ยงเบนต่ำกว่า 0.8% ขันแน่นจุดต่อบัสบาร์',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 370, irPriGnd10m: 850, oilDielectric: 47, oilMoisture: 12, dgaC2H2: 0.1, thermoMaxTemp: 46.2 }
+            },
+            {
+              id: 110,
+              permitNo: 'PM-HV-2026-010',
+              date: '2026-08-10',
+              assetId: 'TR-10',
+              type: 'Transformer',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Half-Year PM',
+              technician: 'ชานนท์ สุขุมวิท',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 94,
+              remarks: 'ตรวจเช็กหน้าคอนแทกต์เทอร์โมมิเตอร์ Winding Temp Alarm & Trip ทำงานสัมพันธ์กับค่าความร้อนจริง',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 305, irPriGnd10m: 690, oilDielectric: 43, oilMoisture: 16, dgaC2H2: 0.2, thermoMaxTemp: 50.1 }
+            },
+            {
+              id: 111,
+              permitNo: 'PM-HV-2026-011',
+              date: '2026-08-11',
+              assetId: 'TR-11',
+              type: 'Transformer',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Annual PM',
+              technician: 'สมชาย พิทักษ์วงษ์',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 95,
+              remarks: 'ทดสอบ Insulation Resistance ระหว่างขดลวด Primary-Secondary ได้ 980 MΩ สภาพความเป็นฉนวนสมบูรณ์',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 360, irPriGnd10m: 810, oilDielectric: 45, oilMoisture: 14, dgaC2H2: 0.1, thermoMaxTemp: 47.0 }
+            },
+            {
+              id: 112,
+              permitNo: 'PM-DGA-2026-012',
+              date: '2026-08-12',
+              assetId: 'TR-12',
+              type: 'Transformer',
+              location: 'Substation 3 (โรงผลิต)',
+              pmType: 'DGA Oil Test',
+              technician: 'ชานนท์ สุขุมวิท',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Fail',
+              ahiGrade: 'D',
+              ahiScore: 42,
+              remarks: 'ข้อเสนอแนะการปรับปรุง: วิเคราะห์ผล DGA พบก๊าซ C2H2 = 4.8 ppm บ่งชี้ว่าเกิด Internal Arcing ต้องวางแผนปลดหม้อแปลงเพื่อ Overhaul ขดลวดด่วน',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Need Replacement', irPriGnd1m: 85, irPriGnd10m: 160, oilDielectric: 28, oilMoisture: 32, dgaC2H2: 4.8, thermoMaxTemp: 78.0 }
+            },
+            {
+              id: 113,
+              permitNo: 'PM-HV-2026-013',
+              date: '2026-08-13',
+              assetId: 'TR-13',
+              type: 'Transformer',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Annual PM',
+              technician: 'ธีรศักดิ์ กล้าหาญ',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 97,
+              remarks: 'ตรวจเช็กประเก็นตัวถังและวาล์วถ่ายน้ำมัน ขันแน่นจุดกราวด์ตัวถังลง Earth Grid วัดได้ 1.2 โอห์ม',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 380, irPriGnd10m: 860, oilDielectric: 48, oilMoisture: 11, dgaC2H2: 0.1, thermoMaxTemp: 45.8 }
+            },
+            {
+              id: 114,
+              permitNo: 'PM-HV-2026-014',
+              date: '2026-08-14',
+              assetId: 'TR-14',
+              type: 'Transformer',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Half-Year PM',
+              technician: 'ประสิทธิ์ ช่างฝีมือ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 96,
+              remarks: 'หม้อแปลง Dry-Type สภาพสะอาด ไม่มีฝุ่นสะสม เซนเซอร์ PT100 วัดอุณหภูมิขดลวดแม่นยำตรงกับเทอร์โมมิเตอร์หน้าตู้',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 1250, irPriGnd10m: 3200, oilDielectric: 0, oilMoisture: 0, dgaC2H2: 0.0, thermoMaxTemp: 42.0 }
+            },
+            {
+              id: 115,
+              permitNo: 'CM-HV-2026-015',
+              date: '2026-08-15',
+              assetId: 'TR-15',
+              type: 'Transformer',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Corrective PM',
+              technician: 'สมชาย พิทักษ์วงษ์',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 91,
+              remarks: 'ดำเนินการปรับปรุง: ขัดทำความสะอาดคราบ Flashover ฝุ่นหนาแน่นบริเวณ Bushing LV และทาสีกันสนิมรอบฐานตัวถัง',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 290, irPriGnd10m: 650, oilDielectric: 41, oilMoisture: 17, dgaC2H2: 0.2, thermoMaxTemp: 51.5 }
+            },
+            {
+              id: 116,
               permitNo: 'PM-HV-2026-016',
               date: '2026-08-16',
               assetId: 'LBS-01',
@@ -776,6 +1007,230 @@
               ahiScore: 97,
               remarks: 'ตรวจเช็กแรงดัน SF6 ปกติ 0.052 MPa ค่า Contact Resistance ทั้ง 3 เฟสเฉลี่ย 43 µΩ กลไกสับ-ปลดคล่องตัว',
               details: { sf6Pressure: '0.052 MPa', contactResA: 42.5, contactResB: 43.8, contactResC: 43.1, syncDiscrepancy: 3.8, lbsIR: 3100 }
+            },
+            {
+              id: 117,
+              permitNo: 'PM-HV-2026-017',
+              date: '2026-08-17',
+              assetId: 'LBS-02',
+              type: 'LBS',
+              location: 'Substation 3 (โรงผลิต)',
+              pmType: 'Half-Year PM',
+              technician: 'กิตติศักดิ์ ช่างซ่อมบำรุง',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 94,
+              remarks: 'ตรวจเช็กตามรอบ Contact Resistance เฉลี่ย 44 µΩ แรงดัน SF6 ปกติ 0.052 MPa ดำเนินการหยอดน้ำมันหล่อลื่นกลไกเรียบร้อย',
+              details: { sf6Pressure: '0.052 MPa', contactResA: 44.2, contactResB: 45.1, contactResC: 43.8, syncDiscrepancy: 4.2, lbsIR: 2800 }
+            },
+            {
+              id: 118,
+              permitNo: 'CM-HV-2026-018',
+              date: '2026-08-18',
+              assetId: 'LBS-03',
+              type: 'LBS',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Corrective PM',
+              technician: 'ธีรศักดิ์ กล้าหาญ',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 90,
+              remarks: 'ดำเนินการปรับปรุง: เปลี่ยน Auxiliary Switch Contact ชุดใหม่เนื่องจากส่งสัญญาณ Status Closed ติดขัด ทดสอบระบบ SCADA ส่งสถานะตรง 100%',
+              details: { sf6Pressure: '0.050 MPa', contactResA: 46.1, contactResB: 47.2, contactResC: 45.8, syncDiscrepancy: 4.5, lbsIR: 2400 }
+            },
+            {
+              id: 119,
+              permitNo: 'PM-HV-2026-019',
+              date: '2026-08-19',
+              assetId: 'LBS-04',
+              type: 'LBS',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Annual PM',
+              technician: 'ประสิทธิ์ ช่างฝีมือ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 95,
+              remarks: 'ทดสอบความเร็วในการปลดวงจร (Opening Time) 45 ms สัมพันธ์กับ Protection Relay สภาพฉนวนลูกถ้วยสะอาด',
+              details: { sf6Pressure: '0.051 MPa', contactResA: 44.8, contactResB: 45.5, contactResC: 44.1, syncDiscrepancy: 4.0, lbsIR: 2900 }
+            },
+            {
+              id: 120,
+              permitNo: 'CM-HV-2026-020',
+              date: '2026-08-20',
+              assetId: 'LBS-05',
+              type: 'LBS',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Corrective PM',
+              technician: 'ประสิทธิ์ ช่างฝีมือ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 90,
+              remarks: 'ดำเนินการปรับปรุง: ทำความสะอาดคราบฝุ่นกลไกสปริง สเปรย์จาระบีสังเคราะห์ และปรับแต่ง Linking Rod คล่องตัวดี',
+              details: { sf6Pressure: '0.050 MPa', contactResA: 48.0, contactResB: 49.5, contactResC: 47.8, syncDiscrepancy: 5.1, lbsIR: 2200 }
+            },
+            {
+              id: 121,
+              permitNo: 'PM-HV-2026-021',
+              date: '2026-08-21',
+              assetId: 'LBS-06',
+              type: 'LBS',
+              location: 'Substation 3 (โรงผลิต)',
+              pmType: 'Half-Year PM',
+              technician: 'ชานนท์ สุขุมวิท',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 96,
+              remarks: 'ตรวจเช็กเกจวัด SF6 ในแถบเขียว วัดค่าฉนวนระหว่างเฟสได้มากกว่า 2,500 MΩ ทำความสะอาดภายนอกตู้ Enclosure',
+              details: { sf6Pressure: '0.053 MPa', contactResA: 43.5, contactResB: 44.0, contactResC: 43.2, syncDiscrepancy: 3.9, lbsIR: 3050 }
+            },
+            {
+              id: 122,
+              permitNo: 'CM-HV-2026-022',
+              date: '2026-08-22',
+              assetId: 'LBS-07',
+              type: 'LBS',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Corrective PM',
+              technician: 'สมชาย พิทักษ์วงษ์',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 93,
+              remarks: 'ดำเนินการปรับปรุง: ปรับตั้งระยะ Alignment ใบมีด Earthing Switch ใหม่เนื่องจากสับลงดินขัดข้อง ทดสอบ Interlock ทำงานถูกต้อง',
+              details: { sf6Pressure: '0.050 MPa', contactResA: 45.0, contactResB: 46.2, contactResC: 45.4, syncDiscrepancy: 4.4, lbsIR: 2600 }
+            },
+            {
+              id: 123,
+              permitNo: 'PM-HV-2026-023',
+              date: '2026-08-23',
+              assetId: 'LBS-08',
+              type: 'LBS',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Annual PM',
+              technician: 'ธีรศักดิ์ กล้าหาญ',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 95,
+              remarks: 'ทดสอบการทำงานด้วยระบบมอเตอร์ไฟฟ้า (Motorized Drive) ปิด-เปิด 5 รอบ ทำงานราบรื่น กระแสขับมอเตอร์ปกติ 2.1A',
+              details: { sf6Pressure: '0.051 MPa', contactResA: 44.0, contactResB: 44.8, contactResC: 43.9, syncDiscrepancy: 4.1, lbsIR: 2850 }
+            },
+            {
+              id: 124,
+              permitNo: 'CM-HV-2026-024',
+              date: '2026-08-24',
+              assetId: 'LBS-09',
+              type: 'LBS',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Corrective PM',
+              technician: 'กิตติศักดิ์ ช่างซ่อมบำรุง',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 91,
+              remarks: 'ดำเนินการปรับปรุง: ขัดล้างคราบออกไซด์หน้าสัมผัส Main Tulip Contact เฟส B ค่าความต้านทานลดจาก 115 เหลือ 48.2 µΩ ผ่านเกณฑ์มาตรฐาน',
+              details: { sf6Pressure: '0.048 MPa', contactResA: 46.5, contactResB: 48.2, contactResC: 47.1, syncDiscrepancy: 4.8, lbsIR: 1950 }
+            },
+            {
+              id: 125,
+              permitNo: 'PM-HV-2026-025',
+              date: '2026-08-25',
+              assetId: 'LBS-10',
+              type: 'LBS',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Half-Year PM',
+              technician: 'ประสิทธิ์ ช่างฝีมือ',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 96,
+              remarks: 'ตรวจเช็กระบบสัญญาณ Trip Indicator ชี้ตำแหน่งชัดเจน ค่าความต้านทานหน้าสัมผัส 3 เฟสเฉลี่ย 43.5 µΩ',
+              details: { sf6Pressure: '0.052 MPa', contactResA: 43.1, contactResB: 44.0, contactResC: 43.5, syncDiscrepancy: 3.9, lbsIR: 3100 }
+            },
+            {
+              id: 126,
+              permitNo: 'PM-HV-2026-026',
+              date: '2026-08-26',
+              assetId: 'LBS-11',
+              type: 'LBS',
+              location: 'Substation 3 (โรงผลิต)',
+              pmType: 'Annual PM',
+              technician: 'สมชาย พิทักษ์วงษ์',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 97,
+              remarks: 'วัดค่าฉนวนเฟสเทียบกราวด์ได้เกิน 3,000 MΩ ค่าความพร้อมเพรียงการสับสัมผัส 3.7 ms อยู่ในเกณฑ์ดีเยี่ยม',
+              details: { sf6Pressure: '0.053 MPa', contactResA: 42.8, contactResB: 43.5, contactResC: 42.9, syncDiscrepancy: 3.7, lbsIR: 3300 }
+            },
+            {
+              id: 127,
+              permitNo: 'PM-HV-2026-027',
+              date: '2026-08-27',
+              assetId: 'LBS-12',
+              type: 'LBS',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Half-Year PM',
+              technician: 'ชานนท์ สุขุมวิท',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 94,
+              remarks: 'ตรวจสอบตัวนับจำนวนครั้งการตัดตอน (Counter: 375 ครั้ง) ชโลมจาระบีกลไกสปริงและขั้วต่อสายไฟ',
+              details: { sf6Pressure: '0.051 MPa', contactResA: 45.2, contactResB: 45.8, contactResC: 44.9, syncDiscrepancy: 4.3, lbsIR: 2700 }
+            },
+            {
+              id: 128,
+              permitNo: 'PM-HV-2026-028',
+              date: '2026-08-28',
+              assetId: 'LBS-13',
+              type: 'LBS',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Annual PM',
+              technician: 'ธีรศักดิ์ กล้าหาญ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 95,
+              remarks: 'ตรวจเช็กสภาพ Insulator ไม่พบรอยร้าวหรือคราบเขม่า Arc แรงดันก๊าซ SF6 อยู่ในแถบเขียวมั่นคง',
+              details: { sf6Pressure: '0.052 MPa', contactResA: 44.0, contactResB: 44.6, contactResC: 43.8, syncDiscrepancy: 4.0, lbsIR: 2950 }
+            },
+            {
+              id: 129,
+              permitNo: 'CM-HV-2026-029',
+              date: '2026-08-29',
+              assetId: 'LBS-14',
+              type: 'LBS',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Corrective PM',
+              technician: 'ธีรศักดิ์ กล้าหาญ',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass with Condition',
+              ahiGrade: 'B',
+              ahiScore: 76,
+              remarks: 'ดำเนินการปรับปรุง: ตรวจพบก๊าซ SF6 ตกเหลือ 0.028 MPa ทำการขันกวดซีลวาล์วและเติมก๊าซกลับเป็น 0.050 MPa ให้เฝ้าระวังรอยรั่วซ้ำใน 1 เดือน',
+              details: { sf6Pressure: '0.050 MPa (Refilled)', contactResA: 52.0, contactResB: 54.2, contactResC: 53.1, syncDiscrepancy: 6.0, lbsIR: 1800 }
+            },
+            {
+              id: 130,
+              permitNo: 'PM-HV-2026-030',
+              date: '2026-08-30',
+              assetId: 'LBS-15',
+              type: 'LBS',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Annual PM',
+              technician: 'สมชาย พิทักษ์วงษ์',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 98,
+              remarks: 'ทดสอบระบบ Shunt Trip Coil ทำงานสับ-ปลดรวดเร็ว ค่า Contact Resistance เฉลี่ย 42 µΩ ผ่านเกณฑ์มาตรฐานสูงสุด',
+              details: { sf6Pressure: '0.054 MPa', contactResA: 41.9, contactResB: 42.5, contactResC: 42.0, syncDiscrepancy: 3.6, lbsIR: 3400 }
             }
           ],
 
@@ -826,6 +1281,9 @@
           if (tab === 'dashboard') {
             this.$nextTick(() => { this.initCharts(); });
           }
+          if (tab === 'route') {
+            this.$nextTick(() => { this.initLeafletMap(); });
+          }
         },
         openAssetDetail(asset) {
           this.activeItem = asset;
@@ -867,10 +1325,10 @@
           }
           const titles = {
             'dashboard': 'แดชบอร์ดภาพรวม (OVERVIEW)',
+            'route': 'แผนที่นำทาง GPS (INTERACTIVE CARTOON GPS)',
             'assets': 'ทะเบียนอุปกรณ์ไฟฟ้า (ASSET DIRECTORY)',
             'history': 'ประวัติและผลการตรวจ (PM HISTORY)',
             'schedule': 'ตารางแผนงาน (PM SCHEDULER)',
-            'route': 'เส้นทางตรวจ (FIELD GPS)',
             'anomaly': 'วิเคราะห์ความผิดปกติ (ANOMALY ENGINE)',
             'pm-form': 'ออกใบงาน PM (WORK ORDER)'
           };
@@ -879,6 +1337,83 @@
         getStatusCount(status) { return this.pmRecords.filter(r => r.status === status).length; },
         getAssetPmCount(assetId) { return this.pmRecords.filter(r => r.assetId === assetId).length; },
         getAssetRecords(assetId) { return this.pmRecords.filter(r => r.assetId === assetId); },
+
+        initLeafletMap() {
+          const mapEl = document.getElementById('substationMap');
+          if (!mapEl) return;
+
+          if (this.map) {
+            this.map.remove();
+          }
+
+          this.map = L.map('substationMap').setView([13.7650, 100.5150], 13);
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+          }).addTo(this.map);
+
+          const latlngs = this.routeCheckpoints.map(cp => [cp.lat, cp.lng]);
+          this.routeLine = L.polyline(latlngs, { color: '#f97316', weight: 4, opacity: 0.8, dashArray: '8, 8' }).addTo(this.map);
+
+          this.routeCheckpoints.forEach(cp => {
+            const pinIcon = L.divIcon({
+              className: 'custom-div-icon',
+              html: `<div class="cartoon-substation-pin w-8 h-8">⚡</div>`,
+              iconSize: [32, 32],
+              iconAnchor: [16, 16]
+            });
+
+            L.marker([cp.lat, cp.lng], { icon: pinIcon })
+              .addTo(this.map)
+              .bindPopup(`<b>${cp.locationName}</b><br>อุปกรณ์: ${cp.assetsCount} ชุด<br>พิกัด: ${cp.lat}, ${cp.lng}`);
+          });
+
+          this.updateVehicleMarker();
+        },
+
+        updateVehicleMarker() {
+          if (!this.map) return;
+          if (this.vehicleMarker) {
+            this.map.removeLayer(this.vehicleMarker);
+          }
+
+          const vehicleIcon = L.divIcon({
+            className: 'custom-div-icon',
+            html: `<div class="cartoon-vehicle-pin w-12 h-12">${this.selectedVehicle.icon}</div>`,
+            iconSize: [48, 48],
+            iconAnchor: [24, 24]
+          });
+
+          this.vehicleMarker = L.marker(this.currentVehiclePos, { icon: vehicleIcon })
+            .addTo(this.map)
+            .bindPopup(`<b>ยานพาหนะปัจจุบัน:</b> ${this.selectedVehicle.name} ${this.selectedVehicle.icon}`);
+        },
+
+        selectVehicle(vehicle) {
+          this.selectedVehicle = vehicle;
+          this.updateVehicleMarker();
+        },
+
+        startVehicleSimulation() {
+          if (this.isSimulating || !this.map) return;
+          this.isSimulating = true;
+
+          const points = this.routeCheckpoints.map(cp => [cp.lat, cp.lng]);
+          let step = 0;
+
+          const interval = setInterval(() => {
+            if (step < points.length) {
+              this.currentVehiclePos = points[step];
+              this.vehicleMarker.setLatLng(this.currentVehiclePos);
+              this.map.panTo(this.currentVehiclePos);
+              step++;
+            } else {
+              clearInterval(interval);
+              this.isSimulating = false;
+              alert(`การจำลองการขับ ${this.selectedVehicle.name} ${this.selectedVehicle.icon} ตรวจครบทุกสถานีย่อยแล้ว!`);
+            }
+          }, 1500);
+        },
 
         startPmFromSchedule(schedule) {
           this.formData.assetId = schedule.assetId;
@@ -1015,6 +1550,12 @@
           }));
 
           const ws = XLSX.utils.json_to_sheet(exportRows);
+          ws['!cols'] = [
+            { wch: 15 }, { wch: 22 }, { wch: 15 }, { wch: 15 }, 
+            { wch: 22 }, { wch: 25 }, { wch: 20 }, { wch: 18 }, 
+            { wch: 18 }, { wch: 50 }
+          ];
+
           const wb = XLSX.utils.book_new();
           XLSX.utils.book_append_sheet(wb, ws, "PM_Records");
           XLSX.writeFile(wb, `รายงานผล_PM_${new Date().toISOString().split('T')[0]}.xlsx`, {
