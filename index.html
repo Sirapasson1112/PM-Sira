@@ -128,7 +128,7 @@
             <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold">{{ anomalies.length }}</span>
           </button>
 
-          <button @click="switchTab('pm-form')" :class="navClass('pm-form')" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition">
+          <button @click="switchTab('pm-form')" :class="navClass('pm-form')" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition group">
             <i data-lucide="clipboard-pen" class="w-4 h-4 text-slate-500"></i>
             <span>ออกใบงาน PM ใหม่</span>
           </button>
@@ -137,7 +137,7 @@
 
       <div class="p-4 border-t border-warm-100 bg-warm-50/40 text-xs text-neutral-500">
         <p class="font-mono font-bold">SYSTEM ACTIVE</p>
-        <p class="text-[10px] text-neutral-400">All 50 Assets Monitored</p>
+        <p class="text-[10px] text-neutral-400">Import & Export Ready</p>
       </div>
     </aside>
 
@@ -154,6 +154,11 @@
           <button v-if="activeDrillDown" @click="closeDrillDown" class="px-3.5 py-2 rounded-xl bg-warm-100 hover:bg-warm-200 text-warm-800 font-semibold text-xs transition flex items-center gap-1.5">
             <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> ย้อนกลับ
           </button>
+          
+          <button @click="switchTab('history')" class="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold text-xs border border-emerald-200 transition flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-emerald-600"></i> จัดการข้อมูล / นำเข้า-ส่งออก
+          </button>
+
           <button @click="switchTab('pm-form')" class="px-4 py-2 rounded-xl bg-warm-500 hover:bg-warm-600 text-white font-semibold text-xs transition flex items-center gap-1.5 shadow-md shadow-warm-500/20">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i> ออกใบงาน PM
           </button>
@@ -197,7 +202,6 @@
                   </div>
                   <p class="text-neutral-700"><b>การปรับปรุง/แก้ไข:</b> {{ rec.remarks }}</p>
                   
-                  <!-- แสดงรูปภาพขนาดย่อถ้ามี -->
                   <div v-if="rec.photos && rec.photos.length > 0" class="flex gap-2 py-1 overflow-x-auto">
                     <img v-for="(p, pidx) in rec.photos" :key="pidx" :src="p" class="w-16 h-16 object-cover rounded-lg border border-warm-200 cursor-pointer" @click="openRecordDetail(rec)" />
                   </div>
@@ -241,9 +245,8 @@
               </div>
             </div>
 
-            <!-- รูปภาพประกอบหน้างานจริงในใบตรวจงาน -->
             <div v-if="activeItem.photos && activeItem.photos.length > 0">
-              <h4 class="font-bold text-xs text-neutral-700 uppercase mb-2">รูปภาพประกอบการตรวจเช็กหน้างาน (Site Inspection Photos)</h4>
+              <h4 class="font-bold text-xs text-neutral-700 uppercase mb-2">รูปภาพประกอบการตรวจเช็กหน้างาน</h4>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div v-for="(p, pidx) in activeItem.photos" :key="pidx" class="rounded-xl overflow-hidden border border-warm-200 bg-neutral-100 aspect-video shadow-sm">
                   <img :src="p" class="w-full h-full object-cover" />
@@ -354,23 +357,50 @@
             </div>
           </section>
 
-          <!-- 3. HISTORY DIRECTORY -->
+          <!-- 3. HISTORY DIRECTORY (IMPORT & EXPORT SUITE) -->
           <section v-if="currentTab === 'history'" class="space-y-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div>
-                <h3 class="font-display font-bold text-base text-neutral-900">ประวัติการตรวจเช็กและซ่อมบำรุงทั้งหมด ({{ pmRecords.length }} ใบงาน)</h3>
-                <p class="text-xs text-neutral-500">คลิกที่แถวรายการเพื่อเปิดดูใบรับรองทางการตัวเต็ม</p>
+            
+            <!-- Import/Export Management Card -->
+            <div class="amber-card p-6 rounded-2xl border-l-4 border-l-warm-500 space-y-4">
+              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-warm-100 pb-3">
+                <div>
+                  <h3 class="font-display font-bold text-sm text-neutral-900 flex items-center gap-2">
+                    <i data-lucide="file-up" class="w-4 h-4 text-warm-600"></i> นำเข้าไฟล์ผลตรวจหน้างาน & ส่งออกรายงาน
+                  </h3>
+                  <p class="text-xs text-neutral-500 mt-0.5">รองรับไฟล์ Excel (.xlsx, .xls), CSV และ JSON พร้อมเข้ารหัสภาษาไทย 100%</p>
+                </div>
+                
+                <button @click="downloadTemplate" class="px-3.5 py-1.5 rounded-xl bg-warm-50 hover:bg-warm-100 text-warm-800 border border-warm-200 text-xs font-semibold flex items-center gap-1.5 transition">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i> ดาวน์โหลด Template Excel
+                </button>
               </div>
-              <div class="flex gap-2">
-                <button @click="exportToExcel" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
-                  <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export Excel
-                </button>
-                <button @click="confirmClearLogs" class="bg-warm-50 hover:bg-rose-50 text-neutral-600 hover:text-rose-600 border border-warm-200 px-3.5 py-2 rounded-xl text-xs font-mono transition">
-                  RESET LOGS
-                </button>
+
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                  <label class="cursor-pointer px-4 py-2 bg-warm-500 hover:bg-warm-600 text-white rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm transition">
+                    <i data-lucide="upload" class="w-4 h-4"></i> นำเข้าข้อมูล (Import File)
+                    <input type="file" accept=".xlsx, .xls, .csv, .json" @change="handleImportFile" class="hidden">
+                  </label>
+                  <span v-if="importedFileName" class="text-xs text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200 font-mono">
+                    ไฟล์: {{ importedFileName }}
+                  </span>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                  <button @click="exportToExcel" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> ส่งออก Excel (.xlsx)
+                  </button>
+                  <button @click="exportToPDF" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+                    <i data-lucide="file-text" class="w-4 h-4"></i> ส่งออก PDF (.pdf)
+                  </button>
+                  <button @click="confirmClearLogs" class="bg-warm-50 hover:bg-rose-50 text-neutral-600 hover:text-rose-600 border border-warm-200 px-3.5 py-2 rounded-xl text-xs font-mono transition">
+                    RESET LOGS
+                  </button>
+                </div>
               </div>
             </div>
 
+            <!-- Records Table -->
             <div class="amber-card rounded-2xl overflow-hidden">
               <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
@@ -664,6 +694,7 @@
 
     createApp({
       data() {
+        const storedRecords = localStorage.getItem('amber_pm_records');
         return {
           currentTab: 'dashboard',
           activeDrillDown: false,
@@ -675,8 +706,12 @@
           itemsPerPage: 9,
           charts: {},
           map: null,
+          routeLine: null,
+          importedFileName: '',
+
           assets: defaultAssets,
-          pmRecords: defaultRecords,
+          pmRecords: storedRecords ? JSON.parse(storedRecords) : defaultRecords,
+
           upcomingSchedules: [
             { id: 1, dueDate: '2026-08-28', assetId: 'TR-04', assetName: 'หม้อแปลงไฟฟ้ากำลัง Unit 4', location: 'Substation 1 (ลานไก)', pmType: 'Annual PM' },
             { id: 2, dueDate: '2026-08-30', assetId: 'LBS-06', assetName: 'Load Break Switch Feeder 6', location: 'Substation 3 (โรงผลิต)', pmType: 'Half-Year PM' }
@@ -715,6 +750,15 @@
         paginatedAssets() {
           const start = (this.currentPage - 1) * this.itemsPerPage;
           return this.filteredAssets.slice(start, start + this.itemsPerPage);
+        }
+      },
+      watch: {
+        pmRecords: {
+          handler(newVal) {
+            localStorage.setItem('amber_pm_records', JSON.stringify(newVal));
+            this.updateCharts();
+          },
+          deep: true
         }
       },
       mounted() {
@@ -759,9 +803,9 @@
             return this.drillDownType === 'asset' ? 'ข้อมูลอุปกรณ์เชิงลึก (ASSET PROFILE)' : 'ใบรับรองผล PM (OFFICIAL CERTIFICATE)';
           }
           const titles = {
-            'dashboard': 'แดชบอร์ดภาพรวม (OVERVIEW)',
-            'assets': 'ทะเบียนอุปกรณ์ไฟฟ้า (50 ASSETS)',
-            'history': 'ประวัติและผลการตรวจ (PM HISTORY)',
+            'dashboard': 'แดชบอร์ดภาพรวม (OVERVIEW & TELEMETRY)',
+            'assets': 'ทะเบียนอุปกรณ์ไฟฟ้า (50 ASSETS DIRECTORY)',
+            'history': 'ประวัติและผลการตรวจ (ALL PM LOGS & DATA SUITE)',
             'route': 'แผนที่เส้นทางตรวจงาน (SUBSTATION MAP)',
             'schedule': 'ตารางแผนงาน (PM SCHEDULER)',
             'anomaly': 'วิเคราะห์ความผิดปกติ (ANOMALY ENGINE)',
@@ -776,7 +820,6 @@
         handlePhotoUpload(event) {
           const files = event.target.files;
           if (!files || files.length === 0) return;
-
           for (let i = 0; i < files.length; i++) {
             const file = files[i];
             const reader = new FileReader();
@@ -799,7 +842,7 @@
 
           this.map = L.map('substationMap').setView([13.7650, 100.5150], 13);
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
+            attribution: '© OpenStreetMap'
           }).addTo(this.map);
 
           const latlngs = this.routeCheckpoints.map(cp => [cp.lat, cp.lng]);
@@ -880,6 +923,12 @@
           });
         },
 
+        updateCharts() {
+          if (this.charts.bar && this.charts.pie) {
+            this.initCharts();
+          }
+        },
+
         savePmRecord() {
           const asset = this.assets.find(a => a.id === this.formData.assetId);
           if (!asset) return;
@@ -906,7 +955,7 @@
           };
 
           this.pmRecords.unshift(newRecord);
-          alert(`บันทึกใบงาน PM เลขที่ ${newRecord.permitNo} พร้อมแนบรูปถ่ายเรียบร้อยแล้ว`);
+          alert(`บันทึกใบงาน PM เลขที่ ${newRecord.permitNo} เรียบร้อยแล้ว`);
           
           this.formData = {
             permitNo: '', date: new Date().toISOString().split('T')[0],
@@ -916,6 +965,123 @@
           this.switchTab('history');
         },
 
+        // ================= IMPORT SYSTEM =================
+        handleImportFile(event) {
+          const file = event.target.files[0];
+          if (!file) return;
+
+          this.importedFileName = file.name;
+          const fileName = file.name.toLowerCase();
+
+          if (fileName.endsWith('.json')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              try {
+                const parsed = JSON.parse(e.target.result);
+                this.processImportedData(Array.isArray(parsed) ? parsed : [parsed]);
+              } catch (err) {
+                alert('ไฟล์ JSON ไม่ถูกต้อง: ' + err.message);
+              }
+            };
+            reader.readAsText(file);
+          } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls') || fileName.endsWith('.csv')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                this.processImportedData(jsonData);
+              } catch (err) {
+                alert('เกิดข้อผิดพลาดในการอ่านไฟล์: ' + err.message);
+              }
+            };
+            reader.readAsArrayBuffer(file);
+          } else {
+            alert('กรุณาเลือกไฟล์ .xlsx, .xls, .csv หรือ .json เท่านั้น');
+          }
+        },
+
+        processImportedData(rows) {
+          if (!rows || rows.length === 0) {
+            alert('ไม่พบข้อมูลในไฟล์ที่เลือก');
+            return;
+          }
+
+          let addedCount = 0;
+          rows.forEach((row, index) => {
+            const assetId = row['รหัสอุปกรณ์'] || row['Asset ID'] || row['assetId'] || 'TR-01';
+            const matchedAsset = this.assets.find(a => a.id.toLowerCase() === String(assetId).trim().toLowerCase()) || {
+              id: assetId,
+              type: String(assetId).startsWith('TR') ? 'Transformer' : 'LBS',
+              location: row['สถานที่'] || row['Location'] || 'Substation Area'
+            };
+
+            const record = {
+              id: Date.now() + index,
+              permitNo: row['เลขที่ใบงาน (Permit No.)'] || row['Permit No.'] || `PM-IMP-${100 + index}`,
+              date: row['วันที่ตรวจเช็ก'] || row['Date'] || new Date().toISOString().split('T')[0],
+              assetId: matchedAsset.id,
+              type: matchedAsset.type,
+              location: matchedAsset.location,
+              pmType: row['ประเภทงาน PM'] || row['PM Type'] || 'Annual PM',
+              technician: row['ผู้ตรวจเช็ก'] || row['Inspector'] || 'Technician (Imported)',
+              approvedBy: row['ผู้อนุมัติ'] || row['ApprovedBy'] || 'ดร.วิศวกรรม ระบบไฟ',
+              status: row['ผลการประเมิน'] || row['Status'] || 'Pass',
+              ahiGrade: (row['ผลการประเมิน'] === 'Pass' || row['Status'] === 'Pass') ? 'A' : 'B',
+              ahiScore: 92,
+              remarks: row['บันทึกการปรับปรุง/แก้ไข'] || row['Remarks'] || 'นำเข้าจากไฟล์ ' + this.importedFileName,
+              details: {
+                tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal',
+                irPriGnd1m: 350, irPriGnd10m: 800, oilDielectric: 45
+              },
+              photos: []
+            };
+
+            this.pmRecords.unshift(record);
+            addedCount++;
+          });
+
+          alert(`นำเข้าข้อมูลสำเร็จทั้งหมด ${addedCount} รายการ`);
+        },
+
+        downloadTemplate() {
+          const sampleData = [
+            {
+              'เลขที่ใบงาน (Permit No.)': 'PM-HV-2026-099',
+              'วันที่ตรวจเช็ก': '2026-08-25',
+              'รหัสอุปกรณ์': 'TR-01',
+              'ประเภทงาน PM': 'Annual PM (บำรุงรักษารายปี)',
+              'สถานที่': 'Substation 2 (อาคารควบคุม)',
+              'ผู้ตรวจเช็ก': 'สมชาย พิทักษ์วงษ์',
+              'ผู้อนุมัติ': 'ดร.วิศวกรรม ระบบไฟ',
+              'ผลการประเมิน': 'Pass',
+              'บันทึกการปรับปรุง/แก้ไข': 'ตรวจเช็กตามรอบประจำปี ค่าฉนวนและค่าน้ำมันผ่านเกณฑ์ปกติ'
+            },
+            {
+              'เลขที่ใบงาน (Permit No.)': 'PM-HV-2026-100',
+              'วันที่ตรวจเช็ก': '2026-08-25',
+              'รหัสอุปกรณ์': 'LBS-01',
+              'ประเภทงาน PM': 'Half-Year PM (ราย 6 เดือน)',
+              'สถานที่': 'Substation 1 (ลานไก)',
+              'ผู้ตรวจเช็ก': 'กิตติศักดิ์ ช่างซ่อมบำรุง',
+              'ผู้อนุมัติ': 'ดร.วิศวกรรม ระบบไฟ',
+              'ผลการประเมิน': 'Pass',
+              'บันทึกการปรับปรุง/แก้ไข': 'วัดค่า Contact Resistance และแรงดันก๊าซ SF6 ปกติ'
+            }
+          ];
+
+          const ws = XLSX.utils.json_to_sheet(sampleData);
+          ws['!cols'] = [
+            { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 25 }, 
+            { wch: 25 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 45 }
+          ];
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "PM_Template");
+          XLSX.writeFile(wb, "PM_Import_Template.xlsx");
+        },
+
         confirmClearLogs() {
           if (confirm('ต้องการรีเซ็ตข้อมูลประวัติ PM ทั้งหมดเป็นค่าเริ่มต้น?')) {
             this.pmRecords = generateComprehensive50AssetRecords(this.assets);
@@ -923,6 +1089,7 @@
           }
         },
 
+        // ================= EXPORT SYSTEM =================
         exportToExcel() {
           const exportRows = this.pmRecords.map(r => ({
             'รหัสรายการ': r.id,
@@ -930,19 +1097,53 @@
             'วันที่ตรวจเช็ก': r.date,
             'รหัสอุปกรณ์': r.assetId,
             'ประเภทอุปกรณ์': r.type === 'Transformer' ? 'หม้อแปลงไฟฟ้า' : 'Load Break Switch',
+            'ประเภทงาน PM': r.pmType,
             'สถานที่ติดตั้ง': r.location,
             'ผู้ตรวจเช็ก': r.technician,
+            'ผู้อนุมัติ': r.approvedBy || '-',
             'จำนวนรูปถ่ายแนบ': r.photos ? r.photos.length : 0,
             'ผลการประเมิน': r.status,
-            'เกรด AHI': `Grade ${r.ahiGrade || 'A'}`,
+            'เกรด AHI': `Grade ${r.ahiGrade || 'A'} (${r.ahiScore || 95}%)`,
             'บันทึกการปรับปรุง/แก้ไข': r.remarks || '-'
           }));
 
           const ws = XLSX.utils.json_to_sheet(exportRows);
-          ws['!cols'] = [{ wch: 15 }, { wch: 22 }, { wch: 15 }, { wch: 15 }, { wch: 22 }, { wch: 25 }, { wch: 20 }, { wch: 15 }, { wch: 18 }, { wch: 18 }, { wch: 50 }];
+          ws['!cols'] = [
+            { wch: 15 }, { wch: 22 }, { wch: 15 }, { wch: 15 }, { wch: 22 }, 
+            { wch: 25 }, { wch: 25 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, 
+            { wch: 18 }, { wch: 18 }, { wch: 50 }
+          ];
+
           const wb = XLSX.utils.book_new();
           XLSX.utils.book_append_sheet(wb, ws, "PM_Records");
-          XLSX.writeFile(wb, `รายงานผล_PM_${new Date().toISOString().split('T')[0]}.xlsx`, { bookType: 'xlsx', type: 'binary' });
+          XLSX.writeFile(wb, `รายงานผล_PM_ระบบไฟฟ้า_${new Date().toISOString().split('T')[0]}.xlsx`, {
+            bookType: 'xlsx',
+            type: 'binary'
+          });
+        },
+
+        exportToPDF() {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF('p', 'mm', 'a4');
+          doc.setFontSize(16);
+          doc.text("HIGH VOLTAGE SUBSTATION PM REPORT", 14, 18);
+          doc.setFontSize(9);
+          doc.setTextColor(100);
+          doc.text(`Generated: ${new Date().toLocaleString('th-TH')} | Maintenance Division`, 14, 25);
+
+          const tableRows = this.pmRecords.map(r => [
+            r.date, r.permitNo || '-', r.assetId, r.type, r.technician, `Grade ${r.ahiGrade || 'A'}`, r.status, r.remarks || '-'
+          ]);
+
+          doc.autoTable({
+            head: [['Date', 'Permit No', 'Asset ID', 'Type', 'Inspector', 'AHI', 'Status', 'Action / Remarks']],
+            body: tableRows,
+            startY: 30,
+            styles: { fontSize: 8 },
+            headStyles: { fillColor: [234, 88, 12] }
+          });
+
+          doc.save(`AMBER_PM_Report_${Date.now()}.pdf`);
         }
       }
     }).mount('#app');
