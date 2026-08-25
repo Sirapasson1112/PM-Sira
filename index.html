@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AMBER CMMS - Substation Engineering & PM Suite</title>
+  <title>AMBER CMMS - Substation Engineering & Field Operations Suite</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -35,7 +35,7 @@
               200: '#fde5d2',
               300: '#fbcba8',
               400: '#f79f65',
-              500: '#f97316', // Primary Orange
+              500: '#f97316',
               600: '#ea580c',
               700: '#c2410c',
               800: '#9a3412',
@@ -94,7 +94,7 @@
             </div>
             <div>
               <h1 class="font-display font-bold text-base text-neutral-900 tracking-tight leading-tight">AMBER PM</h1>
-              <p class="text-[10px] text-warm-600 font-mono font-semibold tracking-wider uppercase">Substation Suite</p>
+              <p class="text-[10px] text-warm-600 font-mono font-semibold tracking-wider uppercase">Field Operations Suite</p>
             </div>
           </div>
         </div>
@@ -163,7 +163,7 @@
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Active
           </span>
         </div>
-        <p class="text-[10px] text-neutral-400">Amber Substation Suite v8.0</p>
+        <p class="text-[10px] text-neutral-400">Amber Substation Suite v9.0</p>
       </div>
     </aside>
 
@@ -358,7 +358,7 @@
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h3 class="font-display font-bold text-base text-neutral-900 flex items-center gap-2">
-                <i data-lucide="alert-octagon" class="w-5 h-5 text-rose-500"></i> ระบบวิเคราะห์ความผิดปกติของงาน Work Order (AI Anomaly Engine)
+                <i data-lucide="alert-octagon" class="w-4 h-4 text-rose-500"></i> ระบบวิเคราะห์ความผิดปกติของงาน Work Order (AI Anomaly Engine)
               </h3>
               <p class="text-xs text-neutral-500">ตรวจจับค่าพารามิเตอร์ที่เกินเกณฑ์ความปลอดภัยและแนะนำมาตรการแก้ไขทันที</p>
             </div>
@@ -714,7 +714,7 @@
 
   </div>
 
-  <!-- VUE SCRIPT -->
+  <!-- VUE SCRIPT WITH 30 COMPREHENSIVE FIELD PM SCENARIOS -->
   <script>
     const { createApp, nextTick } = Vue;
 
@@ -812,14 +812,27 @@
               standardCriteria: '< 80 µΩ',
               rootCause: 'เกิดคราบออกไซด์และการสึกหรอบริเวณ Tulip Contact จากการตัดต่อกระแสโหลดซ้ำหลายรอบ',
               actionPlan: 'ดำเนินการขัดล้างหน้าสัมผัสด้วยน้ำยาขจัดคราบออกไซด์ และชโลมจาระบีนำไฟฟ้าซ้ำ'
+            },
+            {
+              id: 'ANO-003',
+              assetId: 'LBS-14',
+              permitNo: 'CM-HV-2026-040',
+              date: '2026-08-23',
+              severity: 'WARNING',
+              issueTitle: 'แรงดันก๊าซ SF6 Gas Pressure ลดลงต่ำกว่าแถบเขียว',
+              detectedValue: 'Pressure = 0.028 MPa',
+              standardCriteria: '> 0.045 MPa',
+              rootCause: 'เกิดการรั่วซึมขนาดเล็กที่บริเวณ Manifold Filling Valve Gasket',
+              actionPlan: 'ขันกวด Torque ปะเก็นวาล์วใหม่ และทำการ Refill ก๊าซ SF6 จนได้ระดับ 0.050 MPa'
             }
           ],
 
+          // ชุดข้อมูลการตรวจเช็กและซ่อมบำรุง 30 เคสเต็มรูปแบบ
           pmRecords: storedRecords ? JSON.parse(storedRecords) : [
             {
               id: 101,
               permitNo: 'PM-HV-2026-001',
-              date: '2026-08-10',
+              date: '2026-08-01',
               assetId: 'TR-01',
               type: 'Transformer',
               location: 'Substation 2 (อาคารควบคุม)',
@@ -834,8 +847,24 @@
             },
             {
               id: 102,
-              permitNo: 'CM-HV-2026-014',
-              date: '2026-08-12',
+              permitNo: 'PM-HV-2026-002',
+              date: '2026-08-02',
+              assetId: 'TR-02',
+              type: 'Transformer',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Half-Year PM (ราย 6 เดือน)',
+              technician: 'กิตติศักดิ์ ช่างซ่อมบำรุง',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 95,
+              remarks: 'ตรวจสอบระดับน้ำมันปกติ ทำความสะอาดตู้ Control ค่าวัดความร้อนเทอร์โมสแกนจุดต่อขั้วต่อ LV อยู่ที่ 45°C ปกติ',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 310, irPriGnd10m: 710, oilDielectric: 45, oilMoisture: 14, dgaC2H2: 0.1, thermoMaxTemp: 45.0 }
+            },
+            {
+              id: 103,
+              permitNo: 'CM-HV-2026-003',
+              date: '2026-08-03',
               assetId: 'TR-03',
               type: 'Transformer',
               location: 'Substation 1 (ลานไก)',
@@ -847,6 +876,438 @@
               ahiScore: 92,
               remarks: 'ดำเนินการปรับปรุง: เปลี่ยนสารดูดความชื้น Silica Gel ใหม่ทั้งกระบอก (ของเดิมเปลี่ยนเป็นสีชมพู) และเติมน้ำมันหม้อแปลงเพิ่ม 25 ลิตรจนได้ระดับ Gauge',
               details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 280, irPriGnd10m: 620, oilDielectric: 42, oilMoisture: 18, dgaC2H2: 0.2, thermoMaxTemp: 52.0 }
+            },
+            {
+              id: 104,
+              permitNo: 'PM-HV-2026-004',
+              date: '2026-08-04',
+              assetId: 'TR-04',
+              type: 'Transformer',
+              location: 'Substation 3 (โรงผลิต)',
+              pmType: 'Annual PM (บำรุงรักษารายปี)',
+              technician: 'ประสิทธิ์ ช่างฝีมือ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 96,
+              remarks: 'ทดสอบระบบเตือน Buchholz Relay และ Pressure Relief Valve ทำงานตัดวงจรตามมาตรฐาน ค่าความต้านทานสายดิน 1.4 โอห์ม',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 390, irPriGnd10m: 890, oilDielectric: 47, oilMoisture: 11, dgaC2H2: 0.1, thermoMaxTemp: 46.5 }
+            },
+            {
+              id: 105,
+              permitNo: 'PM-HV-2026-005',
+              date: '2026-08-05',
+              assetId: 'TR-05',
+              type: 'Transformer',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Thermography & Visual (ตรวจความร้อน)',
+              technician: 'ชานนท์ สุขุมวิท',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 94,
+              remarks: 'สแกนความร้อนด้วยกล้องอินฟราเรด ไม่พบจุดร้อนผิดปกติ (Hotspot) อุณหภูมิขั้วต่อเฉลี่ย 47.8°C สภาพตัวถังแห้งสะอาด',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 320, irPriGnd10m: 720, oilDielectric: 44, oilMoisture: 15, dgaC2H2: 0.1, thermoMaxTemp: 47.8 }
+            },
+            {
+              id: 106,
+              permitNo: 'PM-HV-2026-006',
+              date: '2026-08-06',
+              assetId: 'TR-06',
+              type: 'Transformer',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Half-Year PM (ราย 6 เดือน)',
+              technician: 'สมชาย พิทักษ์วงษ์',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 97,
+              remarks: 'หม้อแปลง Dry-Type ทำความสะอาดคราบฝุ่นบนขดลวด Epoxy ตรวจสอบพัดลมระบายอากาศ 4 ตัว ทำงานอัตโนมัติสมบูรณ์',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 1100, irPriGnd10m: 2900, oilDielectric: 0, oilMoisture: 0, dgaC2H2: 0.0, thermoMaxTemp: 43.5 }
+            },
+            {
+              id: 107,
+              permitNo: 'CM-HV-2026-007',
+              date: '2026-08-07',
+              assetId: 'TR-07',
+              type: 'Transformer',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
+              technician: 'ประสิทธิ์ ช่างฝีมือ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass with Condition',
+              ahiGrade: 'B',
+              ahiScore: 78,
+              remarks: 'ดำเนินการปรับปรุง: แก้ไขรอยรั่วซึมปะเก็น Flange Bushing H1 ขันกวดตาม Torque แล้ว เฝ้าระวังคราบซึมซ้ำใน 1 เดือน',
+              details: { tankLeaks: 'Minor Seepage', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 150, irPriGnd10m: 320, oilDielectric: 36, oilMoisture: 22, dgaC2H2: 0.8, thermoMaxTemp: 64.5 }
+            },
+            {
+              id: 108,
+              permitNo: 'PM-DGA-2026-008',
+              date: '2026-08-08',
+              assetId: 'TR-08',
+              type: 'Transformer',
+              location: 'Substation 3 (โรงผลิต)',
+              pmType: 'DGA Oil Sampling (เก็บตัวอย่างน้ำมัน)',
+              technician: 'ธีรศักดิ์ กล้าหาญ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 93,
+              remarks: 'ผลทดสอบก๊าซในน้ำมัน DGA อยู่ในเกณฑ์ปกติ ก๊าซมีเทน CH4 = 15 ppm, ไฮโดรเจน H2 = 25 ppm ไม่พบสัญญาณการเสื่อมสภาพ',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 340, irPriGnd10m: 780, oilDielectric: 46, oilMoisture: 13, dgaC2H2: 0.1, thermoMaxTemp: 49.0 }
+            },
+            {
+              id: 109,
+              permitNo: 'PM-HV-2026-009',
+              date: '2026-08-09',
+              assetId: 'TR-09',
+              type: 'Transformer',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Annual PM (บำรุงรักษารายปี)',
+              technician: 'กิตติศักดิ์ ช่างซ่อมบำรุง',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 96,
+              remarks: 'ตรวจวัดค่า Winding Resistance ทั้ง 3 เฟส สมดุลดีเยี่ยม ค่าเบี่ยงเบนต่ำกว่า 0.8% ขันแน่นจุดต่อบัสบาร์',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 370, irPriGnd10m: 850, oilDielectric: 47, oilMoisture: 12, dgaC2H2: 0.1, thermoMaxTemp: 46.2 }
+            },
+            {
+              id: 110,
+              permitNo: 'PM-HV-2026-010',
+              date: '2026-08-10',
+              assetId: 'TR-10',
+              type: 'Transformer',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Half-Year PM (ราย 6 เดือน)',
+              technician: 'ชานนท์ สุขุมวิท',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 94,
+              remarks: 'ตรวจเช็กหน้าคอนแทกต์เทอร์โมมิเตอร์ Winding Temp Alarm & Trip ทำงานสัมพันธ์กับค่าความร้อนจริง',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 305, irPriGnd10m: 690, oilDielectric: 43, oilMoisture: 16, dgaC2H2: 0.2, thermoMaxTemp: 50.1 }
+            },
+            {
+              id: 111,
+              permitNo: 'PM-HV-2026-011',
+              date: '2026-08-11',
+              assetId: 'TR-11',
+              type: 'Transformer',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Annual PM (บำรุงรักษารายปี)',
+              technician: 'สมชาย พิทักษ์วงษ์',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 95,
+              remarks: 'ทดสอบ Insulation Resistance ระหว่างขดลวด Primary-Secondary ได้ 980 MΩ สภาพความเป็นฉนวนสมบูรณ์',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 360, irPriGnd10m: 810, oilDielectric: 45, oilMoisture: 14, dgaC2H2: 0.1, thermoMaxTemp: 47.0 }
+            },
+            {
+              id: 112,
+              permitNo: 'PM-DGA-2026-012',
+              date: '2026-08-12',
+              assetId: 'TR-12',
+              type: 'Transformer',
+              location: 'Substation 3 (โรงผลิต)',
+              pmType: 'DGA Oil Sampling (เก็บตัวอย่างน้ำมัน)',
+              technician: 'ชานนท์ สุขุมวิท',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Fail',
+              ahiGrade: 'D',
+              ahiScore: 42,
+              remarks: 'ข้อเสนอแนะการปรับปรุง: วิเคราะห์ผล DGA พบก๊าซ C2H2 = 4.8 ppm บ่งชี้ว่าเกิด Internal Arcing ต้องวางแผนปลดหม้อแปลงเพื่อ Overhaul ขดลวดด่วน',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Need Replacement', irPriGnd1m: 85, irPriGnd10m: 160, oilDielectric: 28, oilMoisture: 32, dgaC2H2: 4.8, thermoMaxTemp: 78.0 }
+            },
+            {
+              id: 113,
+              permitNo: 'PM-HV-2026-013',
+              date: '2026-08-13',
+              assetId: 'TR-13',
+              type: 'Transformer',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Annual PM (บำรุงรักษารายปี)',
+              technician: 'ธีรศักดิ์ กล้าหาญ',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 97,
+              remarks: 'ตรวจเช็กประเก็นตัวถังและวาล์วถ่ายน้ำมัน ขันแน่นจุดกราวด์ตัวถังลง Earth Grid วัดได้ 1.2 โอห์ม',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 380, irPriGnd10m: 860, oilDielectric: 48, oilMoisture: 11, dgaC2H2: 0.1, thermoMaxTemp: 45.8 }
+            },
+            {
+              id: 114,
+              permitNo: 'PM-HV-2026-014',
+              date: '2026-08-14',
+              assetId: 'TR-14',
+              type: 'Transformer',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Half-Year PM (ราย 6 เดือน)',
+              technician: 'ประสิทธิ์ ช่างฝีมือ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 96,
+              remarks: 'หม้อแปลง Dry-Type สภาพสะอาด ไม่มีฝุ่นสะสม เซนเซอร์ PT100 วัดอุณหภูมิขดลวดแม่นยำตรงกับเทอร์โมมิเตอร์หน้าตู้',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 1250, irPriGnd10m: 3200, oilDielectric: 0, oilMoisture: 0, dgaC2H2: 0.0, thermoMaxTemp: 42.0 }
+            },
+            {
+              id: 115,
+              permitNo: 'CM-HV-2026-015',
+              date: '2026-08-15',
+              assetId: 'TR-15',
+              type: 'Transformer',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
+              technician: 'สมชาย พิทักษ์วงษ์',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 91,
+              remarks: 'ดำเนินการปรับปรุง: ขัดทำความสะอาดคราบ Flashover ฝุ่นหนาแน่นบริเวณ Bushing LV และทาสีกันสนิมรอบฐานตัวถัง',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 290, irPriGnd10m: 650, oilDielectric: 41, oilMoisture: 17, dgaC2H2: 0.2, thermoMaxTemp: 51.5 }
+            },
+            {
+              id: 116,
+              permitNo: 'PM-HV-2026-016',
+              date: '2026-08-16',
+              assetId: 'LBS-01',
+              type: 'LBS',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Annual PM (บำรุงรักษารายปี)',
+              technician: 'กิตติศักดิ์ ช่างซ่อมบำรุง',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 97,
+              remarks: 'ตรวจเช็กแรงดัน SF6 ปกติ 0.052 MPa ค่า Contact Resistance ทั้ง 3 เฟสเฉลี่ย 43 µΩ กลไกสับ-ปลดคล่องตัว',
+              details: { sf6Pressure: '0.052 MPa', contactResA: 42.5, contactResB: 43.8, contactResC: 43.1, syncDiscrepancy: 3.8, opCounter: 195, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 3100 }
+            },
+            {
+              id: 117,
+              permitNo: 'PM-HV-2026-017',
+              date: '2026-08-17',
+              assetId: 'LBS-02',
+              type: 'LBS',
+              location: 'Substation 3 (โรงผลิต)',
+              pmType: 'Half-Year PM (ราย 6 เดือน)',
+              technician: 'กิตติศักดิ์ ช่างซ่อมบำรุง',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 94,
+              remarks: 'ตรวจเช็กตามรอบ Contact Resistance เฉลี่ย 44 µΩ แรงดัน SF6 ปกติ 0.052 MPa ดำเนินการหยอดน้ำมันหล่อลื่นกลไกเรียบร้อย',
+              details: { sf6Pressure: '0.052 MPa', contactResA: 44.2, contactResB: 45.1, contactResC: 43.8, syncDiscrepancy: 4.2, opCounter: 345, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 2800 }
+            },
+            {
+              id: 118,
+              permitNo: 'CM-HV-2026-018',
+              date: '2026-08-18',
+              assetId: 'LBS-03',
+              type: 'LBS',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
+              technician: 'ธีรศักดิ์ กล้าหาญ',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 90,
+              remarks: 'ดำเนินการปรับปรุง: เปลี่ยน Auxiliary Switch Contact ชุดใหม่เนื่องจากส่งสัญญาณ Status Closed ติดขัด ทดสอบระบบ SCADA ส่งสถานะตรง 100%',
+              details: { sf6Pressure: '0.050 MPa', contactResA: 46.1, contactResB: 47.2, contactResC: 45.8, syncDiscrepancy: 4.5, opCounter: 412, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 2400 }
+            },
+            {
+              id: 119,
+              permitNo: 'PM-HV-2026-019',
+              date: '2026-08-19',
+              assetId: 'LBS-04',
+              type: 'LBS',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Annual PM (บำรุงรักษารายปี)',
+              technician: 'ประสิทธิ์ ช่างฝีมือ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 95,
+              remarks: 'ทดสอบความเร็วในการปลดวงจร (Opening Time) 45 ms สัมพันธ์กับ Protection Relay สภาพฉนวนลูกถ้วยสะอาด',
+              details: { sf6Pressure: '0.051 MPa', contactResA: 44.8, contactResB: 45.5, contactResC: 44.1, syncDiscrepancy: 4.0, opCounter: 260, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 2900 }
+            },
+            {
+              id: 120,
+              permitNo: 'CM-HV-2026-020',
+              date: '2026-08-20',
+              assetId: 'LBS-05',
+              type: 'LBS',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
+              technician: 'ประสิทธิ์ ช่างฝีมือ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 90,
+              remarks: 'ดำเนินการปรับปรุง: ทำความสะอาดคราบฝุ่นกลไกสปริง สเปรย์จาระบีสังเคราะห์ และปรับแต่ง Linking Rod คล่องตัวดี',
+              details: { sf6Pressure: '0.050 MPa', contactResA: 48.0, contactResB: 49.5, contactResC: 47.8, syncDiscrepancy: 5.1, opCounter: 512, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 2200 }
+            },
+            {
+              id: 121,
+              permitNo: 'PM-HV-2026-021',
+              date: '2026-08-21',
+              assetId: 'LBS-06',
+              type: 'LBS',
+              location: 'Substation 3 (โรงผลิต)',
+              pmType: 'Half-Year PM (ราย 6 เดือน)',
+              technician: 'ชานนท์ สุขุมวิท',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 96,
+              remarks: 'ตรวจเช็กเกจวัด SF6 ในแถบเขียว วัดค่าฉนวนระหว่างเฟสได้มากกว่า 2,500 MΩ ทำความสะอาดภายนอกตู้ Enclosure',
+              details: { sf6Pressure: '0.053 MPa', contactResA: 43.5, contactResB: 44.0, contactResC: 43.2, syncDiscrepancy: 3.9, opCounter: 180, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 3050 }
+            },
+            {
+              id: 122,
+              permitNo: 'CM-HV-2026-022',
+              date: '2026-08-22',
+              assetId: 'LBS-07',
+              type: 'LBS',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
+              technician: 'สมชาย พิทักษ์วงษ์',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 93,
+              remarks: 'ดำเนินการปรับปรุง: ปรับตั้งระยะ Alignment ใบมีด Earthing Switch ใหม่เนื่องจากสับลงดินขัดข้อง ทดสอบ Interlock ทำงานถูกต้อง',
+              details: { sf6Pressure: '0.050 MPa', contactResA: 45.0, contactResB: 46.2, contactResC: 45.4, syncDiscrepancy: 4.4, opCounter: 320, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 2600 }
+            },
+            {
+              id: 123,
+              permitNo: 'PM-HV-2026-023',
+              date: '2026-08-23',
+              assetId: 'LBS-08',
+              type: 'LBS',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Annual PM (บำรุงรักษารายปี)',
+              technician: 'ธีรศักดิ์ กล้าหาญ',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 95,
+              remarks: 'ทดสอบการทำงานด้วยระบบมอเตอร์ไฟฟ้า (Motorized Drive) ปิด-เปิด 5 รอบ ทำงานราบรื่น กระแสขับมอเตอร์ปกติ 2.1A',
+              details: { sf6Pressure: '0.051 MPa', contactResA: 44.0, contactResB: 44.8, contactResC: 43.9, syncDiscrepancy: 4.1, opCounter: 290, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 2850 }
+            },
+            {
+              id: 124,
+              permitNo: 'CM-HV-2026-024',
+              date: '2026-08-24',
+              assetId: 'LBS-09',
+              type: 'LBS',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
+              technician: 'กิตติศักดิ์ ช่างซ่อมบำรุง',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 91,
+              remarks: 'ดำเนินการปรับปรุง: ขัดล้างคราบออกไซด์หน้าสัมผัส Main Tulip Contact เฟส B ค่าความต้านทานลดจาก 115 เหลือ 48.2 µΩ ผ่านเกณฑ์มาตรฐาน',
+              details: { sf6Pressure: '0.048 MPa', contactResA: 46.5, contactResB: 48.2, contactResC: 47.1, syncDiscrepancy: 4.8, opCounter: 680, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 1950 }
+            },
+            {
+              id: 125,
+              permitNo: 'PM-HV-2026-025',
+              date: '2026-08-25',
+              assetId: 'LBS-10',
+              type: 'LBS',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Half-Year PM (ราย 6 เดือน)',
+              technician: 'ประสิทธิ์ ช่างฝีมือ',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 96,
+              remarks: 'ตรวจเช็กระบบสัญญาณ Trip Indicator ชี้ตำแหน่งชัดเจน ค่าความต้านทานหน้าสัมผัส 3 เฟสเฉลี่ย 43.5 µΩ',
+              details: { sf6Pressure: '0.052 MPa', contactResA: 43.1, contactResB: 44.0, contactResC: 43.5, syncDiscrepancy: 3.9, opCounter: 150, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 3100 }
+            },
+            {
+              id: 126,
+              permitNo: 'PM-HV-2026-026',
+              date: '2026-08-26',
+              assetId: 'LBS-11',
+              type: 'LBS',
+              location: 'Substation 3 (โรงผลิต)',
+              pmType: 'Annual PM (บำรุงรักษารายปี)',
+              technician: 'สมชาย พิทักษ์วงษ์',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 97,
+              remarks: 'วัดค่าฉนวนเฟสเทียบกราวด์ได้เกิน 3,000 MΩ ค่าความพร้อมเพรียงการสับสัมผัส 3.7 ms อยู่ในเกณฑ์ดีเยี่ยม',
+              details: { sf6Pressure: '0.053 MPa', contactResA: 42.8, contactResB: 43.5, contactResC: 42.9, syncDiscrepancy: 3.7, opCounter: 210, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 3300 }
+            },
+            {
+              id: 127,
+              permitNo: 'PM-HV-2026-027',
+              date: '2026-08-27',
+              assetId: 'LBS-12',
+              type: 'LBS',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Half-Year PM (ราย 6 เดือน)',
+              technician: 'ชานนท์ สุขุมวิท',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 94,
+              remarks: 'ตรวจสอบตัวนับจำนวนครั้งการตัดตอน (Counter: 375 ครั้ง) ชโลมจาระบีกลไกสปริงและขั้วต่อสายไฟ',
+              details: { sf6Pressure: '0.051 MPa', contactResA: 45.2, contactResB: 45.8, contactResC: 44.9, syncDiscrepancy: 4.3, opCounter: 375, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 2700 }
+            },
+            {
+              id: 128,
+              permitNo: 'PM-HV-2026-028',
+              date: '2026-08-28',
+              assetId: 'LBS-13',
+              type: 'LBS',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Annual PM (บำรุงรักษารายปี)',
+              technician: 'ธีรศักดิ์ กล้าหาญ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 95,
+              remarks: 'ตรวจเช็กสภาพ Insulator ไม่พบรอยร้าวหรือคราบเขม่า Arc แรงดันก๊าซ SF6 อยู่ในแถบเขียวมั่นคง',
+              details: { sf6Pressure: '0.052 MPa', contactResA: 44.0, contactResB: 44.6, contactResC: 43.8, syncDiscrepancy: 4.0, opCounter: 230, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 2950 }
+            },
+            {
+              id: 129,
+              permitNo: 'CM-HV-2026-029',
+              date: '2026-08-29',
+              assetId: 'LBS-14',
+              type: 'LBS',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
+              technician: 'ธีรศักดิ์ กล้าหาญ',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass with Condition',
+              ahiGrade: 'B',
+              ahiScore: 76,
+              remarks: 'ดำเนินการปรับปรุง: ตรวจพบก๊าซ SF6 ตกเหลือ 0.028 MPa ทำการขันกวดซีลวาล์วและเติมก๊าซกลับเป็น 0.050 MPa ให้เฝ้าระวังรอยรั่วซ้ำใน 1 เดือน',
+              details: { sf6Pressure: '0.050 MPa (Refilled)', contactResA: 52.0, contactResB: 54.2, contactResC: 53.1, syncDiscrepancy: 6.0, opCounter: 420, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 1800 }
+            },
+            {
+              id: 130,
+              permitNo: 'PM-HV-2026-030',
+              date: '2026-08-30',
+              assetId: 'LBS-15',
+              type: 'LBS',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Annual PM (บำรุงรักษารายปี)',
+              technician: 'สมชาย พิทักษ์วงษ์',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 98,
+              remarks: 'ทดสอบระบบ Shunt Trip Coil ทำงานสับ-ปลดรวดเร็ว ค่า Contact Resistance เฉลี่ย 42 µΩ ผ่านเกณฑ์มาตรฐานสูงสุด',
+              details: { sf6Pressure: '0.054 MPa', contactResA: 41.9, contactResB: 42.5, contactResC: 42.0, syncDiscrepancy: 3.6, opCounter: 140, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 3400 }
             }
           ],
 
@@ -1095,6 +1556,7 @@
         confirmClearLogs() {
           if (confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างประวัติการบันทึกงาน PM ทั้งหมด?')) {
             this.pmRecords = [];
+            localStorage.removeItem('amber_pm_records');
             alert('ล้างประวัติเรียบร้อยแล้ว');
           }
         },
