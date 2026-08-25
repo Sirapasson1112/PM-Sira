@@ -1,172 +1,1152 @@
-pmRecords: storedRecords ? JSON.parse(storedRecords) : [
-  {
-    id: 101,
-    permitNo: 'PM-HV-2026-001',
-    date: '2026-08-10',
-    assetId: 'TR-01',
-    type: 'Transformer',
-    location: 'Substation 2 (อาคารควบคุม)',
-    pmType: 'Annual PM (บำรุงรักษารายปี)',
-    technician: 'สมชาย พิทักษ์วงษ์',
-    approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
-    status: 'Pass',
-    ahiGrade: 'A',
-    ahiScore: 98,
-    remarks: 'ตรวจเช็กประจำปี ค่าฉนวน PI = 2.5, Breakdown Oil 48kV สภาพพร้อมใช้งานสมบูรณ์',
-    details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 350, irPriGnd10m: 875, oilDielectric: 48, oilMoisture: 12, dgaC2H2: 0.1, thermoMaxTemp: 48.2 },
-    photos: [{ name: 'TR01_Overview.jpg', url: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b6?w=500&q=80' }]
-  },
-  {
-    id: 102,
-    permitNo: 'CM-HV-2026-014',
-    date: '2026-08-12',
-    assetId: 'TR-03',
-    type: 'Transformer',
-    location: 'Substation 1 (ลานไก)',
-    pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
-    technician: 'ธีรศักดิ์ กล้าหาญ',
-    approvedBy: 'สมชาย พิทักษ์วงษ์',
-    status: 'Pass',
-    ahiGrade: 'A',
-    ahiScore: 92,
-    remarks: 'ดำเนินการเปลี่ยนสารดูดความชื้น Silica Gel ใหม่ทั้งกระบอก และเติมน้ำมันหม้อแปลงเพิ่ม 25 ลิตร',
-    details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 280, irPriGnd10m: 620, oilDielectric: 42, oilMoisture: 18, dgaC2H2: 0.2, thermoMaxTemp: 52.0 },
-    photos: [{ name: 'Silica_Replaced.jpg', url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500&q=80' }]
-  },
-  {
-    id: 103,
-    permitNo: 'CM-HV-2026-018',
-    date: '2026-08-14',
-    assetId: 'TR-07',
-    type: 'Transformer',
-    location: 'Substation 4 (สถานีจ่ายย่อย)',
-    pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
-    technician: 'ประสิทธิ์ ช่างฝีมือ',
-    approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
-    status: 'Pass with Condition',
-    ahiGrade: 'B',
-    ahiScore: 78,
-    remarks: 'แก้ไขรอยรั่วซึมปะเก็น Flange Bushing H1 ขันกวดตาม Torque แล้ว เฝ้าระวังคราบซึมซ้ำใน 1 เดือน',
-    details: { tankLeaks: 'Minor Seepage', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 150, irPriGnd10m: 320, oilDielectric: 36, oilMoisture: 22, dgaC2H2: 0.8, thermoMaxTemp: 64.5 },
-    photos: [{ name: 'Bushing_Leak_Repaired.jpg', url: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=500&q=80' }]
-  },
-  {
-    id: 104,
-    permitNo: 'PM-DGA-2026-005',
-    date: '2026-08-16',
-    assetId: 'TR-12',
-    type: 'Transformer',
-    location: 'Substation 3 (โรงผลิต)',
-    pmType: 'DGA Oil Sampling (เก็บตัวอย่างน้ำมัน)',
-    technician: 'ชานนท์ สุขุมวิท',
-    approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
-    status: 'Fail',
-    ahiGrade: 'D',
-    ahiScore: 42,
-    remarks: 'วิเคราะห์ผล DGA พบก๊าซ C2H2 = 4.8 ppm บ่งชี้ว่าเกิด Internal Arcing ต้องปลดวงจรเพื่อ Overhaul',
-    details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Need Replacement', irPriGnd1m: 85, irPriGnd10m: 160, oilDielectric: 28, oilMoisture: 32, dgaC2H2: 4.8, thermoMaxTemp: 78.0 },
-    photos: [{ name: 'DGA_Warning_Lab.jpg', url: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=500&q=80' }]
-  },
-  {
-    id: 105,
-    permitNo: 'PM-HV-2026-022',
-    date: '2026-08-18',
-    assetId: 'TR-18',
-    type: 'Transformer',
-    location: 'Substation 2 (อาคารควบคุม)',
-    pmType: 'Annual PM (บำรุงรักษารายปี)',
-    technician: 'สมชาย พิทักษ์วงษ์',
-    approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
-    status: 'Pass',
-    ahiGrade: 'A',
-    ahiScore: 99,
-    remarks: 'หม้อแปลง Dry-Type ตรวจพัดลมระบายอากาศ เทอร์โมมิเตอร์ และค่าความเป็นฉนวนผ่านเกณฑ์ 100%',
-    details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 1200, irPriGnd10m: 3100, turnsRatioError: 0.12, thermoMaxTemp: 44.2 },
-    photos: [{ name: 'DryType_Commission.jpg', url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500&q=80' }]
-  },
-  {
-    id: 106,
-    permitNo: 'PM-HV-2026-025',
-    date: '2026-08-19',
-    assetId: 'LBS-02',
-    type: 'LBS',
-    location: 'Substation 3 (โรงผลิต)',
-    pmType: 'Half-Year PM (ราย 6 เดือน)',
-    technician: 'กิตติศักดิ์ ช่างซ่อมบำรุง',
-    approvedBy: 'สมชาย พิทักษ์วงษ์',
-    status: 'Pass',
-    ahiGrade: 'A',
-    ahiScore: 94,
-    remarks: 'วัดค่า Contact Resistance เฉลี่ย 44 µΩ แรงดันก๊าซ SF6 ปกติ 0.052 MPa',
-    details: { sf6Pressure: '0.052 MPa', contactResA: 44.2, contactResB: 45.1, contactResC: 43.8, syncDiscrepancy: 4.2, opCounter: 345, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 2800 },
-    photos: [{ name: 'LBS02_Inspection.jpg', url: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b6?w=500&q=80' }]
-  },
-  {
-    id: 107,
-    permitNo: 'CM-HV-2026-031',
-    date: '2026-08-20',
-    assetId: 'LBS-05',
-    type: 'LBS',
-    location: 'Substation 2 (อาคารควบคุม)',
-    pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
-    technician: 'ประสิทธิ์ ช่างฝีมือ',
-    approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
-    status: 'Pass',
-    ahiGrade: 'A',
-    ahiScore: 90,
-    remarks: 'ทำความสะอาดคราบฝุ่นกลไกสปริง สเปรย์จาระบีสังเคราะห์ และปรับแต่ง Linking Rod คล่องตัวดี',
-    details: { sf6Pressure: '0.050 MPa', contactResA: 48.0, contactResB: 49.5, contactResC: 47.8, syncDiscrepancy: 5.1, opCounter: 512, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 2200 },
-    photos: [{ name: 'LBS_Mechanism_Service.jpg', url: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=500&q=80' }]
-  },
-  {
-    id: 108,
-    permitNo: 'CM-HV-2026-035',
-    date: '2026-08-22',
-    assetId: 'LBS-09',
-    type: 'LBS',
-    location: 'Substation 1 (ลานไก)',
-    pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
-    technician: 'กิตติศักดิ์ ช่างซ่อมบำรุง',
-    approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
-    status: 'Pass',
-    ahiGrade: 'A',
-    ahiScore: 91,
-    remarks: 'ขัดล้างคราบออกไซด์หน้าสัมผัส Main Tulip Contact เฟส B ค่าความต้านทานลดจาก 115 เหลือ 48.2 µΩ',
-    details: { sf6Pressure: '0.048 MPa', contactResA: 46.5, contactResB: 48.2, contactResC: 47.1, syncDiscrepancy: 4.8, opCounter: 680, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 1950 },
-    photos: [{ name: 'Contact_Cleaning.jpg', url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500&q=80' }]
-  },
-  {
-    id: 109,
-    permitNo: 'CM-HV-2026-040',
-    date: '2026-08-23',
-    assetId: 'LBS-14',
-    type: 'LBS',
-    location: 'Substation 4 (สถานีจ่ายย่อย)',
-    pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
-    technician: 'ธีรศักดิ์ กล้าหาญ',
-    approvedBy: 'สมชาย พิทักษ์วงษ์',
-    status: 'Pass with Condition',
-    ahiGrade: 'B',
-    ahiScore: 76,
-    remarks: 'พบก๊าซ SF6 ตกเหลือ 0.028 MPa ทำการขันกวดซีลวาล์วและเติมก๊าซกลับเป็น 0.050 MPa ให้เฝ้าระวังรอยรั่ว',
-    details: { sf6Pressure: '0.050 MPa (Refilled)', contactResA: 52.0, contactResB: 54.2, contactResC: 53.1, syncDiscrepancy: 6.0, opCounter: 420, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 1800 },
-    photos: [{ name: 'SF6_Gas_Refill.jpg', url: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b6?w=500&q=80' }]
-  },
-  {
-    id: 110,
-    permitNo: 'PM-HV-2026-044',
-    date: '2026-08-25',
-    assetId: 'LBS-21',
-    type: 'LBS',
-    location: 'Substation 2 (อาคารควบคุม)',
-    pmType: 'Annual PM (บำรุงรักษารายปี)',
-    technician: 'ชานนท์ สุขุมวิท',
-    approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
-    status: 'Pass',
-    ahiGrade: 'A',
-    ahiScore: 95,
-    remarks: 'ปรับแนว Alignment ใบมีดต่อลงดิน Earthing Blade สับแนบสนิท และทดสอบระบบ Mechanical Interlock ปกติ',
-    details: { sf6Pressure: '0.051 MPa', contactResA: 43.1, contactResB: 44.0, contactResC: 42.8, syncDiscrepancy: 3.9, opCounter: 188, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 3200 },
-    photos: [{ name: 'Earthing_Switch_Adjust.jpg', url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500&q=80' }]
-  }
-]
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AERO POWER CMMS - High Voltage Substation PM System</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Vue 3 -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- SheetJS -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- jsPDF & AutoTable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Sarabun', 'sans-serif'],
+            display: ['Prompt', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          },
+          colors: {
+            soft: {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+            },
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Prompt:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap');
+    body { background-color: #f8fafc; color: #1e293b; }
+    .modern-card { background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05); }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="antialiased font-sans selection:bg-brand-500 selection:text-white">
+  <div id="app" class="flex h-screen overflow-hidden">
+    
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-white border-r border-soft-200 flex flex-col justify-between flex-shrink-0 z-20">
+      <div>
+        <div class="p-6 border-b border-soft-200 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 shadow-sm">
+              <i data-lucide="zap" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h1 class="font-display font-bold text-base text-soft-900 tracking-tight">SUBSTATION PM</h1>
+              <p class="text-[11px] text-slate-400 font-mono tracking-wider">Enterprise CMMS</p>
+            </div>
+          </div>
+        </div>
+
+        <nav class="p-4 space-y-1.5">
+          <button @click="currentTab = 'dashboard'" :class="navClass('dashboard')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition group">
+            <div class="flex items-center gap-3">
+              <i data-lucide="layout-dashboard" class="w-4 h-4 transition group-hover:scale-110"></i>
+              <span>แดชบอร์ดภาพรวม</span>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-50 text-brand-600 font-bold border border-brand-100">Live</span>
+          </button>
+
+          <button @click="currentTab = 'assets'" :class="navClass('assets')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition group">
+            <div class="flex items-center gap-3">
+              <i data-lucide="server" class="w-4 h-4 transition group-hover:scale-110"></i>
+              <span>ทะเบียนอุปกรณ์ไฟฟ้า</span>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-soft-100 text-soft-700 font-bold">{{ assets.length }}</span>
+          </button>
+
+          <button @click="currentTab = 'pm-form'" :class="navClass('pm-form')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition group">
+            <i data-lucide="clipboard-check" class="w-4 h-4 transition group-hover:scale-110"></i>
+            <span>ออกใบงาน PM & ทดสอบ</span>
+          </button>
+
+          <button @click="currentTab = 'history'" :class="navClass('history')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition group">
+            <div class="flex items-center gap-3">
+              <i data-lucide="history" class="w-4 h-4 transition group-hover:scale-110"></i>
+              <span>ประวัติ & ส่งออกรายงาน</span>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-soft-100 text-soft-700 font-bold">{{ pmRecords.length }}</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="p-4 border-t border-soft-200 bg-soft-50/50 space-y-2 text-xs">
+        <div class="flex items-center justify-between font-mono">
+          <span class="text-slate-400">DATABASE SYNC</span>
+          <span class="text-emerald-600 font-bold flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Active
+          </span>
+        </div>
+        <p class="text-[11px] text-slate-400">High Voltage Maintenance v6.0</p>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col overflow-hidden bg-soft-50">
+      <header class="h-16 bg-white border-b border-soft-200 px-8 flex items-center justify-between z-10">
+        <div>
+          <h2 class="font-display font-bold text-base text-soft-900">{{ getTabTitle() }}</h2>
+          <p class="text-xs text-slate-400">ระบบบริหารจัดการและตรวจวิเคราะห์สุขภาพอุปกรณ์ไฟฟ้าแรงสูง</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button @click="showAddAssetModal = true" class="px-3.5 py-2 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-700 font-display font-semibold text-xs border border-brand-200 transition flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="plus" class="w-4 h-4"></i> เพิ่มอุปกรณ์ใหม่
+          </button>
+          <button @click="currentTab = 'pm-form'" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-display font-semibold text-xs transition flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="file-plus" class="w-4 h-4"></i> บันทึกผล PM
+          </button>
+        </div>
+      </header>
+
+      <!-- Canvas Body -->
+      <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar space-y-6">
+        
+        <!-- ================= 1. DASHBOARD ================= -->
+        <section v-if="currentTab === 'dashboard'" class="space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="modern-card p-5 rounded-2xl">
+              <div class="flex items-center justify-between text-slate-400">
+                <span class="text-xs font-mono uppercase font-bold tracking-wider">อุปกรณ์ทั้งหมด</span>
+                <div class="p-2.5 bg-brand-50 text-brand-600 rounded-xl"><i data-lucide="cpu" class="w-5 h-5"></i></div>
+              </div>
+              <h3 class="font-display font-bold text-3xl text-soft-900 mt-2">{{ assets.length }} <span class="text-xs font-normal text-slate-400">ชุด</span></h3>
+              <p class="text-[11px] text-brand-600 font-mono mt-1 font-semibold">TR: {{ getCountByType('Transformer') }} | LBS: {{ getCountByType('LBS') }}</p>
+            </div>
+
+            <div class="modern-card p-5 rounded-2xl border-l-4 border-l-emerald-500">
+              <div class="flex items-center justify-between text-slate-400">
+                <span class="text-xs font-mono uppercase font-bold tracking-wider">สุขภาพปกติ (Grade A)</span>
+                <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
+              </div>
+              <h3 class="font-display font-bold text-3xl text-emerald-600 mt-2">{{ getStatusCount('Pass') }}</h3>
+              <p class="text-[11px] text-slate-400 mt-1">พร้อมจ่ายไฟฟ้าเสถียร 100%</p>
+            </div>
+
+            <div class="modern-card p-5 rounded-2xl border-l-4 border-l-amber-500">
+              <div class="flex items-center justify-between text-slate-400">
+                <span class="text-xs font-mono uppercase font-bold tracking-wider">เฝ้าระวัง (Grade B)</span>
+                <div class="p-2.5 bg-amber-50 text-amber-600 rounded-xl"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
+              </div>
+              <h3 class="font-display font-bold text-3xl text-amber-600 mt-2">{{ getStatusCount('Pass with Condition') }}</h3>
+              <p class="text-[11px] text-slate-400 mt-1">พบความชื้น / คราบน้ำมันซึม</p>
+            </div>
+
+            <div class="modern-card p-5 rounded-2xl border-l-4 border-l-rose-500">
+              <div class="flex items-center justify-between text-slate-400">
+                <span class="text-xs font-mono uppercase font-bold tracking-wider">ต้องซ่อมด่วน (Grade D)</span>
+                <div class="p-2.5 bg-rose-50 text-rose-600 rounded-xl"><i data-lucide="alert-octagon" class="w-5 h-5"></i></div>
+              </div>
+              <h3 class="font-display font-bold text-3xl text-rose-600 mt-2">{{ getStatusCount('Fail') }}</h3>
+              <p class="text-[11px] text-slate-400 mt-1">ค่าฉนวนหรือความต้านทานตกเกณฑ์</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 modern-card p-6 rounded-2xl space-y-4">
+              <div class="flex items-center justify-between border-b border-soft-200 pb-3">
+                <h3 class="font-display font-bold text-sm text-soft-900 flex items-center gap-2">
+                  <i data-lucide="bar-chart-3" class="w-4 h-4 text-brand-600"></i> สัดส่วนผลการทดสอบ PM รายอุปกรณ์ (Health Analysis)
+                </h3>
+                <span class="text-xs font-mono text-slate-400">Active Telemetry</span>
+              </div>
+              <div class="h-64 flex items-center justify-center">
+                <canvas id="healthChart"></canvas>
+              </div>
+            </div>
+
+            <div class="modern-card p-6 rounded-2xl space-y-4">
+              <div class="flex items-center justify-between border-b border-soft-200 pb-3">
+                <h3 class="font-display font-bold text-sm text-soft-900 flex items-center gap-2">
+                  <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-600"></i> สัดส่วนเกรดสุขภาพรวม (AHI)
+                </h3>
+              </div>
+              <div class="h-56 flex items-center justify-center">
+                <canvas id="pieChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="modern-card p-6 rounded-2xl space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-display font-bold text-sm text-soft-900 flex items-center gap-2">
+                <i data-lucide="history" class="w-4 h-4 text-brand-600"></i> รายการผลการทดสอบและวินิจฉัยล่าสุด
+              </h3>
+              <button @click="currentTab = 'history'" class="text-xs text-brand-600 hover:underline font-semibold">ดูทั้งหมด →</button>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="border-b border-soft-200 text-slate-400 font-mono uppercase bg-soft-50">
+                  <tr>
+                    <th class="p-3">วันที่</th>
+                    <th class="p-3">Permit No.</th>
+                    <th class="p-3">รหัสอุปกรณ์</th>
+                    <th class="p-3">ประเภทงาน</th>
+                    <th class="p-3">ผู้ตรวจเช็ก</th>
+                    <th class="p-3">ดัชนี AHI</th>
+                    <th class="p-3">ผลการตรวจ</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-soft-200">
+                  <tr v-for="r in pmRecords.slice(0, 5)" :key="r.id" class="hover:bg-soft-50/80 transition">
+                    <td class="p-3 font-mono text-slate-600">{{ r.date }}</td>
+                    <td class="p-3 font-mono font-bold text-brand-600">{{ r.permitNo || '-' }}</td>
+                    <td class="p-3 font-bold text-soft-900 font-mono">{{ r.assetId }}</td>
+                    <td class="p-3 text-slate-600">{{ r.pmType }}</td>
+                    <td class="p-3 text-slate-700">{{ r.technician }}</td>
+                    <td class="p-3">
+                      <span class="font-bold px-2.5 py-0.5 rounded text-[11px] font-mono" :class="ahiClass(r.ahiGrade)">
+                        Grade {{ r.ahiGrade || 'A' }} ({{ r.ahiScore || 95 }}%)
+                      </span>
+                    </td>
+                    <td class="p-3">
+                      <span :class="statusBadge(r.status)" class="px-2.5 py-0.5 rounded-full font-semibold border text-[11px]">
+                        {{ r.status }}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr v-if="pmRecords.length === 0">
+                    <td colspan="7" class="p-6 text-center text-slate-400">ยังไม่มีบันทึกข้อมูล</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= 2. ASSETS MANAGEMENT ================= -->
+        <section v-if="currentTab === 'assets'" class="space-y-6">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+              <div class="relative w-full sm:w-80">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400"></i>
+                <input v-model="searchAsset" type="text" placeholder="ค้นหารหัส, ชื่ออุปกรณ์, สถานีย่อย..." class="w-full pl-10 pr-4 py-2 bg-white border border-soft-200 rounded-xl text-xs text-soft-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100 shadow-sm">
+              </div>
+              <select v-model="filterType" class="p-2 bg-white border border-soft-200 rounded-xl text-xs text-soft-900 focus:border-brand-500 focus:outline-none shadow-sm">
+                <option value="ALL">ทุกประเภทอุปกรณ์ ({{ assets.length }} ชุด)</option>
+                <option value="Transformer">หม้อแปลงไฟฟ้า (Transformer)</option>
+                <option value="LBS">Load Break Switch (LBS)</option>
+              </select>
+            </div>
+
+            <div class="text-xs text-slate-500 font-mono">
+              แสดง <b>{{ filteredAssets.length }}</b> จาก {{ assets.length }} ชุด
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div v-for="a in paginatedAssets" :key="a.id" class="modern-card p-5 rounded-2xl space-y-4 hover:border-brand-300 transition group">
+              <div class="flex items-start justify-between">
+                <div>
+                  <span class="text-xs font-mono font-bold text-brand-600 tracking-wider">{{ a.id }}</span>
+                  <h4 class="font-display font-bold text-base text-soft-900 mt-0.5 group-hover:text-brand-600 transition">{{ a.name }}</h4>
+                  <p class="text-[11px] text-slate-400 flex items-center gap-1 mt-1">
+                    <i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i> {{ a.location }}
+                  </p>
+                </div>
+                <span :class="badgeClass(a.type)">{{ a.type }}</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 bg-soft-50 p-3 rounded-xl text-xs font-mono border border-soft-200">
+                <div>
+                  <span class="text-slate-400 block text-[10px]">RATING</span>
+                  <span class="text-slate-700 font-semibold truncate block">{{ a.rating || '-' }}</span>
+                </div>
+                <div>
+                  <span class="text-slate-400 block text-[10px]">BRAND</span>
+                  <span class="text-slate-700 font-semibold truncate block">{{ a.brand || '-' }}</span>
+                </div>
+                <div>
+                  <span class="text-slate-400 block text-[10px]">SERIAL NO.</span>
+                  <span class="text-slate-600 truncate block">{{ a.serial || '-' }}</span>
+                </div>
+                <div>
+                  <span class="text-slate-400 block text-[10px]">PM COUNT</span>
+                  <span class="text-brand-600 font-bold">{{ getAssetPmCount(a.id) }} รอบ</span>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between pt-2 border-t border-soft-200">
+                <button @click="viewAssetDetails(a)" class="text-xs text-brand-600 hover:text-brand-700 font-display font-semibold flex items-center gap-1 transition">
+                  <i data-lucide="eye" class="w-3.5 h-3.5"></i> ตรวจสอบประวัติเชิงลึก
+                </button>
+                <button @click="deleteAsset(a.id)" class="text-slate-400 hover:text-rose-500 transition p-1" title="ลบอุปกรณ์">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 modern-card rounded-2xl flex items-center justify-between text-xs font-mono text-slate-500">
+            <div>หน้า {{ currentPage }} จาก {{ totalPages }}</div>
+            <div class="flex gap-2">
+              <button :disabled="currentPage === 1" @click="currentPage--" class="px-3 py-1.5 rounded-lg bg-soft-100 disabled:opacity-40 hover:bg-soft-200 transition font-semibold">ก่อนหน้า</button>
+              <button :disabled="currentPage === totalPages" @click="currentPage++" class="px-3 py-1.5 rounded-lg bg-soft-100 disabled:opacity-40 hover:bg-soft-200 transition font-semibold">ถัดไป</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= 3. PM FORM ================= -->
+        <section v-if="currentTab === 'pm-form'" class="max-w-5xl mx-auto space-y-6">
+          <div class="modern-card p-6 md:p-8 rounded-2xl space-y-6">
+            <div class="border-b border-soft-200 pb-4 flex justify-between items-center">
+              <div>
+                <h3 class="font-display font-bold text-base text-soft-900">ใบงานบันทึกผลการทดสอบทางวิศวกรรมไฟฟ้า (High Voltage Diagnostics PM)</h3>
+                <p class="text-xs text-slate-500">กรอกข้อมูลพารามิเตอร์ตามมาตรฐาน IEEE C57 / IEC 60076 / IEC 62271</p>
+              </div>
+              <span class="text-xs font-mono px-3 py-1 rounded-full bg-brand-50 text-brand-700 border border-brand-200 font-semibold">IEEE / IEC Standard</span>
+            </div>
+
+            <form @submit.prevent="savePmRecord" class="space-y-6">
+              
+              <!-- Permit Info -->
+              <div class="bg-soft-50 p-5 rounded-2xl border border-soft-200 space-y-4">
+                <h4 class="font-display font-bold text-xs text-soft-800 uppercase tracking-wider flex items-center gap-2">
+                  <i data-lucide="shield-alert" class="w-4 h-4 text-brand-600"></i> ข้อมูลใบอนุญาตทำงานและสภาวะแวดล้อม
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                  <div>
+                    <label class="block font-semibold text-slate-700 mb-1">เลขที่ใบงาน (Permit No.) *</label>
+                    <input v-model="formData.permitNo" type="text" placeholder="เช่น PM-HV-2026-088" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl font-mono focus:border-brand-500 focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block font-semibold text-slate-700 mb-1">วันที่เข้าตรวจเช็ก *</label>
+                    <input v-model="formData.date" type="date" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl font-mono focus:border-brand-500 focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block font-semibold text-slate-700 mb-1">เลือกอุปกรณ์ *</label>
+                    <select v-model="formData.assetId" @change="onAssetSelect" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl font-medium focus:border-brand-500 focus:outline-none">
+                      <option value="" disabled>-- เลือกอุปกรณ์ --</option>
+                      <option v-for="a in assets" :key="a.id" :value="a.id">[{{ a.type }}] {{ a.id }} - {{ a.name }}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block font-semibold text-slate-700 mb-1">ประเภทงาน PM</label>
+                    <select v-model="formData.pmType" class="w-full p-2.5 bg-white border border-soft-300 rounded-xl focus:border-brand-500 focus:outline-none">
+                      <option value="Annual PM (บำรุงรักษารายปี)">Annual PM (บำรุงรักษารายปี)</option>
+                      <option value="Half-Year PM (ราย 6 เดือน)">Half-Year PM (ราย 6 เดือน)</option>
+                      <option value="Thermography & Visual (ตรวจความร้อน)">Thermography & Visual (ตรวจความร้อน)</option>
+                      <option value="DGA Oil Sampling (เก็บตัวอย่างน้ำมัน)">DGA Oil Sampling (เก็บตัวอย่างน้ำมัน)</option>
+                      <option value="Emergency PM (แก้ไขฉุกเฉิน)">Emergency PM (แก้ไขฉุกเฉิน)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Transformer Form -->
+              <div v-if="selectedAssetType === 'Transformer'" class="p-5 rounded-2xl bg-brand-50/40 border border-brand-100 space-y-4">
+                <h4 class="font-display font-bold text-sm text-brand-900 flex items-center gap-2">
+                  <i data-lucide="cpu" class="w-4 h-4 text-brand-600"></i> การทดสอบหม้อแปลงไฟฟ้า (Transformer PM)
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                  <div>
+                    <label class="block font-medium text-slate-700 mb-1">Insulation Pri-Gnd 1 min (MΩ)</label>
+                    <input v-model.number="formData.checks.irPriGnd1m" type="number" placeholder="เกณฑ์ > 100 MΩ" class="w-full p-2 bg-white border border-soft-300 rounded-xl font-mono">
+                  </div>
+                  <div>
+                    <label class="block font-medium text-slate-700 mb-1">Dielectric Breakdown Oil (kV)</label>
+                    <input v-model.number="formData.checks.oilDielectric" type="number" placeholder="เกณฑ์ > 30 kV" class="w-full p-2 bg-white border border-soft-300 rounded-xl font-mono">
+                  </div>
+                  <div>
+                    <label class="block font-medium text-slate-700 mb-1">จุดร้อน Thermo Scan (°C)</label>
+                    <input v-model.number="formData.checks.thermoMaxTemp" type="number" placeholder="เช่น 48.5 °C" class="w-full p-2 bg-white border border-soft-300 rounded-xl font-mono">
+                  </div>
+                </div>
+              </div>
+
+              <!-- LBS Form -->
+              <div v-if="selectedAssetType === 'LBS'" class="p-5 rounded-2xl bg-amber-50/40 border border-amber-200 space-y-4">
+                <h4 class="font-display font-bold text-sm text-amber-900 flex items-center gap-2">
+                  <i data-lucide="toggle-right" class="w-4 h-4 text-amber-600"></i> การทดสอบ Load Break Switch (LBS PM)
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                  <div>
+                    <label class="block font-medium text-slate-700 mb-1">แรงดันก๊าซ SF6 (MPa)</label>
+                    <input v-model="formData.checks.sf6Pressure" type="text" placeholder="เช่น 0.05 MPa" class="w-full p-2 bg-white border border-soft-300 rounded-xl font-mono">
+                  </div>
+                  <div>
+                    <label class="block font-medium text-slate-700 mb-1">Contact Resistance เฟส A (µΩ)</label>
+                    <input v-model.number="formData.checks.contactResA" type="number" placeholder="เกณฑ์ < 80 µΩ" class="w-full p-2 bg-white border border-soft-300 rounded-xl font-mono">
+                  </div>
+                  <div>
+                    <label class="block font-medium text-slate-700 mb-1">Insulation Phase-to-Phase (MΩ)</label>
+                    <input v-model.number="formData.checks.lbsIR" type="number" placeholder="เกณฑ์ > 1000 MΩ" class="w-full p-2 bg-white border border-soft-300 rounded-xl font-mono">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sign-off -->
+              <div class="bg-soft-50 p-5 rounded-2xl border border-soft-200 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                  <div>
+                    <label class="block font-semibold text-slate-700 mb-1">ผู้ตรวจเช็ก *</label>
+                    <input v-model="formData.technician" type="text" placeholder="ชื่อผู้ตรวจ" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl">
+                  </div>
+                  <div>
+                    <label class="block font-semibold text-slate-700 mb-1">ผู้อนุมัติ</label>
+                    <input v-model="formData.approvedBy" type="text" placeholder="ชื่อผู้อนุมัติ" class="w-full p-2.5 bg-white border border-soft-300 rounded-xl">
+                  </div>
+                  <div>
+                    <label class="block font-semibold text-slate-700 mb-1">ผลการตรวจ *</label>
+                    <select v-model="formData.status" required class="w-full p-2.5 border rounded-xl font-bold text-xs" :class="statusSelectClass(formData.status)">
+                      <option value="Pass"> ผ่านเกณฑ์ (PASS)</option>
+                      <option value="Pass with Condition"> เฝ้าระวัง (MONITOR)</option>
+                      <option value="Fail"> ไม่ผ่านเกณฑ์ (FAIL)</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">ข้อเสนอแนะ</label>
+                  <input v-model="formData.remarks" type="text" placeholder="รายละเอียดเพิ่มเติม..." class="w-full p-2.5 bg-white border border-soft-300 rounded-xl">
+                </div>
+              </div>
+
+              <div class="flex justify-end gap-3 pt-4 border-t border-soft-200">
+                <button type="button" @click="resetForm" class="px-5 py-2.5 border border-soft-300 rounded-xl text-xs font-semibold text-slate-600 hover:bg-soft-100 transition">
+                  ล้างข้อมูล
+                </button>
+                <button type="submit" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-display font-semibold flex items-center gap-2 shadow-sm transition">
+                  <i data-lucide="save" class="w-4 h-4"></i> บันทึกใบงาน PM
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </section>
+
+        <!-- ================= 4. HISTORY & EXPORT ================= -->
+        <section v-if="currentTab === 'history'" class="space-y-6">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h3 class="font-display font-bold text-base text-soft-900">ประวัติงาน PM ทั้งหมดในระบบ</h3>
+              <p class="text-xs text-slate-500">จัดการข้อมูลประวัติและส่งออกรายงาน Excel/PDF</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <button @click="exportToExcel" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-display font-semibold flex items-center gap-2 shadow-sm transition">
+                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export Excel
+              </button>
+              <button @click="exportToPDF" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl text-xs font-display font-semibold flex items-center gap-2 shadow-sm transition">
+                <i data-lucide="file-text" class="w-4 h-4"></i> Export PDF
+              </button>
+              <button @click="confirmClearLogs" class="bg-soft-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-soft-200 px-4 py-2 rounded-xl text-xs font-mono transition">
+                CLEAR ALL LOGS
+              </button>
+            </div>
+          </div>
+
+          <div class="modern-card rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="border-b border-soft-200 text-slate-400 font-mono uppercase bg-soft-50">
+                  <tr>
+                    <th class="p-4">วันที่ตรวจ</th>
+                    <th class="p-4">Permit No.</th>
+                    <th class="p-4">รหัสอุปกรณ์</th>
+                    <th class="p-4">ประเภท</th>
+                    <th class="p-4">ผู้ตรวจ / ผู้อนุมัติ</th>
+                    <th class="p-4">สุขภาพ AHI</th>
+                    <th class="p-4">ผลการตรวจ</th>
+                    <th class="p-4 text-center">จัดการ</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-soft-200">
+                  <tr v-for="r in pmRecords" :key="r.id" class="hover:bg-soft-50 transition">
+                    <td class="p-4 font-mono text-slate-600">{{ r.date }}</td>
+                    <td class="p-4 font-mono font-bold text-brand-600">{{ r.permitNo || '-' }}</td>
+                    <td class="p-4 font-bold text-soft-900 font-mono">{{ r.assetId }}</td>
+                    <td class="p-4"><span :class="badgeClass(r.type)">{{ r.type }}</span></td>
+                    <td class="p-4">
+                      {{ r.technician }}
+                      <span v-if="r.approvedBy" class="text-slate-400 block text-[10px] font-mono">Appr: {{ r.approvedBy }}</span>
+                    </td>
+                    <td class="p-4">
+                      <span class="font-bold px-2.5 py-0.5 rounded text-[11px] font-mono" :class="ahiClass(r.ahiGrade)">
+                        Grade {{ r.ahiGrade || 'A' }}
+                      </span>
+                    </td>
+                    <td class="p-4">
+                      <span :class="statusBadge(r.status)" class="px-2.5 py-1 rounded-full font-semibold border text-[11px]">
+                        {{ r.status }}
+                      </span>
+                    </td>
+                    <td class="p-4 text-center">
+                      <button @click="deleteSingleRecord(r.id)" title="ลบรายการนี้" class="text-slate-400 hover:text-rose-600 p-1">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr v-if="pmRecords.length === 0">
+                    <td colspan="8" class="p-8 text-center text-slate-400 font-mono">
+                      ไม่มีประวัติการบันทึกข้อมูล PM ในระบบ
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- MODAL: ADD ASSET -->
+    <div v-if="showAddAssetModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div class="bg-white max-w-lg w-full p-6 space-y-4 rounded-2xl shadow-2xl border border-soft-200">
+        <div class="flex justify-between items-center border-b border-soft-200 pb-3">
+          <h3 class="font-display font-bold text-base text-soft-900 flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-5 h-5 text-brand-600"></i> เพิ่มอุปกรณ์ใหม่เข้าระบบ
+          </h3>
+          <button @click="showAddAssetModal = false" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <form @submit.prevent="addNewAsset" class="space-y-4 text-xs">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">รหัสอุปกรณ์ *</label>
+              <input v-model="newAssetForm.id" placeholder="เช่น TR-26" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl font-mono">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">ประเภท *</label>
+              <select v-model="newAssetForm.type" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl">
+                <option value="Transformer">Transformer</option>
+                <option value="LBS">Load Break Switch</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">ชื่ออุปกรณ์ *</label>
+            <input v-model="newAssetForm.name" placeholder="ชื่ออุปกรณ์" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">สถานที่ *</label>
+            <input v-model="newAssetForm.location" placeholder="สถานที่ติดตั้ง" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl">
+          </div>
+          <div class="flex justify-end gap-2 pt-3 border-t border-soft-200">
+            <button type="button" @click="showAddAssetModal = false" class="px-4 py-2 border border-soft-300 rounded-xl text-slate-600">ยกเลิก</button>
+            <button type="submit" class="px-5 py-2 bg-brand-600 text-white font-semibold rounded-xl">บันทึก</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: ASSET DETAILS -->
+    <div v-if="selectedAssetForModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div class="bg-white max-w-3xl w-full p-6 space-y-5 rounded-2xl max-h-[90vh] overflow-y-auto custom-scrollbar border border-soft-200 shadow-2xl">
+        <div class="flex justify-between items-start border-b border-soft-200 pb-3">
+          <div>
+            <h3 class="font-display font-bold text-base text-soft-900 flex items-center gap-2">
+              <i data-lucide="server" class="w-5 h-5 text-brand-600"></i> {{ selectedAssetForModal.id }} - {{ selectedAssetForModal.name }}
+            </h3>
+            <p class="text-xs text-slate-500 font-mono">{{ selectedAssetForModal.location }} | {{ selectedAssetForModal.type }}</p>
+          </div>
+          <button @click="selectedAssetForModal = null" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-soft-50 p-4 rounded-xl text-xs font-mono border border-soft-200">
+          <div><span class="text-slate-400 block text-[10px]">RATING</span> <span class="font-bold text-slate-700">{{ selectedAssetForModal.rating || '-' }}</span></div>
+          <div><span class="text-slate-400 block text-[10px]">BRAND</span> <span class="font-semibold text-slate-700">{{ selectedAssetForModal.brand || '-' }}</span></div>
+          <div><span class="text-slate-400 block text-[10px]">SERIAL NO.</span> <span class="text-slate-700">{{ selectedAssetForModal.serial || '-' }}</span></div>
+          <div><span class="text-slate-400 block text-[10px]">INSTALL DATE</span> <span class="text-slate-700">{{ selectedAssetForModal.installDate || '-' }}</span></div>
+        </div>
+
+        <div>
+          <h4 class="font-display font-bold text-xs text-slate-700 uppercase tracking-wider mb-3">ประวัติการเข้าตรวจ PM ของอุปกรณ์ชิ้นนี้</h4>
+          <div v-if="getAssetRecords(selectedAssetForModal.id).length > 0" class="space-y-3">
+            <div v-for="rec in getAssetRecords(selectedAssetForModal.id)" :key="rec.id" class="p-4 bg-soft-50 rounded-xl border border-soft-200 text-xs space-y-2">
+              <div class="flex justify-between items-center border-b border-soft-200 pb-2">
+                <span class="font-bold font-mono text-slate-700">วันที่: {{ rec.date }} (Permit: {{ rec.permitNo || '-' }})</span>
+                <span :class="statusBadge(rec.status)" class="px-2.5 py-0.5 rounded-full font-bold border text-[11px]">{{ rec.status }}</span>
+              </div>
+              <div class="text-slate-600"><span class="font-semibold text-slate-700">ผู้ตรวจ:</span> {{ rec.technician }} | <span class="font-semibold text-slate-700">ผู้อนุมัติ:</span> {{ rec.approvedBy || '-' }}</div>
+              <div class="text-slate-600"><span class="font-semibold text-slate-700">ข้อเสนอแนะ:</span> {{ rec.remarks || '-' }}</div>
+            </div>
+          </div>
+          <div v-else class="p-6 bg-soft-50 rounded-xl text-center text-slate-400 text-xs font-mono">ไม่มีประวัติการเข้าตรวจ</div>
+        </div>
+
+        <div class="flex justify-end pt-3 border-t border-soft-200">
+          <button @click="selectedAssetForModal = null" class="px-5 py-2 bg-soft-800 text-white rounded-xl text-xs font-semibold hover:bg-soft-900 transition">ปิด</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- VUE LOGIC -->
+  <script>
+    const { createApp, nextTick } = Vue;
+
+    function generateInitial50Assets() {
+      const list = [];
+      const substations = ['Substation 1 (ลานไก)', 'Substation 2 (อาคารควบคุม)', 'Substation 3 (โรงผลิต)', 'Substation 4 (สถานีจ่ายย่อย)'];
+      const trBrands = ['Tirathai', 'Ekarat', 'ABB', 'Schneider', 'QTC'];
+      const lbsBrands = ['Entec', 'Schneider Electric', 'ABB', 'Eaton', 'Siemens'];
+
+      for (let i = 1; i <= 25; i++) {
+        const idStr = i < 10 ? `TR-0${i}` : `TR-${i}`;
+        list.push({
+          id: idStr,
+          name: `หม้อแปลงไฟฟ้ากำลัง Unit ${i}`,
+          type: 'Transformer',
+          location: substations[i % substations.length],
+          rating: i % 2 === 0 ? '24kV / 1000kVA (Oil)' : '24kV / 500kVA (Dry)',
+          brand: trBrands[i % trBrands.length],
+          serial: `TR-SN-202${(i % 5) + 1}-${1000 + i}`,
+          installDate: `202${(i % 5) + 1}-0${(i % 9) + 1}-15`,
+          status: 'Active'
+        });
+      }
+
+      for (let i = 1; i <= 25; i++) {
+        const idStr = i < 10 ? `LBS-0${i}` : `LBS-${i}`;
+        list.push({
+          id: idStr,
+          name: `Load Break Switch Feeder ${i}`,
+          type: 'LBS',
+          location: substations[(i + 1) % substations.length],
+          rating: '24kV 630A (SF6 Insulated)',
+          brand: lbsBrands[i % lbsBrands.length],
+          serial: `LBS-SN-202${(i % 5) + 1}-${2000 + i}`,
+          installDate: `202${(i % 5) + 1}-0${(i % 9) + 1}-20`,
+          status: 'Active'
+        });
+      }
+
+      return list;
+    }
+
+    createApp({
+      data() {
+        const storedAssets = localStorage.getItem('aero_assets');
+        const storedRecords = localStorage.getItem('aero_pm_records');
+
+        return {
+          currentTab: 'dashboard',
+          showAddAssetModal: false,
+          searchAsset: '',
+          filterType: 'ALL',
+          currentPage: 1,
+          itemsPerPage: 9,
+          selectedAssetType: '',
+          selectedAssetForModal: null,
+          uploadedPhotos: [],
+          importedFileName: '',
+          charts: {},
+
+          assets: storedAssets ? JSON.parse(storedAssets) : generateInitial50Assets(),
+
+          newAssetForm: {
+            id: '',
+            name: '',
+            type: 'Transformer',
+            location: '',
+            rating: '',
+            brand: '',
+            serial: '',
+            installDate: new Date().toISOString().split('T')[0],
+            status: 'Active'
+          },
+
+          pmRecords: storedRecords ? JSON.parse(storedRecords) : [
+            {
+              id: 101,
+              permitNo: 'PM-HV-2026-001',
+              date: '2026-08-10',
+              assetId: 'TR-01',
+              type: 'Transformer',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Annual PM (บำรุงรักษารายปี)',
+              technician: 'สมชาย พิทักษ์วงษ์',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 98,
+              remarks: 'ตรวจเช็กประจำปี ค่าฉนวน PI = 2.5, Breakdown Oil 48kV สภาพพร้อมใช้งานสมบูรณ์',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 350, irPriGnd10m: 875, oilDielectric: 48, oilMoisture: 12, dgaC2H2: 0.1, thermoMaxTemp: 48.2 },
+              photos: []
+            },
+            {
+              id: 102,
+              permitNo: 'CM-HV-2026-014',
+              date: '2026-08-12',
+              assetId: 'TR-03',
+              type: 'Transformer',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
+              technician: 'ธีรศักดิ์ กล้าหาญ',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 92,
+              remarks: 'ดำเนินการเปลี่ยนสารดูดความชื้น Silica Gel ใหม่ทั้งกระบอก และเติมน้ำมันหม้อแปลงเพิ่ม 25 ลิตร',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 280, irPriGnd10m: 620, oilDielectric: 42, oilMoisture: 18, dgaC2H2: 0.2, thermoMaxTemp: 52.0 },
+              photos: []
+            },
+            {
+              id: 103,
+              permitNo: 'CM-HV-2026-018',
+              date: '2026-08-14',
+              assetId: 'TR-07',
+              type: 'Transformer',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
+              technician: 'ประสิทธิ์ ช่างฝีมือ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass with Condition',
+              ahiGrade: 'B',
+              ahiScore: 78,
+              remarks: 'แก้ไขรอยรั่วซึมปะเก็น Flange Bushing H1 ขันกวดตาม Torque แล้ว เฝ้าระวังคราบซึมซ้ำใน 1 เดือน',
+              details: { tankLeaks: 'Minor Seepage', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 150, irPriGnd10m: 320, oilDielectric: 36, oilMoisture: 22, dgaC2H2: 0.8, thermoMaxTemp: 64.5 },
+              photos: []
+            },
+            {
+              id: 104,
+              permitNo: 'PM-DGA-2026-005',
+              date: '2026-08-16',
+              assetId: 'TR-12',
+              type: 'Transformer',
+              location: 'Substation 3 (โรงผลิต)',
+              pmType: 'DGA Oil Sampling (เก็บตัวอย่างน้ำมัน)',
+              technician: 'ชานนท์ สุขุมวิท',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Fail',
+              ahiGrade: 'D',
+              ahiScore: 42,
+              remarks: 'วิเคราะห์ผล DGA พบก๊าซ C2H2 = 4.8 ppm บ่งชี้ว่าเกิด Internal Arcing ต้องปลดวงจรเพื่อ Overhaul',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Need Replacement', irPriGnd1m: 85, irPriGnd10m: 160, oilDielectric: 28, oilMoisture: 32, dgaC2H2: 4.8, thermoMaxTemp: 78.0 },
+              photos: []
+            },
+            {
+              id: 105,
+              permitNo: 'PM-HV-2026-022',
+              date: '2026-08-18',
+              assetId: 'TR-18',
+              type: 'Transformer',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Annual PM (บำรุงรักษารายปี)',
+              technician: 'สมชาย พิทักษ์วงษ์',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 99,
+              remarks: 'หม้อแปลง Dry-Type ตรวจพัดลมระบายอากาศ เทอร์โมมิเตอร์ และค่าความเป็นฉนวนผ่านเกณฑ์ 100%',
+              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 1200, irPriGnd10m: 3100, turnsRatioError: 0.12, thermoMaxTemp: 44.2 },
+              photos: []
+            },
+            {
+              id: 106,
+              permitNo: 'PM-HV-2026-025',
+              date: '2026-08-19',
+              assetId: 'LBS-02',
+              type: 'LBS',
+              location: 'Substation 3 (โรงผลิต)',
+              pmType: 'Half-Year PM (ราย 6 เดือน)',
+              technician: 'กิตติศักดิ์ ช่างซ่อมบำรุง',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 94,
+              remarks: 'วัดค่า Contact Resistance เฉลี่ย 44 µΩ แรงดันก๊าซ SF6 ปกติ 0.052 MPa',
+              details: { sf6Pressure: '0.052 MPa', contactResA: 44.2, contactResB: 45.1, contactResC: 43.8, syncDiscrepancy: 4.2, opCounter: 345, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 2800 },
+              photos: []
+            },
+            {
+              id: 107,
+              permitNo: 'CM-HV-2026-031',
+              date: '2026-08-20',
+              assetId: 'LBS-05',
+              type: 'LBS',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
+              technician: 'ประสิทธิ์ ช่างฝีมือ',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 90,
+              remarks: 'ทำความสะอาดคราบฝุ่นกลไกสปริง สเปรย์จาระบีสังเคราะห์ และปรับแต่ง Linking Rod คล่องตัวดี',
+              details: { sf6Pressure: '0.050 MPa', contactResA: 48.0, contactResB: 49.5, contactResC: 47.8, syncDiscrepancy: 5.1, opCounter: 512, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 2200 },
+              photos: []
+            },
+            {
+              id: 108,
+              permitNo: 'CM-HV-2026-035',
+              date: '2026-08-22',
+              assetId: 'LBS-09',
+              type: 'LBS',
+              location: 'Substation 1 (ลานไก)',
+              pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
+              technician: 'กิตติศักดิ์ ช่างซ่อมบำรุง',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 91,
+              remarks: 'ขัดล้างคราบออกไซด์หน้าสัมผัส Main Tulip Contact เฟส B ค่าความต้านทานลดจาก 115 เหลือ 48.2 µΩ',
+              details: { sf6Pressure: '0.048 MPa', contactResA: 46.5, contactResB: 48.2, contactResC: 47.1, syncDiscrepancy: 4.8, opCounter: 680, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 1950 },
+              photos: []
+            },
+            {
+              id: 109,
+              permitNo: 'CM-HV-2026-040',
+              date: '2026-08-23',
+              assetId: 'LBS-14',
+              type: 'LBS',
+              location: 'Substation 4 (สถานีจ่ายย่อย)',
+              pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
+              technician: 'ธีรศักดิ์ กล้าหาญ',
+              approvedBy: 'สมชาย พิทักษ์วงษ์',
+              status: 'Pass with Condition',
+              ahiGrade: 'B',
+              ahiScore: 76,
+              remarks: 'พบก๊าซ SF6 ตกเหลือ 0.028 MPa ทำการขันกวดซีลวาล์วและเติมก๊าซกลับเป็น 0.050 MPa ให้เฝ้าระวังรอยรั่ว',
+              details: { sf6Pressure: '0.050 MPa (Refilled)', contactResA: 52.0, contactResB: 54.2, contactResC: 53.1, syncDiscrepancy: 6.0, opCounter: 420, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 1800 },
+              photos: []
+            },
+            {
+              id: 110,
+              permitNo: 'PM-HV-2026-044',
+              date: '2026-08-25',
+              assetId: 'LBS-21',
+              type: 'LBS',
+              location: 'Substation 2 (อาคารควบคุม)',
+              pmType: 'Annual PM (บำรุงรักษารายปี)',
+              technician: 'ชานนท์ สุขุมวิท',
+              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
+              status: 'Pass',
+              ahiGrade: 'A',
+              ahiScore: 95,
+              remarks: 'ปรับแนว Alignment ใบมีดต่อลงดิน Earthing Blade สับแนบสนิท และทดสอบระบบ Mechanical Interlock ปกติ',
+              details: { sf6Pressure: '0.051 MPa', contactResA: 43.1, contactResB: 44.0, contactResC: 42.8, syncDiscrepancy: 3.9, opCounter: 188, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 3200 },
+              photos: []
+            }
+          ],
+
+          formData: {
+            permitNo: '',
+            date: new Date().toISOString().split('T')[0],
+            assetId: '',
+            technician: '',
+            approvedBy: '',
+            pmType: 'Annual PM (บำรุงรักษารายปี)',
+            status: 'Pass',
+            remarks: '',
+            checks: {}
+          }
+        };
+      },
+      computed: {
+        filteredAssets() {
+          const q = this.searchAsset.toLowerCase();
+          return this.assets.filter(a => {
+            const matchesSearch = a.id.toLowerCase().includes(q) || a.name.toLowerCase().includes(q) || a.location.toLowerCase().includes(q);
+            const matchesType = this.filterType === 'ALL' || a.type === this.filterType;
+            return matchesSearch && matchesType;
+          });
+        },
+        totalPages() {
+          return Math.ceil(this.filteredAssets.length / this.itemsPerPage) || 1;
+        },
+        paginatedAssets() {
+          const start = (this.currentPage - 1) * this.itemsPerPage;
+          return this.filteredAssets.slice(start, start + this.itemsPerPage);
+        }
+      },
+      watch: {
+        assets: {
+          handler(newVal) { localStorage.setItem('aero_assets', JSON.stringify(newVal)); },
+          deep: true
+        },
+        pmRecords: {
+          handler(newVal) {
+            localStorage.setItem('aero_pm_records', JSON.stringify(newVal));
+            this.updateCharts();
+          },
+          deep: true
+        },
+        currentTab(newVal) {
+          if (newVal === 'dashboard') {
+            this.$nextTick(() => { this.initCharts(); });
+          }
+        }
+      },
+      mounted() {
+        this.renderIcons();
+        this.initCharts();
+      },
+      updated() {
+        this.renderIcons();
+      },
+      methods: {
+        renderIcons() {
+          nextTick(() => {
+            if (window.lucide) { window.lucide.createIcons(); }
+          });
+        },
+        navClass(tab) {
+          return this.currentTab === tab 
+            ? 'bg-brand-50 text-brand-700 font-bold border border-brand-100 shadow-sm' 
+            : 'text-slate-600 hover:bg-soft-100 hover:text-slate-900 border border-transparent';
+        },
+        badgeClass(type) {
+          return type === 'Transformer' 
+            ? 'px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-indigo-50 text-indigo-700 border border-indigo-200' 
+            : 'px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200';
+        },
+        statusBadge(status) {
+          if (status === 'Pass') return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+          if (status === 'Pass with Condition') return 'bg-amber-50 text-amber-700 border-amber-200';
+          return 'bg-rose-50 text-rose-700 border-rose-200';
+        },
+        statusSelectClass(status) {
+          if (status === 'Pass') return 'border-emerald-300 text-emerald-700 bg-emerald-50/50';
+          if (status === 'Pass with Condition') return 'border-amber-300 text-amber-700 bg-amber-50/50';
+          return 'border-rose-300 text-rose-700 bg-rose-50/50';
+        },
+        ahiClass(grade) {
+          if (grade === 'A') return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+          if (grade === 'B') return 'bg-amber-50 text-amber-700 border border-amber-200';
+          return 'bg-rose-50 text-rose-700 border border-rose-200';
+        },
+        getTabTitle() {
+          const titles = {
+            'dashboard': 'แดชบอร์ดสรุปภาพรวมและดัชนีสุขภาพอุปกรณ์ (Dashboard & AHI)',
+            'assets': 'ทะเบียนอุปกรณ์หม้อแปลงและ Load Break Switch (Asset Inventory)',
+            'pm-form': 'บันทึกข้อมูลการตรวจเช็กและวินิจฉัยทางวิศวกรรม (Diagnostics Entry)',
+            'history': 'ประวัติการบำรุงรักษาย้อนหลังและส่งออกรายงาน (PM Log & Report Export)'
+          };
+          return titles[this.currentTab];
+        },
+        getCountByType(type) { return this.assets.filter(a => a.type === type).length; },
+        getStatusCount(status) { return this.pmRecords.filter(r => r.status === status).length; },
+        initCharts() {
+          const ctx1 = document.getElementById('healthChart');
+          const ctx2 = document.getElementById('pieChart');
+          if (!ctx1 || !ctx2) return;
+
+          if (this.charts.bar) this.charts.bar.destroy();
+          if (this.charts.pie) this.charts.pie.destroy();
+
+          this.charts.bar = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+              labels: ['TR Good', 'TR Condition', 'TR Critical', 'LBS Good', 'LBS Condition', 'LBS Critical'],
+              datasets: [{
+                label: 'จำนวนอุปกรณ์',
+                data: [
+                  this.pmRecords.filter(r => r.type === 'Transformer' && r.status === 'Pass').length,
+                  this.pmRecords.filter(r => r.type === 'Transformer' && r.status === 'Pass with Condition').length,
+                  this.pmRecords.filter(r => r.type === 'Transformer' && r.status === 'Fail').length,
+                  this.pmRecords.filter(r => r.type === 'LBS' && r.status === 'Pass').length,
+                  this.pmRecords.filter(r => r.type === 'LBS' && r.status === 'Pass with Condition').length,
+                  this.pmRecords.filter(r => r.type === 'LBS' && r.status === 'Fail').length
+                ],
+                backgroundColor: ['#10b981', '#f59e0b', '#f43f5e', '#3b82f6', '#f59e0b', '#f43f5e'],
+                borderRadius: 8
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                y: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', font: { family: 'JetBrains Mono' } } },
+                x: { grid: { display: false }, ticks: { color: '#64748b', font: { family: 'Prompt' } } }
+              }
+            }
+          });
+
+          this.charts.pie = new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+              labels: ['Grade A (Good)', 'Grade B (Monitor)', 'Grade D (Critical)'],
+              datasets: [{
+                data: [
+                  this.getStatusCount('Pass') || 1,
+                  this.getStatusCount('Pass with Condition'),
+                  this.getStatusCount('Fail')
+                ],
+                backgroundColor: ['#10b981', '#f59e0b', '#f43f5e'],
+                borderWidth: 0
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { position: 'bottom', labels: { color: '#475569', font: { family: 'Prompt' } } } },
+              cutout: '72%'
+            }
+          });
+        },
+        updateCharts() {
+          if (this.charts.bar && this.charts.pie) { this.initCharts(); }
+        },
+        addNewAsset() {
+          const idUpper = this.newAssetForm.id.trim().toUpperCase();
+          if (this.assets.some(a => a.id.toUpperCase() === idUpper)) {
+            alert(`รหัสอุปกรณ์ "${idUpper}" มีอยู่ในระบบแล้ว`);
+            return;
+          }
+          this.assets.unshift({ ...this.newAssetForm, id: idUpper, status: 'Active' });
+          alert(`เพิ่มอุปกรณ์ "${idUpper}" เรียบร้อยแล้ว`);
+          this.showAddAssetModal = false;
+        },
+        deleteAsset(assetId) {
+          if (confirm(`ยืนยันการลบอุปกรณ์ ${assetId}?`)) {
+            this.assets = this.assets.filter(a => a.id !== assetId);
+          }
+        },
+        onAssetSelect() {
+          const asset = this.assets.find(a => a.id === this.formData.assetId);
+          this.selectedAssetType = asset ? asset.type : '';
+          this.formData.checks = {};
+        },
+        savePmRecord() {
+          const asset = this.assets.find(a => a.id === this.formData.assetId);
+          if (!asset) return;
+
+          let grade = 'A';
+          let score = 95;
+          if (this.formData.status === 'Pass with Condition') { grade = 'B'; score = 75; }
+          if (this.formData.status === 'Fail') { grade = 'D'; score = 40; }
+
+          const newRecord = {
+            id: Date.now(),
+            permitNo: this.formData.permitNo || `PM-HV-${Date.now().toString().slice(-4)}`,
+            date: this.formData.date,
+            assetId: this.formData.assetId,
+            type: asset.type,
+            location: asset.location,
+            pmType: this.formData.pmType,
+            technician: this.formData.technician,
+            approvedBy: this.formData.approvedBy,
+            status: this.formData.status,
+            ahiGrade: grade,
+            ahiScore: score,
+            remarks: this.formData.remarks,
+            details: { ...this.formData.checks },
+            photos: []
+          };
+
+          this.pmRecords.unshift(newRecord);
+          alert(`บันทึกใบงาน PM เลขที่ ${newRecord.permitNo} เรียบร้อยแล้ว`);
+          this.resetForm();
+          this.currentTab = 'history';
+        },
+        resetForm() {
+          this.formData = {
+            permitNo: '',
+            date: new Date().toISOString().split('T')[0],
+            assetId: '',
+            technician: '',
+            approvedBy: '',
+            pmType: 'Annual PM (บำรุงรักษารายปี)',
+            status: 'Pass',
+            remarks: '',
+            checks: {}
+          };
+          this.selectedAssetType = '';
+        },
+        confirmClearLogs() {
+          if (confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างประวัติการบันทึกงาน PM ทั้งหมด?')) {
+            this.pmRecords = [];
+            alert('ล้างประวัติเรียบร้อยแล้ว');
+          }
+        },
+        deleteSingleRecord(id) {
+          if (confirm('ยืนยันการลบรายการนี้?')) {
+            this.pmRecords = this.pmRecords.filter(r => r.id !== id);
+          }
+        },
+        viewAssetDetails(asset) { this.selectedAssetForModal = asset; },
+        getAssetPmCount(assetId) { return this.pmRecords.filter(r => r.assetId === assetId).length; },
+        getAssetRecords(assetId) { return this.pmRecords.filter(r => r.assetId === assetId); },
+        exportToExcel() {
+          const exportRows = this.pmRecords.map(r => ({
+            'ID': r.id,
+            'Permit No.': r.permitNo || '-',
+            'วันที่ตรวจ': r.date,
+            'รหัสอุปกรณ์': r.assetId,
+            'ประเภท': r.type,
+            'ประเภทงาน': r.pmType,
+            'สถานที่': r.location,
+            'ผู้ตรวจ': r.technician,
+            'ผู้อนุมัติ': r.approvedBy || '-',
+            'ผลการตรวจ': r.status,
+            'เกรด AHI': `Grade ${r.ahiGrade || 'A'}`,
+            'ข้อเสนอแนะ': r.remarks || '-',
+            'พารามิเตอร์': JSON.stringify(r.details)
+          }));
+          const ws = XLSX.utils.json_to_sheet(exportRows);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "PM_Records");
+          XLSX.writeFile(wb, `SUBSTATION_PM_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
+        },
+        exportToPDF() {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF('p', 'mm', 'a4');
+          doc.setFontSize(16);
+          doc.text("HIGH VOLTAGE SUBSTATION PM REPORT", 14, 18);
+          doc.setFontSize(9);
+          doc.setTextColor(100);
+          doc.text(`Generated: ${new Date().toLocaleString('th-TH')}`, 14, 25);
+
+          const tableRows = this.pmRecords.map(r => [
+            r.date, r.permitNo || '-', r.assetId, r.type, r.technician, `Grade ${r.ahiGrade || 'A'}`, r.status, r.remarks || '-'
+          ]);
+
+          doc.autoTable({
+            head: [['Date', 'Permit No', 'Asset ID', 'Type', 'Inspector', 'AHI', 'Status', 'Remarks']],
+            body: tableRows,
+            startY: 30,
+            styles: { fontSize: 8 },
+            headStyles: { fillColor: [30, 41, 59] }
+          });
+
+          doc.save(`SUBSTATION_PM_Report_${Date.now()}.pdf`);
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
