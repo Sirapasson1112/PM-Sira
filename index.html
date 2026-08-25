@@ -190,12 +190,18 @@
             <div class="space-y-3">
               <h4 class="font-display font-bold text-xs text-neutral-700 uppercase tracking-wider">ประวัติการตรวจเช็กของอุปกรณ์นี้ ({{ getAssetRecords(activeItem.id).length }} ครั้ง)</h4>
               <div v-if="getAssetRecords(activeItem.id).length > 0" class="space-y-2.5">
-                <div v-for="rec in getAssetRecords(activeItem.id)" :key="rec.id" class="p-4 bg-white rounded-xl border border-warm-200 text-xs space-y-1.5">
+                <div v-for="rec in getAssetRecords(activeItem.id)" :key="rec.id" class="p-4 bg-white rounded-xl border border-warm-200 text-xs space-y-2">
                   <div class="flex justify-between items-center border-b border-warm-100 pb-1.5">
                     <span class="font-mono font-bold text-warm-700">{{ rec.date }} ({{ rec.permitNo }})</span>
                     <span :class="statusBadge(rec.status)" class="px-2 py-0.5 rounded-full font-bold border text-[11px]">{{ rec.status }}</span>
                   </div>
                   <p class="text-neutral-700"><b>การปรับปรุง/แก้ไข:</b> {{ rec.remarks }}</p>
+                  
+                  <!-- แสดงรูปภาพขนาดย่อถ้ามี -->
+                  <div v-if="rec.photos && rec.photos.length > 0" class="flex gap-2 py-1 overflow-x-auto">
+                    <img v-for="(p, pidx) in rec.photos" :key="pidx" :src="p" class="w-16 h-16 object-cover rounded-lg border border-warm-200 cursor-pointer" @click="openRecordDetail(rec)" />
+                  </div>
+
                   <p class="text-[11px] text-neutral-400">ผู้ตรวจ: {{ rec.technician }} | ผู้อนุมัติ: {{ rec.approvedBy || '-' }}</p>
                 </div>
               </div>
@@ -231,6 +237,16 @@
                 <div v-for="(val, key) in activeItem.details" :key="key" class="p-2.5 bg-warm-50/40 rounded-lg border border-warm-100">
                   <span class="text-neutral-400 block text-[10px] font-mono">{{ formatKeyName(key) }}</span>
                   <span class="font-bold text-neutral-800 font-mono">{{ val || '-' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- รูปภาพประกอบหน้างานจริงในใบตรวจงาน -->
+            <div v-if="activeItem.photos && activeItem.photos.length > 0">
+              <h4 class="font-bold text-xs text-neutral-700 uppercase mb-2">รูปภาพประกอบการตรวจเช็กหน้างาน (Site Inspection Photos)</h4>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div v-for="(p, pidx) in activeItem.photos" :key="pidx" class="rounded-xl overflow-hidden border border-warm-200 bg-neutral-100 aspect-video shadow-sm">
+                  <img :src="p" class="w-full h-full object-cover" />
                 </div>
               </div>
             </div>
@@ -298,7 +314,7 @@
             </div>
           </section>
 
-          <!-- 2. ASSETS DIRECTORY (50 UNITS) -->
+          <!-- 2. ASSETS DIRECTORY -->
           <section v-if="currentTab === 'assets'" class="space-y-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
@@ -365,6 +381,7 @@
                       <th class="p-4">รหัสอุปกรณ์</th>
                       <th class="p-4">ประเภทงาน</th>
                       <th class="p-4">ผู้ตรวจเช็ก</th>
+                      <th class="p-4">รูปถ่าย</th>
                       <th class="p-4">สุขภาพ AHI</th>
                       <th class="p-4">ผลการตรวจ</th>
                       <th class="p-4 text-center">เข้าดูข้อมูล</th>
@@ -377,6 +394,11 @@
                       <td class="p-4 font-bold text-neutral-900 font-mono">{{ r.assetId }}</td>
                       <td class="p-4"><span class="bg-neutral-100 px-2 py-0.5 rounded text-neutral-700">{{ r.pmType }}</span></td>
                       <td class="p-4 text-neutral-700">{{ r.technician }}</td>
+                      <td class="p-4 font-mono">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-warm-50 border border-warm-200 text-warm-700">
+                          <i data-lucide="image" class="w-3 h-3"></i> {{ r.photos ? r.photos.length : 0 }}
+                        </span>
+                      </td>
                       <td class="p-4 font-mono font-bold">{{ r.ahiGrade }} ({{ r.ahiScore }}%)</td>
                       <td class="p-4"><span :class="statusBadge(r.status)" class="px-2.5 py-1 rounded-full font-semibold border text-[11px]">{{ r.status }}</span></td>
                       <td class="p-4 text-center text-warm-600 font-semibold underline">เปิดดูผลตรวจ →</td>
@@ -449,10 +471,10 @@
             </div>
           </section>
 
-          <!-- 7. PM FORM -->
+          <!-- 7. PM FORM (พร้อมระบบแนบ/ถ่ายรูปหน้างาน) -->
           <section v-if="currentTab === 'pm-form'" class="max-w-4xl mx-auto space-y-6">
             <div class="amber-card p-6 md:p-8 rounded-2xl space-y-6">
-              <h3 class="font-display font-bold text-base text-neutral-900">ออกใบงานบำรุงรักษาเชิงป้องกัน (PM Work Order)</h3>
+              <h3 class="font-display font-bold text-base text-neutral-900">ออกใบงานบำรุงรักษาเชิงป้องกัน & แนบรูปถ่ายหน้างาน (PM Work Order)</h3>
               <form @submit.prevent="savePmRecord" class="space-y-4 text-xs">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
@@ -493,7 +515,37 @@
 
                 <div>
                   <label class="block font-semibold mb-1">บันทึกการปรับปรุงแก้ไข / ข้อเสนอแนะ *</label>
-                  <textarea v-model="formData.remarks" rows="3" placeholder="ระบุสิ่งที่ดำเนินการแก้ไขหน้างาน..." required class="w-full p-2.5 bg-white border border-warm-200 rounded-xl"></textarea>
+                  <textarea v-model="formData.remarks" rows="2" placeholder="ระบุสิ่งที่ดำเนินการแก้ไขหน้างาน..." required class="w-full p-2.5 bg-white border border-warm-200 rounded-xl"></textarea>
+                </div>
+
+                <!-- ถ่ายรูปหรืออัปโหลดรูปภาพหน้างาน -->
+                <div class="p-4 rounded-xl border border-warm-200 bg-warm-50/40 space-y-3">
+                  <div class="flex justify-between items-center">
+                    <div>
+                      <h4 class="font-bold text-neutral-800 flex items-center gap-1.5">
+                        <i data-lucide="camera" class="w-4 h-4 text-warm-600"></i> ถ่ายรูป/แนบรูปถ่ายหน้างาน (Site Inspection Photos)
+                      </h4>
+                      <p class="text-[11px] text-neutral-500">สามารถใช้กล้องมือถือถ่ายภาพจริง หรือเลือกรูปจากคลังภาพได้</p>
+                    </div>
+
+                    <label class="cursor-pointer px-4 py-2 bg-warm-500 hover:bg-warm-600 text-white rounded-xl font-semibold flex items-center gap-1.5 shadow-sm transition">
+                      <i data-lucide="image-plus" class="w-4 h-4"></i> เพิ่มรูปถ่าย
+                      <input type="file" accept="image/*" multiple capture="environment" @change="handlePhotoUpload" class="hidden">
+                    </label>
+                  </div>
+
+                  <!-- Gallery Preview -->
+                  <div v-if="formData.photos.length > 0" class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                    <div v-for="(photo, pidx) in formData.photos" :key="pidx" class="relative group rounded-xl overflow-hidden border border-warm-200 aspect-video bg-neutral-900 shadow-sm">
+                      <img :src="photo" class="w-full h-full object-cover">
+                      <button type="button" @click="removePhoto(pidx)" class="absolute top-1.5 right-1.5 p-1 bg-rose-600 text-white rounded-full opacity-90 hover:opacity-100 transition shadow">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div v-else class="text-center py-4 border border-dashed border-warm-200 rounded-lg text-neutral-400 font-mono text-[11px]">
+                    ยังไม่มีรูปถ่ายหน้างานที่แนบในใบงานนี้
+                  </div>
                 </div>
 
                 <div class="flex justify-end pt-3 border-t border-warm-100">
@@ -512,7 +564,7 @@
 
   </div>
 
-  <!-- SCRIPT LOGIC (วางไว้ล่างสุด ป้องกัน Blank Screen) -->
+  <!-- SCRIPT LOGIC -->
   <script>
     const { createApp, nextTick } = Vue;
 
@@ -599,7 +651,8 @@
           ahiGrade: grade,
           ahiScore: grade === 'A' ? 96 : (grade === 'B' ? 78 : 42),
           remarks: remarks,
-          details: details
+          details: details,
+          photos: []
         });
       });
 
@@ -644,7 +697,8 @@
           ],
           formData: {
             permitNo: '', date: new Date().toISOString().split('T')[0],
-            assetId: '', technician: '', approvedBy: '', status: 'Pass', remarks: ''
+            assetId: '', technician: '', approvedBy: '', status: 'Pass', remarks: '',
+            photos: []
           }
         };
       },
@@ -711,13 +765,32 @@
             'route': 'แผนที่เส้นทางตรวจงาน (SUBSTATION MAP)',
             'schedule': 'ตารางแผนงาน (PM SCHEDULER)',
             'anomaly': 'วิเคราะห์ความผิดปกติ (ANOMALY ENGINE)',
-            'pm-form': 'ออกใบงาน PM (WORK ORDER)'
+            'pm-form': 'ออกใบงาน PM & ถ่ายรูป (WORK ORDER)'
           };
           return titles[this.currentTab] || 'AMBER CMMS';
         },
         getStatusCount(status) { return this.pmRecords.filter(r => r.status === status).length; },
         getAssetPmCount(assetId) { return this.pmRecords.filter(r => r.assetId === assetId).length; },
         getAssetRecords(assetId) { return this.pmRecords.filter(r => r.assetId === assetId); },
+
+        handlePhotoUpload(event) {
+          const files = event.target.files;
+          if (!files || files.length === 0) return;
+
+          for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              this.formData.photos.push(e.target.result);
+              this.renderIcons();
+            };
+            reader.readAsDataURL(file);
+          }
+        },
+
+        removePhoto(index) {
+          this.formData.photos.splice(index, 1);
+        },
 
         initLeafletMap() {
           const mapEl = document.getElementById('substationMap');
@@ -726,7 +799,7 @@
 
           this.map = L.map('substationMap').setView([13.7650, 100.5150], 13);
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
+            attribution: '© OpenStreetMap contributors'
           }).addTo(this.map);
 
           const latlngs = this.routeCheckpoints.map(cp => [cp.lat, cp.lng]);
@@ -825,11 +898,21 @@
             ahiGrade: this.formData.status === 'Pass' ? 'A' : (this.formData.status === 'Pass with Condition' ? 'B' : 'D'),
             ahiScore: 95,
             remarks: this.formData.remarks,
-            details: {}
+            details: {
+              tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal',
+              irPriGnd1m: 350, irPriGnd10m: 850, oilDielectric: 46, thermoMaxTemp: 45.0
+            },
+            photos: [...this.formData.photos]
           };
 
           this.pmRecords.unshift(newRecord);
-          alert(`บันทึกใบงาน PM เลขที่ ${newRecord.permitNo} เรียบร้อยแล้ว`);
+          alert(`บันทึกใบงาน PM เลขที่ ${newRecord.permitNo} พร้อมแนบรูปถ่ายเรียบร้อยแล้ว`);
+          
+          this.formData = {
+            permitNo: '', date: new Date().toISOString().split('T')[0],
+            assetId: '', technician: '', approvedBy: '', status: 'Pass', remarks: '',
+            photos: []
+          };
           this.switchTab('history');
         },
 
@@ -849,13 +932,14 @@
             'ประเภทอุปกรณ์': r.type === 'Transformer' ? 'หม้อแปลงไฟฟ้า' : 'Load Break Switch',
             'สถานที่ติดตั้ง': r.location,
             'ผู้ตรวจเช็ก': r.technician,
+            'จำนวนรูปถ่ายแนบ': r.photos ? r.photos.length : 0,
             'ผลการประเมิน': r.status,
             'เกรด AHI': `Grade ${r.ahiGrade || 'A'}`,
             'บันทึกการปรับปรุง/แก้ไข': r.remarks || '-'
           }));
 
           const ws = XLSX.utils.json_to_sheet(exportRows);
-          ws['!cols'] = [{ wch: 15 }, { wch: 22 }, { wch: 15 }, { wch: 15 }, { wch: 22 }, { wch: 25 }, { wch: 20 }, { wch: 18 }, { wch: 18 }, { wch: 50 }];
+          ws['!cols'] = [{ wch: 15 }, { wch: 22 }, { wch: 15 }, { wch: 15 }, { wch: 22 }, { wch: 25 }, { wch: 20 }, { wch: 15 }, { wch: 18 }, { wch: 18 }, { wch: 50 }];
           const wb = XLSX.utils.book_new();
           XLSX.utils.book_append_sheet(wb, ws, "PM_Records");
           XLSX.writeFile(wb, `รายงานผล_PM_${new Date().toISOString().split('T')[0]}.xlsx`, { bookType: 'xlsx', type: 'binary' });
