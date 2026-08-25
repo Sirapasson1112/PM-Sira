@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Enterprise Substation CMMS - Transformer & LBS PM System</title>
+  <title>Enterprise CMMS - Transformer & LBS Substation PM System</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -11,7 +11,7 @@
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- SheetJS (Excel Export) -->
+  <!-- SheetJS (Excel Import & Export) -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <!-- jsPDF & AutoTable -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -48,13 +48,13 @@
             <i data-lucide="layout-dashboard" class="w-4 h-4"></i> แดชบอร์ด (Dashboard)
           </button>
           <button @click="currentTab = 'assets'" :class="navClass('assets')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition">
-            <i data-lucide="layers" class="w-4 h-4"></i> ทะเบียนอุปกรณ์ 50 ตัว (Assets)
+            <i data-lucide="layers" class="w-4 h-4"></i> ทะเบียนอุปกรณ์ (Assets 50 ตัว)
           </button>
           <button @click="currentTab = 'pm-form'" :class="navClass('pm-form')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition">
             <i data-lucide="clipboard-edit" class="w-4 h-4"></i> บันทึกงาน PM & แนบรูป
           </button>
           <button @click="currentTab = 'history'" :class="navClass('history')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition">
-            <i data-lucide="file-check-2" class="w-4 h-4"></i> ประวัติงาน PM & ส่งออก
+            <i data-lucide="file-check-2" class="w-4 h-4"></i> ประวัติงาน PM / นำเข้า-ส่งออก
           </button>
         </nav>
       </div>
@@ -64,11 +64,11 @@
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span>ระบบพร้อมใช้งาน (Online)</span>
         </div>
-        <p class="text-[11px] text-slate-500">Power Maintenance Management v3.0</p>
+        <p class="text-[11px] text-slate-500">Power Maintenance Management v3.5</p>
       </div>
     </aside>
 
-    <!-- MAIN CONTENT AREA -->
+    <!-- MAIN CONTENT -->
     <main class="flex-1 flex flex-col overflow-hidden">
       <!-- Top Header -->
       <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 z-10">
@@ -93,7 +93,7 @@
               <div>
                 <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">อุปกรณ์ในระบบ</span>
                 <h3 class="text-2xl font-bold text-slate-800 mt-1">{{ assets.length }} ชุด</h3>
-                <span class="text-xs text-blue-600 font-medium">ครอบคลุมทั้งสถานีย่อย 1-4</span>
+                <span class="text-xs text-blue-600 font-medium">ครอบคลุมสถานีย่อย 1-4</span>
               </div>
               <div class="p-3 bg-blue-50 text-blue-600 rounded-xl"><i data-lucide="cpu" class="w-6 h-6"></i></div>
             </div>
@@ -102,7 +102,7 @@
               <div>
                 <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">หม้อแปลงไฟฟ้า (TR)</span>
                 <h3 class="text-2xl font-bold text-slate-800 mt-1">{{ assets.filter(a => a.type === 'Transformer').length }} เครื่อง</h3>
-                <span class="text-xs text-indigo-600 font-medium">Oil-immersed & Dry-type</span>
+                <span class="text-xs text-indigo-600 font-medium">Oil & Dry Type</span>
               </div>
               <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><i data-lucide="box" class="w-6 h-6"></i></div>
             </div>
@@ -126,7 +126,7 @@
             </div>
           </div>
 
-          <!-- Quick Action & Overview -->
+          <!-- Quick Actions & Recent Records -->
           <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
             <div class="flex items-center justify-between">
               <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
@@ -172,25 +172,21 @@
         <section v-if="currentTab === 'assets'" class="space-y-6">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-              <!-- Search Box -->
               <div class="relative w-full sm:w-72">
                 <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
                 <input v-model="searchAsset" type="text" placeholder="ค้นหารหัส, ชื่ออุปกรณ์, สถานีย่อย..." class="w-full pl-9 pr-4 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm">
               </div>
-              <!-- Type Filter -->
               <select v-model="filterType" class="p-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm">
                 <option value="ALL">ทุกประเภทอุปกรณ์ (50 ตัว)</option>
                 <option value="Transformer">หม้อแปลงไฟฟ้า (TR: 25 ตัว)</option>
                 <option value="LBS">Load Break Switch (LBS: 25 ตัว)</option>
               </select>
             </div>
-
             <div class="text-xs text-slate-500">
               แสดง <b>{{ filteredAssets.length }}</b> จากทั้งหมด <b>{{ assets.length }}</b> อุปกรณ์
             </div>
           </div>
 
-          <!-- Assets Table with Individual View Button -->
           <div class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm">
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
@@ -230,7 +226,6 @@
               </table>
             </div>
 
-            <!-- Pagination Control -->
             <div class="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs text-slate-500">
               <div>หน้า {{ currentPage }} จาก {{ totalPages }}</div>
               <div class="flex gap-2">
@@ -241,13 +236,42 @@
           </div>
         </section>
 
-        <!-- ================= 3. PM FORM (DATA ENTRY + PHOTOS) ================= -->
+        <!-- ================= 3. PM FORM & IMPORT FILE ================= -->
         <section v-if="currentTab === 'pm-form'" class="max-w-5xl mx-auto space-y-6">
+          
+          <!-- File Import Box -->
+          <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 p-6 rounded-2xl shadow-sm space-y-3">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div>
+                <h4 class="font-bold text-blue-900 text-sm flex items-center gap-2">
+                  <i data-lucide="file-up" class="w-5 h-5 text-blue-600"></i> นำเข้าไฟล์ข้อมูลงาน PM เข้าสู่ระบบ (Import File)
+                </h4>
+                <p class="text-xs text-blue-700 mt-1">
+                  รองรับการอัปโหลดไฟล์ <b>Excel (.xlsx, .xls), CSV หรือ JSON</b> เพื่อดึงข้อมูลเข้าแบบฟอร์ม หรือนำเข้าประวัติจำนวนมากอัตโนมัติ
+                </p>
+              </div>
+              <button @click="downloadTemplate" class="text-xs bg-white text-blue-700 border border-blue-300 hover:bg-blue-100 font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i> ดาวน์โหลด Template Excel
+              </button>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 pt-2">
+              <label class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm transition">
+                <i data-lucide="folder-open" class="w-4 h-4"></i> เลือกไฟล์ Excel / CSV / JSON
+                <input type="file" accept=".xlsx, .xls, .csv, .json" @change="handleImportFile" class="hidden">
+              </label>
+              <span v-if="importedFileName" class="text-xs text-emerald-700 font-semibold flex items-center gap-1 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+                <i data-lucide="check" class="w-4 h-4"></i> นำเข้าสำเร็จ: {{ importedFileName }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Manual Form -->
           <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
             <div class="border-b border-slate-200 pb-4 flex justify-between items-center">
               <div>
-                <h3 class="text-lg font-bold text-slate-800">แบบฟอร์มบันทึกผลการบำรุงรักษาเชิงป้องกัน (PM Entry)</h3>
-                <p class="text-xs text-slate-500">เลือกอุปกรณ์จากรายการ 50 ตัว กรอกพารามิเตอร์ และแนบรูปภาพหน้างานจริง</p>
+                <h3 class="text-lg font-bold text-slate-800">แบบฟอร์มบันทึกผลการบำรุงรักษาเชิงป้องกัน (PM Checklist)</h3>
+                <p class="text-xs text-slate-500">เลือกอุปกรณ์จากรายการ 50 ตัว หรือตรวจสอบข้อมูลที่โหลดมาจากไฟล์</p>
               </div>
               <span class="bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full font-semibold border border-blue-200">Data Entry</span>
             </div>
@@ -272,7 +296,7 @@
                     </select>
                   </div>
                   <div>
-                    <label class="block font-medium text-slate-700 mb-1">ชื่อวิศวกร / หัวหน้าทีมตรวจ *</label>
+                    <label class="block font-medium text-slate-700 mb-1">ชื่อวิศวกร / ผู้ตรวจเช็ก *</label>
                     <input v-model="formData.technician" type="text" placeholder="เช่น วิศวกร สมศักดิ์ มีสุข" required class="w-full p-2.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
                   </div>
                   <div>
@@ -294,7 +318,7 @@
                 </div>
               </div>
 
-              <!-- Transformer Section -->
+              <!-- Transformer Checklist -->
               <div v-if="selectedAssetType === 'Transformer'" class="p-5 bg-indigo-50/50 rounded-xl border border-indigo-200 space-y-5">
                 <div class="flex items-center justify-between">
                   <h4 class="font-bold text-indigo-900 text-sm flex items-center gap-2">
@@ -341,7 +365,7 @@
                 </div>
               </div>
 
-              <!-- LBS Section -->
+              <!-- LBS Checklist -->
               <div v-if="selectedAssetType === 'LBS'" class="p-5 bg-amber-50/50 rounded-xl border border-amber-200 space-y-5">
                 <div class="flex items-center justify-between">
                   <h4 class="font-bold text-amber-900 text-sm flex items-center gap-2">
@@ -384,7 +408,7 @@
               <!-- Attachments Section -->
               <div class="bg-slate-50/70 p-5 rounded-xl border border-slate-200 space-y-4">
                 <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                  <i data-lucide="camera" class="w-4 h-4 text-blue-600"></i> แนบรูปถ่ายหน้างาน & รายงานผลตรวจ
+                  <i data-lucide="camera" class="w-4 h-4 text-blue-600"></i> แนบรูปถ่ายหน้างาน
                 </h4>
                 <div class="space-y-3">
                   <div class="flex items-center gap-3">
@@ -408,7 +432,7 @@
                 </div>
               </div>
 
-              <!-- Summary & Remarks -->
+              <!-- Summary & Actions -->
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">สรุปสถานะผลการตรวจ *</label>
@@ -437,14 +461,20 @@
           </div>
         </section>
 
-        <!-- ================= 4. HISTORY & EXPORT & CLEAR LOGS ================= -->
+        <!-- ================= 4. HISTORY & EXPORT / IMPORT ================= -->
         <section v-if="currentTab === 'history'" class="space-y-6">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h3 class="text-base font-bold text-slate-800">ประวัติงาน PM ทั้งหมดในระบบ</h3>
-              <p class="text-xs text-slate-500">จัดการข้อมูลประวัติ ส่งออกรายงาน หรือล้างประวัติการบันทึก</p>
+              <p class="text-xs text-slate-500">จัดการข้อมูลประวัติ นำเข้าไฟล์ หรือส่งออกรายงาน</p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
+              <!-- Quick Import to History -->
+              <label class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm transition">
+                <i data-lucide="file-up" class="w-4 h-4"></i> นำเข้าไฟล์ PM (Excel/CSV)
+                <input type="file" accept=".xlsx, .xls, .csv, .json" @change="handleImportFile" class="hidden">
+              </label>
+
               <!-- Export Excel -->
               <button @click="exportToExcel" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm">
                 <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export Excel
@@ -453,9 +483,9 @@
               <button @click="exportToPDF" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm">
                 <i data-lucide="file-text" class="w-4 h-4"></i> Export PDF
               </button>
-              <!-- Clear All PM Logs Button -->
+              <!-- Clear All PM Logs -->
               <button @click="confirmClearLogs" class="bg-slate-800 hover:bg-rose-700 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm transition">
-                <i data-lucide="trash" class="w-4 h-4"></i> ล้างประวัติทั้งหมด (Clear Logs)
+                <i data-lucide="trash" class="w-4 h-4"></i> ล้างประวัติทั้งหมด
               </button>
             </div>
           </div>
@@ -501,7 +531,7 @@
                   <tr v-if="pmRecords.length === 0">
                     <td colspan="8" class="p-8 text-center text-slate-400">
                       <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
-                      ไม่มีข้อมูลประวัติการทำ PM ในระบบ (ประวัติถูกล้างหรือยังไม่มีการบันทึก)
+                      ไม่มีข้อมูลประวัติการทำ PM ในระบบ (สามารถกดปุ่ม "นำเข้าไฟล์ PM" ด้านบนเพื่อนำเข้าข้อมูลได้)
                     </td>
                   </tr>
                 </tbody>
@@ -526,7 +556,6 @@
           <button @click="selectedAssetForModal = null" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
 
-        <!-- Asset Specification Details -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl text-xs">
           <div><span class="text-slate-400 block">พิกัดกำลัง/แรงดัน:</span> <span class="font-bold font-mono text-slate-800">{{ selectedAssetForModal.rating }}</span></div>
           <div><span class="text-slate-400 block">ผู้ผลิต / ยี่ห้อ:</span> <span class="font-semibold">{{ selectedAssetForModal.brand }}</span></div>
@@ -534,7 +563,6 @@
           <div><span class="text-slate-400 block">วันที่ติดตั้ง:</span> <span>{{ selectedAssetForModal.installDate }}</span></div>
         </div>
 
-        <!-- PM Records for this Specific Asset -->
         <div>
           <h4 class="font-bold text-xs text-slate-700 uppercase tracking-wide mb-3 flex items-center gap-1.5">
             <i data-lucide="history" class="w-4 h-4 text-blue-600"></i> ประวัติการเข้าตรวจ PM ย้อนหลังของอุปกรณ์ตัวนี้
@@ -549,13 +577,6 @@
                 </span>
               </div>
               <div class="text-slate-600"><span class="font-semibold">ข้อเสนอแนะ:</span> {{ rec.remarks || '-' }}</div>
-              
-              <!-- Photo previews if any -->
-              <div v-if="rec.photos && rec.photos.length > 0" class="flex gap-2 pt-2">
-                <div v-for="(p, pidx) in rec.photos" :key="pidx" class="w-16 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-100">
-                  <img :src="p.url" class="w-full h-full object-cover">
-                </div>
-              </div>
             </div>
           </div>
           <div v-else class="p-6 bg-slate-50 rounded-xl text-center text-slate-400 text-xs">
@@ -571,18 +592,16 @@
 
   </div>
 
-  <!-- VUE LOGIC WITH 50 PRE-LOADED ASSETS -->
+  <!-- VUE LOGIC WITH FILE IMPORT & EXPORT -->
   <script>
     const { createApp, nextTick } = Vue;
 
-    // Helper Function เพื่อ Generate อุปกรณ์หม้อแปลงและ LBS ให้ครบ 50 ตัว
     function generate50Assets() {
       const list = [];
       const substations = ['Substation 1 (ลานไก)', 'Substation 2 (อาคารควบคุม)', 'Substation 3 (โรงผลิต)', 'Substation 4 (สถานีจ่ายย่อย)'];
       const trBrands = ['Tirathai', 'Ekarat', 'ABB', 'Schneider', 'QTC'];
       const lbsBrands = ['Entec', 'Schneider Electric', 'ABB', 'Eaton', 'Siemens'];
 
-      // 1. หม้อแปลง 25 ตัว (TR-01 ถึง TR-25)
       for (let i = 1; i <= 25; i++) {
         const idStr = i < 10 ? `TR-0${i}` : `TR-${i}`;
         list.push({
@@ -598,7 +617,6 @@
         });
       }
 
-      // 2. Load Break Switch 25 ตัว (LBS-01 ถึง LBS-25)
       for (let i = 1; i <= 25; i++) {
         const idStr = i < 10 ? `LBS-0${i}` : `LBS-${i}`;
         list.push({
@@ -628,11 +646,10 @@
           selectedAssetType: '',
           selectedAssetForModal: null,
           uploadedPhotos: [],
+          importedFileName: '',
 
-          // รายการอุปกรณ์ 50 ตัว
           assets: generate50Assets(),
 
-          // รายการประวัติงาน PM เริ่มต้น
           pmRecords: [
             {
               id: 101,
@@ -690,10 +707,6 @@
           return this.filteredAssets.slice(start, start + this.itemsPerPage);
         }
       },
-      watch: {
-        searchAsset() { this.currentPage = 1; },
-        filterType() { this.currentPage = 1; }
-      },
       mounted() {
         this.renderIcons();
       },
@@ -722,8 +735,8 @@
           const titles = {
             'dashboard': 'ระบบรายงานภาพรวมและการประเมินสุขภาพอุปกรณ์ (Dashboard)',
             'assets': 'ทะเบียนอุปกรณ์ทั้งหมด (50 Units Transformer & LBS Database)',
-            'pm-form': 'บันทึกข้อมูลการตรวจเช็กและแนบรูปภาพหน้างาน (PM Inspection Entry)',
-            'history': 'ประวัติการบำรุงรักษาย้อนหลังและส่งออกข้อมูล (PM History & Clear Logs)'
+            'pm-form': 'บันทึกข้อมูล PM / นำเข้าไฟล์ (PM Data Entry & File Import)',
+            'history': 'ประวัติการบำรุงรักษาย้อนหลังและส่งออกข้อมูล (PM History & Export)'
           };
           return titles[this.currentTab];
         },
@@ -747,6 +760,118 @@
         removePhoto(index) {
           this.uploadedPhotos.splice(index, 1);
         },
+
+        // ================= FILE IMPORT SYSTEM (Excel / CSV / JSON) =================
+        handleImportFile(event) {
+          const file = event.target.files[0];
+          if (!file) return;
+
+          this.importedFileName = file.name;
+          const fileName = file.name.toLowerCase();
+
+          if (fileName.endsWith('.json')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              try {
+                const parsed = JSON.parse(e.target.result);
+                this.processImportedData(Array.isArray(parsed) ? parsed : [parsed]);
+              } catch (err) {
+                alert('ไฟล์ JSON ไม่ถูกต้อง: ' + err.message);
+              }
+            };
+            reader.readAsText(file);
+          } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls') || fileName.endsWith('.csv')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                this.processImportedData(jsonData);
+              } catch (err) {
+                alert('เกิดข้อผิดพลาดในการอ่านไฟล์ Excel: ' + err.message);
+              }
+            };
+            reader.readAsArrayBuffer(file);
+          } else {
+            alert('กรุณาเลือกไฟล์ .xlsx, .xls, .csv หรือ .json เท่านั้น');
+          }
+        },
+
+        processImportedData(rows) {
+          if (!rows || rows.length === 0) {
+            alert('ไม่พบข้อมูลในไฟล์ที่เลือก');
+            return;
+          }
+
+          let addedCount = 0;
+          rows.forEach((row, index) => {
+            const assetId = row['Asset ID'] || row['รหัสอุปกรณ์'] || row['assetId'] || 'TR-01';
+            const matchedAsset = this.assets.find(a => a.id.toLowerCase() === String(assetId).trim().toLowerCase()) || {
+              id: assetId,
+              type: String(assetId).startsWith('TR') ? 'Transformer' : 'LBS',
+              location: row['Location'] || row['สถานที่'] || 'Main Substation'
+            };
+
+            const record = {
+              id: Date.now() + index,
+              date: row['Date'] || row['วันที่'] || row['date'] || new Date().toISOString().split('T')[0],
+              assetId: matchedAsset.id,
+              type: matchedAsset.type,
+              location: matchedAsset.location,
+              technician: row['Inspector'] || row['ผู้ตรวจ'] || row['technician'] || 'Technician (Imported)',
+              status: row['Status'] || row['ผลการตรวจ'] || row['status'] || 'Pass',
+              remarks: row['Remarks'] || row['หมายเหตุ'] || row['ข้อเสนอแนะ'] || 'นำเข้าจากไฟล์ ' + this.importedFileName,
+              details: row['details'] || {},
+              photos: []
+            };
+
+            this.pmRecords.push(record);
+            addedCount++;
+          });
+
+          // โหลดแถวแรกลง Form อัตโนมัติ เพื่อให้ผู้ใช้ตรวจทานได้ทันที
+          const first = rows[0];
+          const firstAssetId = first['Asset ID'] || first['รหัสอุปกรณ์'] || first['assetId'];
+          if (firstAssetId && this.assets.some(a => a.id === firstAssetId)) {
+            this.formData.assetId = firstAssetId;
+            this.onAssetSelect();
+            this.formData.date = first['Date'] || first['วันที่'] || this.formData.date;
+            this.formData.technician = first['Inspector'] || first['ผู้ตรวจ'] || this.formData.technician;
+            this.formData.remarks = first['Remarks'] || first['หมายเหตุ'] || this.formData.remarks;
+            this.formData.status = first['Status'] || first['ผลการตรวจ'] || 'Pass';
+          }
+
+          alert(`นำเข้าข้อมูลสำเร็จทั้งหมด ${addedCount} รายการ และเพิ่มลงในประวัติเรียบร้อยแล้ว`);
+          this.currentTab = 'history';
+        },
+
+        // ดาวน์โหลด Template Excel ตัวอย่างสำหรับกรอกข้อมูล
+        downloadTemplate() {
+          const sampleData = [
+            {
+              'วันที่': '2026-08-25',
+              'รหัสอุปกรณ์': 'TR-01',
+              'ผู้ตรวจ': 'สมชาย พิทักษ์วงษ์',
+              'ผลการตรวจ': 'Pass',
+              'หมายเหตุ': 'ตรวจเช็กตามรอบปกติ ไม่พบจุดบกพร่อง'
+            },
+            {
+              'วันที่': '2026-08-25',
+              'รหัสอุปกรณ์': 'LBS-01',
+              'ผู้ตรวจ': 'กิตติศักดิ์ ช่างซ่อมบำรุง',
+              'ผลการตรวจ': 'Pass',
+              'หมายเหตุ': 'วัดค่า Contact Resistance ผ่านเกณฑ์'
+            }
+          ];
+
+          const ws = XLSX.utils.json_to_sheet(sampleData);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "PM_Template");
+          XLSX.writeFile(wb, "PM_Import_Template.xlsx");
+        },
+
         savePmRecord() {
           const asset = this.assets.find(a => a.id === this.formData.assetId);
           if (!asset) return;
@@ -782,9 +907,9 @@
             checks: {}
           };
           this.uploadedPhotos = [];
+          this.importedFileName = '';
           this.selectedAssetType = '';
         },
-        // ฟังก์ชันล้างประวัติ PM ทั้งหมด
         confirmClearLogs() {
           if (this.pmRecords.length === 0) {
             alert('ไม่มีรายการประวัติให้ล้าง');
@@ -795,13 +920,11 @@
             alert('ล้างประวัติการบันทึกงาน PM ทั้งหมดเรียบร้อยแล้ว');
           }
         },
-        // ฟังก์ชันลบประวัติงาน PM รายตัว
         deleteSingleRecord(id) {
           if (confirm('ยืนยันการลบรายการประวัตินี้?')) {
             this.pmRecords = this.pmRecords.filter(r => r.id !== id);
           }
         },
-        // ฟังก์ชันเปิดดูข้อมูลและประวัติอุปกรณ์รายตัว
         viewAssetDetails(asset) {
           this.selectedAssetForModal = asset;
         },
