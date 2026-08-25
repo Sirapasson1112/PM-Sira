@@ -104,7 +104,7 @@
           <button @click="currentTab = 'history'" :class="navClass('history')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition group">
             <div class="flex items-center gap-3">
               <i data-lucide="history" class="w-4 h-4 transition group-hover:scale-110"></i>
-              <span>ประวัติ & ส่งออกรายงาน</span>
+              <span>ประวัติ & ดูการปรับปรุง</span>
             </div>
             <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-soft-100 text-soft-700 font-bold">{{ pmRecords.length }}</span>
           </button>
@@ -118,7 +118,7 @@
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Active
           </span>
         </div>
-        <p class="text-[11px] text-slate-400">High Voltage Maintenance v6.0</p>
+        <p class="text-[11px] text-slate-400">High Voltage Maintenance v6.5</p>
       </div>
     </aside>
 
@@ -227,6 +227,7 @@
                     <th class="p-3">ผู้ตรวจเช็ก</th>
                     <th class="p-3">ดัชนี AHI</th>
                     <th class="p-3">ผลการตรวจ</th>
+                    <th class="p-3 text-center">ดูรายละเอียด</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-soft-200">
@@ -246,9 +247,14 @@
                         {{ r.status }}
                       </span>
                     </td>
+                    <td class="p-3 text-center">
+                      <button @click="viewImprovementDetails(r)" class="text-brand-600 hover:text-brand-800 font-semibold underline text-xs">
+                        ดูการปรับปรุง
+                      </button>
+                    </td>
                   </tr>
                   <tr v-if="pmRecords.length === 0">
-                    <td colspan="7" class="p-6 text-center text-slate-400">ยังไม่มีบันทึกข้อมูล</td>
+                    <td colspan="8" class="p-6 text-center text-slate-400">ยังไม่มีบันทึกข้อมูล</td>
                   </tr>
                 </tbody>
               </table>
@@ -369,7 +375,7 @@
                       <option value="Half-Year PM (ราย 6 เดือน)">Half-Year PM (ราย 6 เดือน)</option>
                       <option value="Thermography & Visual (ตรวจความร้อน)">Thermography & Visual (ตรวจความร้อน)</option>
                       <option value="DGA Oil Sampling (เก็บตัวอย่างน้ำมัน)">DGA Oil Sampling (เก็บตัวอย่างน้ำมัน)</option>
-                      <option value="Emergency PM (แก้ไขฉุกเฉิน)">Emergency PM (แก้ไขฉุกเฉิน)</option>
+                      <option value="Corrective / Emergency (แก้ไขฉุกเฉิน)">Corrective / Emergency (แก้ไขฉุกเฉิน)</option>
                     </select>
                   </div>
                 </div>
@@ -417,7 +423,7 @@
                 </div>
               </div>
 
-              <!-- Sign-off -->
+              <!-- Sign-off & Remarks -->
               <div class="bg-soft-50 p-5 rounded-2xl border border-soft-200 space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                   <div>
@@ -438,8 +444,8 @@
                   </div>
                 </div>
                 <div>
-                  <label class="block text-xs font-semibold text-slate-700 mb-1">ข้อเสนอแนะ</label>
-                  <input v-model="formData.remarks" type="text" placeholder="รายละเอียดเพิ่มเติม..." class="w-full p-2.5 bg-white border border-soft-300 rounded-xl">
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">บันทึกการปรับปรุง / งานแก้ไข / ข้อเสนอแนะ *</label>
+                  <textarea v-model="formData.remarks" rows="2" placeholder="ระบุรายละเอียดสิ่งที่ได้ดำเนินการแก้ไข หรือรายการที่ต้องปรับปรุง..." class="w-full p-2.5 bg-white border border-soft-300 rounded-xl focus:border-brand-500 focus:outline-none"></textarea>
                 </div>
               </div>
 
@@ -456,12 +462,12 @@
           </div>
         </section>
 
-        <!-- ================= 4. HISTORY & EXPORT ================= -->
+        <!-- ================= 4. HISTORY & EXPORT & VIEW IMPROVEMENTS ================= -->
         <section v-if="currentTab === 'history'" class="space-y-6">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h3 class="font-display font-bold text-base text-soft-900">ประวัติงาน PM ทั้งหมดในระบบ</h3>
-              <p class="text-xs text-slate-500">จัดการข้อมูลประวัติและส่งออกรายงาน Excel/PDF</p>
+              <h3 class="font-display font-bold text-base text-soft-900">ประวัติงาน PM และรายงานผลการตรวจเช็กทั้งหมด</h3>
+              <p class="text-xs text-slate-500">สามารถกดดูรายละเอียดการปรับปรุงแก้ไขของแต่ละใบงานได้</p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
               <button @click="exportToExcel" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-display font-semibold flex items-center gap-2 shadow-sm transition">
@@ -484,11 +490,12 @@
                     <th class="p-4">วันที่ตรวจ</th>
                     <th class="p-4">Permit No.</th>
                     <th class="p-4">รหัสอุปกรณ์</th>
-                    <th class="p-4">ประเภท</th>
+                    <th class="p-4">ประเภทงาน</th>
                     <th class="p-4">ผู้ตรวจ / ผู้อนุมัติ</th>
                     <th class="p-4">สุขภาพ AHI</th>
                     <th class="p-4">ผลการตรวจ</th>
-                    <th class="p-4 text-center">จัดการ</th>
+                    <th class="p-4 text-center">ดูการปรับปรุง</th>
+                    <th class="p-4 text-center">ลบ</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-soft-200">
@@ -512,13 +519,18 @@
                       </span>
                     </td>
                     <td class="p-4 text-center">
+                      <button @click="viewImprovementDetails(r)" class="bg-brand-50 hover:bg-brand-600 hover:text-white text-brand-700 font-semibold px-3 py-1.5 rounded-lg border border-brand-200 text-xs transition inline-flex items-center gap-1 shadow-sm">
+                        <i data-lucide="file-text" class="w-3.5 h-3.5"></i> ดูการปรับปรุง
+                      </button>
+                    </td>
+                    <td class="p-4 text-center">
                       <button @click="deleteSingleRecord(r.id)" title="ลบรายการนี้" class="text-slate-400 hover:text-rose-600 p-1">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                       </button>
                     </td>
                   </tr>
                   <tr v-if="pmRecords.length === 0">
-                    <td colspan="8" class="p-8 text-center text-slate-400 font-mono">
+                    <td colspan="9" class="p-8 text-center text-slate-400 font-mono">
                       ไม่มีประวัติการบันทึกข้อมูล PM ในระบบ
                     </td>
                   </tr>
@@ -530,6 +542,93 @@
 
       </div>
     </main>
+
+    <!-- ================= MODAL: VIEW IMPROVEMENT & DIAGNOSTIC DETAILS ================= -->
+    <div v-if="selectedImprovementRecord" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div class="bg-white max-w-3xl w-full p-6 space-y-5 rounded-2xl max-h-[90vh] overflow-y-auto custom-scrollbar border border-soft-200 shadow-2xl">
+        
+        <!-- Header -->
+        <div class="flex justify-between items-start border-b border-soft-200 pb-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-brand-50 text-brand-700 border border-brand-200">{{ selectedImprovementRecord.permitNo }}</span>
+              <h3 class="font-display font-bold text-base text-soft-900">
+                รายละเอียดการตรวจและบันทึกการปรับปรุง: {{ selectedImprovementRecord.assetId }}
+              </h3>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">
+              วันที่ทำรายการ: {{ selectedImprovementRecord.date }} | สถานที่: {{ selectedImprovementRecord.location }}
+            </p>
+          </div>
+          <button @click="selectedImprovementRecord = null" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <!-- 1. บันทึกการปรับปรุงและงานแก้ไข (Corrective Actions) -->
+        <div class="p-4 rounded-xl border border-brand-200 bg-brand-50/50 space-y-2">
+          <h4 class="font-display font-bold text-xs text-brand-900 uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="wrench" class="w-4 h-4 text-brand-600"></i> บันทึกงานปรับปรุงแก้ไขและการดำเนินการหน้างาน (Action Plan)
+          </h4>
+          <p class="text-xs text-slate-800 leading-relaxed font-medium bg-white p-3 rounded-lg border border-brand-100">
+            {{ selectedImprovementRecord.remarks || 'ไม่มีบันทึกเพิ่มเติม' }}
+          </p>
+        </div>
+
+        <!-- 2. ข้อมูลผลการประเมินและดัชนีสุขภาพ (Health & Inspector) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-soft-50 p-4 rounded-xl text-xs font-mono border border-soft-200">
+          <div>
+            <span class="text-slate-400 block text-[10px]">ผลการตรวจ</span>
+            <span :class="statusBadge(selectedImprovementRecord.status)" class="px-2 py-0.5 rounded-full font-bold border text-[11px] inline-block mt-0.5">
+              {{ selectedImprovementRecord.status }}
+            </span>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px]">เกรดสุขภาพ (AHI)</span>
+            <span class="font-bold text-slate-800">Grade {{ selectedImprovementRecord.ahiGrade || 'A' }} ({{ selectedImprovementRecord.ahiScore || 95 }}%)</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px]">ผู้ตรวจเช็ก</span>
+            <span class="font-semibold text-slate-700 truncate block">{{ selectedImprovementRecord.technician }}</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px]">วิศวกรผู้อนุมัติ</span>
+            <span class="font-semibold text-slate-700 truncate block">{{ selectedImprovementRecord.approvedBy || '-' }}</span>
+          </div>
+        </div>
+
+        <!-- 3. ค่าพารามิเตอร์การทดสอบที่บันทึกได้ -->
+        <div>
+          <h4 class="font-display font-bold text-xs text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i data-lucide="activity" class="w-4 h-4 text-brand-600"></i> ผลการวัดพารามิเตอร์ทางไฟฟ้า & กายภาพ
+          </h4>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
+            <div v-for="(val, key) in selectedImprovementRecord.details" :key="key" class="p-2.5 bg-soft-50 rounded-lg border border-soft-200">
+              <span class="text-slate-400 block text-[10px] font-mono">{{ formatKeyName(key) }}</span>
+              <span class="font-bold text-slate-800 font-mono">{{ val || '-' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. รูปภาพหน้างาน -->
+        <div v-if="selectedImprovementRecord.photos && selectedImprovementRecord.photos.length > 0">
+          <h4 class="font-display font-bold text-xs text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i data-lucide="camera" class="w-4 h-4 text-brand-600"></i> รูปภาพประกอบการปรับปรุงหน้างาน
+          </h4>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div v-for="(p, idx) in selectedImprovementRecord.photos" :key="idx" class="rounded-xl overflow-hidden border border-soft-200 aspect-video bg-black shadow-sm">
+              <img :src="p.url" class="w-full h-full object-cover">
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex justify-end pt-3 border-t border-soft-200">
+          <button @click="selectedImprovementRecord = null" class="px-5 py-2 bg-soft-800 text-white rounded-xl text-xs font-semibold hover:bg-soft-900 transition">
+            ปิดหน้าต่าง
+          </button>
+        </div>
+
+      </div>
+    </div>
 
     <!-- MODAL: ADD ASSET -->
     <div v-if="showAddAssetModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -600,7 +699,7 @@
                 <span :class="statusBadge(rec.status)" class="px-2.5 py-0.5 rounded-full font-bold border text-[11px]">{{ rec.status }}</span>
               </div>
               <div class="text-slate-600"><span class="font-semibold text-slate-700">ผู้ตรวจ:</span> {{ rec.technician }} | <span class="font-semibold text-slate-700">ผู้อนุมัติ:</span> {{ rec.approvedBy || '-' }}</div>
-              <div class="text-slate-600"><span class="font-semibold text-slate-700">ข้อเสนอแนะ:</span> {{ rec.remarks || '-' }}</div>
+              <div class="text-slate-600"><span class="font-semibold text-slate-700">การปรับปรุง:</span> {{ rec.remarks || '-' }}</div>
             </div>
           </div>
           <div v-else class="p-6 bg-soft-50 rounded-xl text-center text-slate-400 text-xs font-mono">ไม่มีประวัติการเข้าตรวจ</div>
@@ -665,14 +764,13 @@
         return {
           currentTab: 'dashboard',
           showAddAssetModal: false,
+          selectedImprovementRecord: null,
           searchAsset: '',
           filterType: 'ALL',
           currentPage: 1,
           itemsPerPage: 9,
           selectedAssetType: '',
           selectedAssetForModal: null,
-          uploadedPhotos: [],
-          importedFileName: '',
           charts: {},
 
           assets: storedAssets ? JSON.parse(storedAssets) : generateInitial50Assets(),
@@ -703,9 +801,9 @@
               status: 'Pass',
               ahiGrade: 'A',
               ahiScore: 98,
-              remarks: 'ตรวจเช็กประจำปี ค่าฉนวน PI = 2.5, Breakdown Oil 48kV สภาพพร้อมใช้งานสมบูรณ์',
+              remarks: 'ตรวจเช็กประจำปี ค่าฉนวน PI = 2.5, Breakdown Oil 48kV ดำเนินการทำความสะอาด Bushing และขันกวดขั้วต่อทั้งหมด สภาพพร้อมใช้งานสมบูรณ์',
               details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 350, irPriGnd10m: 875, oilDielectric: 48, oilMoisture: 12, dgaC2H2: 0.1, thermoMaxTemp: 48.2 },
-              photos: []
+              photos: [{ url: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b6?w=500&q=80' }]
             },
             {
               id: 102,
@@ -720,9 +818,9 @@
               status: 'Pass',
               ahiGrade: 'A',
               ahiScore: 92,
-              remarks: 'ดำเนินการเปลี่ยนสารดูดความชื้น Silica Gel ใหม่ทั้งกระบอก และเติมน้ำมันหม้อแปลงเพิ่ม 25 ลิตร',
+              remarks: 'ดำเนินการปรับปรุง: เปลี่ยนสารดูดความชื้น Silica Gel ใหม่ทั้งกระบอก (ของเดิมเปลี่ยนเป็นสีชมพู) และเติมน้ำมันหม้อแปลงเพิ่ม 25 ลิตรจนได้ระดับ Gauge',
               details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 280, irPriGnd10m: 620, oilDielectric: 42, oilMoisture: 18, dgaC2H2: 0.2, thermoMaxTemp: 52.0 },
-              photos: []
+              photos: [{ url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500&q=80' }]
             },
             {
               id: 103,
@@ -737,9 +835,9 @@
               status: 'Pass with Condition',
               ahiGrade: 'B',
               ahiScore: 78,
-              remarks: 'แก้ไขรอยรั่วซึมปะเก็น Flange Bushing H1 ขันกวดตาม Torque แล้ว เฝ้าระวังคราบซึมซ้ำใน 1 เดือน',
+              remarks: 'ดำเนินการปรับปรุง: แก้ไขรอยรั่วซึมปะเก็น Flange Bushing H1 ขันกวดตาม Torque แล้ว เฝ้าระวังคราบซึมซ้ำใน 1 เดือน',
               details: { tankLeaks: 'Minor Seepage', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 150, irPriGnd10m: 320, oilDielectric: 36, oilMoisture: 22, dgaC2H2: 0.8, thermoMaxTemp: 64.5 },
-              photos: []
+              photos: [{ url: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=500&q=80' }]
             },
             {
               id: 104,
@@ -754,29 +852,12 @@
               status: 'Fail',
               ahiGrade: 'D',
               ahiScore: 42,
-              remarks: 'วิเคราะห์ผล DGA พบก๊าซ C2H2 = 4.8 ppm บ่งชี้ว่าเกิด Internal Arcing ต้องปลดวงจรเพื่อ Overhaul',
+              remarks: 'ข้อเสนอแนะการปรับปรุง: วิเคราะห์ผล DGA พบก๊าซ C2H2 = 4.8 ppm บ่งชี้ว่าเกิด Internal Arcing ต้องวางแผนปลดหม้อแปลงเพื่อ Overhaul ขดลวดด่วน',
               details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Need Replacement', irPriGnd1m: 85, irPriGnd10m: 160, oilDielectric: 28, oilMoisture: 32, dgaC2H2: 4.8, thermoMaxTemp: 78.0 },
-              photos: []
+              photos: [{ url: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=500&q=80' }]
             },
             {
               id: 105,
-              permitNo: 'PM-HV-2026-022',
-              date: '2026-08-18',
-              assetId: 'TR-18',
-              type: 'Transformer',
-              location: 'Substation 2 (อาคารควบคุม)',
-              pmType: 'Annual PM (บำรุงรักษารายปี)',
-              technician: 'สมชาย พิทักษ์วงษ์',
-              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
-              status: 'Pass',
-              ahiGrade: 'A',
-              ahiScore: 99,
-              remarks: 'หม้อแปลง Dry-Type ตรวจพัดลมระบายอากาศ เทอร์โมมิเตอร์ และค่าความเป็นฉนวนผ่านเกณฑ์ 100%',
-              details: { tankLeaks: 'Normal', oilLevel: 'Normal', silicaGel: 'Normal', irPriGnd1m: 1200, irPriGnd10m: 3100, turnsRatioError: 0.12, thermoMaxTemp: 44.2 },
-              photos: []
-            },
-            {
-              id: 106,
               permitNo: 'PM-HV-2026-025',
               date: '2026-08-19',
               assetId: 'LBS-02',
@@ -788,29 +869,12 @@
               status: 'Pass',
               ahiGrade: 'A',
               ahiScore: 94,
-              remarks: 'วัดค่า Contact Resistance เฉลี่ย 44 µΩ แรงดันก๊าซ SF6 ปกติ 0.052 MPa',
+              remarks: 'ตรวจเช็กตามรอบ Contact Resistance เฉลี่ย 44 µΩ แรงดัน SF6 ปกติ 0.052 MPa ดำเนินการหยอดน้ำมันหล่อลื่นกลไกเรียบร้อย',
               details: { sf6Pressure: '0.052 MPa', contactResA: 44.2, contactResB: 45.1, contactResC: 43.8, syncDiscrepancy: 4.2, opCounter: 345, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 2800 },
-              photos: []
+              photos: [{ url: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b6?w=500&q=80' }]
             },
             {
-              id: 107,
-              permitNo: 'CM-HV-2026-031',
-              date: '2026-08-20',
-              assetId: 'LBS-05',
-              type: 'LBS',
-              location: 'Substation 2 (อาคารควบคุม)',
-              pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
-              technician: 'ประสิทธิ์ ช่างฝีมือ',
-              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
-              status: 'Pass',
-              ahiGrade: 'A',
-              ahiScore: 90,
-              remarks: 'ทำความสะอาดคราบฝุ่นกลไกสปริง สเปรย์จาระบีสังเคราะห์ และปรับแต่ง Linking Rod คล่องตัวดี',
-              details: { sf6Pressure: '0.050 MPa', contactResA: 48.0, contactResB: 49.5, contactResC: 47.8, syncDiscrepancy: 5.1, opCounter: 512, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 2200 },
-              photos: []
-            },
-            {
-              id: 108,
+              id: 106,
               permitNo: 'CM-HV-2026-035',
               date: '2026-08-22',
               assetId: 'LBS-09',
@@ -822,43 +886,9 @@
               status: 'Pass',
               ahiGrade: 'A',
               ahiScore: 91,
-              remarks: 'ขัดล้างคราบออกไซด์หน้าสัมผัส Main Tulip Contact เฟส B ค่าความต้านทานลดจาก 115 เหลือ 48.2 µΩ',
+              remarks: 'ดำเนินการปรับปรุง: ขัดล้างคราบออกไซด์หน้าสัมผัส Main Tulip Contact เฟส B ค่าความต้านทานลดจาก 115 เหลือ 48.2 µΩ ผ่านเกณฑ์มาตรฐาน',
               details: { sf6Pressure: '0.048 MPa', contactResA: 46.5, contactResB: 48.2, contactResC: 47.1, syncDiscrepancy: 4.8, opCounter: 680, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 1950 },
-              photos: []
-            },
-            {
-              id: 109,
-              permitNo: 'CM-HV-2026-040',
-              date: '2026-08-23',
-              assetId: 'LBS-14',
-              type: 'LBS',
-              location: 'Substation 4 (สถานีจ่ายย่อย)',
-              pmType: 'Corrective / Emergency (แก้ไขฉุกเฉิน)',
-              technician: 'ธีรศักดิ์ กล้าหาญ',
-              approvedBy: 'สมชาย พิทักษ์วงษ์',
-              status: 'Pass with Condition',
-              ahiGrade: 'B',
-              ahiScore: 76,
-              remarks: 'พบก๊าซ SF6 ตกเหลือ 0.028 MPa ทำการขันกวดซีลวาล์วและเติมก๊าซกลับเป็น 0.050 MPa ให้เฝ้าระวังรอยรั่ว',
-              details: { sf6Pressure: '0.050 MPa (Refilled)', contactResA: 52.0, contactResB: 54.2, contactResC: 53.1, syncDiscrepancy: 6.0, opCounter: 420, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 1800 },
-              photos: []
-            },
-            {
-              id: 110,
-              permitNo: 'PM-HV-2026-044',
-              date: '2026-08-25',
-              assetId: 'LBS-21',
-              type: 'LBS',
-              location: 'Substation 2 (อาคารควบคุม)',
-              pmType: 'Annual PM (บำรุงรักษารายปี)',
-              technician: 'ชานนท์ สุขุมวิท',
-              approvedBy: 'ดร.วิศวกรรม ระบบไฟ',
-              status: 'Pass',
-              ahiGrade: 'A',
-              ahiScore: 95,
-              remarks: 'ปรับแนว Alignment ใบมีดต่อลงดิน Earthing Blade สับแนบสนิท และทดสอบระบบ Mechanical Interlock ปกติ',
-              details: { sf6Pressure: '0.051 MPa', contactResA: 43.1, contactResB: 44.0, contactResC: 42.8, syncDiscrepancy: 3.9, opCounter: 188, operationMechanism: 'Smooth', earthingSwitch: 'Normal', lbsIR: 3200 },
-              photos: []
+              photos: [{ url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500&q=80' }]
             }
           ],
 
@@ -953,12 +983,41 @@
             'dashboard': 'แดชบอร์ดสรุปภาพรวมและดัชนีสุขภาพอุปกรณ์ (Dashboard & AHI)',
             'assets': 'ทะเบียนอุปกรณ์หม้อแปลงและ Load Break Switch (Asset Inventory)',
             'pm-form': 'บันทึกข้อมูลการตรวจเช็กและวินิจฉัยทางวิศวกรรม (Diagnostics Entry)',
-            'history': 'ประวัติการบำรุงรักษาย้อนหลังและส่งออกรายงาน (PM Log & Report Export)'
+            'history': 'ประวัติการบำรุงรักษาและบันทึกการปรับปรุง (PM History & Actions)'
           };
           return titles[this.currentTab];
         },
         getCountByType(type) { return this.assets.filter(a => a.type === type).length; },
         getStatusCount(status) { return this.pmRecords.filter(r => r.status === status).length; },
+        
+        viewImprovementDetails(record) {
+          this.selectedImprovementRecord = record;
+        },
+
+        formatKeyName(key) {
+          const map = {
+            tankLeaks: 'สภาพตัวถัง/รั่วซึม',
+            oilLevel: 'ระดับน้ำมัน Conservator',
+            silicaGel: 'สารดูดความชื้น Silica Gel',
+            irPriGnd1m: 'Insulation Pri-Gnd 1m (MΩ)',
+            irPriGnd10m: 'Insulation Pri-Gnd 10m (MΩ)',
+            oilDielectric: 'Dielectric Voltage (kV)',
+            oilMoisture: 'Oil Moisture (ppm)',
+            dgaC2H2: 'Acetylene C2H2 (ppm)',
+            thermoMaxTemp: 'Thermo Max Temp (°C)',
+            sf6Pressure: 'SF6 Gas Pressure',
+            contactResA: 'Contact Res A (µΩ)',
+            contactResB: 'Contact Res B (µΩ)',
+            contactResC: 'Contact Res C (µΩ)',
+            syncDiscrepancy: 'Sync Discrepancy (ms)',
+            opCounter: 'Operation Counter',
+            operationMechanism: 'กลไกสับ-ปลด',
+            earthingSwitch: 'Earthing Switch',
+            lbsIR: 'Insulation Phase-Phase (MΩ)'
+          };
+          return map[key] || key;
+        },
+
         initCharts() {
           const ctx1 = document.getElementById('healthChart');
           const ctx2 = document.getElementById('pieChart');
@@ -1013,14 +1072,18 @@
             options: {
               responsive: true,
               maintainAspectRatio: false,
-              plugins: { legend: { position: 'bottom', labels: { color: '#475569', font: { family: 'Prompt' } } } },
+              plugins: {
+                legend: { position: 'bottom', labels: { color: '#475569', font: { family: 'Prompt' } } }
+              },
               cutout: '72%'
             }
           });
         },
+
         updateCharts() {
           if (this.charts.bar && this.charts.pie) { this.initCharts(); }
         },
+
         addNewAsset() {
           const idUpper = this.newAssetForm.id.trim().toUpperCase();
           if (this.assets.some(a => a.id.toUpperCase() === idUpper)) {
@@ -1031,16 +1094,19 @@
           alert(`เพิ่มอุปกรณ์ "${idUpper}" เรียบร้อยแล้ว`);
           this.showAddAssetModal = false;
         },
+
         deleteAsset(assetId) {
           if (confirm(`ยืนยันการลบอุปกรณ์ ${assetId}?`)) {
             this.assets = this.assets.filter(a => a.id !== assetId);
           }
         },
+
         onAssetSelect() {
           const asset = this.assets.find(a => a.id === this.formData.assetId);
           this.selectedAssetType = asset ? asset.type : '';
           this.formData.checks = {};
         },
+
         savePmRecord() {
           const asset = this.assets.find(a => a.id === this.formData.assetId);
           if (!asset) return;
@@ -1073,6 +1139,7 @@
           this.resetForm();
           this.currentTab = 'history';
         },
+
         resetForm() {
           this.formData = {
             permitNo: '',
@@ -1087,20 +1154,24 @@
           };
           this.selectedAssetType = '';
         },
+
         confirmClearLogs() {
           if (confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างประวัติการบันทึกงาน PM ทั้งหมด?')) {
             this.pmRecords = [];
             alert('ล้างประวัติเรียบร้อยแล้ว');
           }
         },
+
         deleteSingleRecord(id) {
           if (confirm('ยืนยันการลบรายการนี้?')) {
             this.pmRecords = this.pmRecords.filter(r => r.id !== id);
           }
         },
+
         viewAssetDetails(asset) { this.selectedAssetForModal = asset; },
         getAssetPmCount(assetId) { return this.pmRecords.filter(r => r.assetId === assetId).length; },
         getAssetRecords(assetId) { return this.pmRecords.filter(r => r.assetId === assetId); },
+
         exportToExcel() {
           const exportRows = this.pmRecords.map(r => ({
             'ID': r.id,
@@ -1114,7 +1185,7 @@
             'ผู้อนุมัติ': r.approvedBy || '-',
             'ผลการตรวจ': r.status,
             'เกรด AHI': `Grade ${r.ahiGrade || 'A'}`,
-            'ข้อเสนอแนะ': r.remarks || '-',
+            'บันทึกการปรับปรุง/แก้ไข': r.remarks || '-',
             'พารามิเตอร์': JSON.stringify(r.details)
           }));
           const ws = XLSX.utils.json_to_sheet(exportRows);
@@ -1122,6 +1193,7 @@
           XLSX.utils.book_append_sheet(wb, ws, "PM_Records");
           XLSX.writeFile(wb, `SUBSTATION_PM_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
         },
+
         exportToPDF() {
           const { jsPDF } = window.jspdf;
           const doc = new jsPDF('p', 'mm', 'a4');
@@ -1136,7 +1208,7 @@
           ]);
 
           doc.autoTable({
-            head: [['Date', 'Permit No', 'Asset ID', 'Type', 'Inspector', 'AHI', 'Status', 'Remarks']],
+            head: [['Date', 'Permit No', 'Asset ID', 'Type', 'Inspector', 'AHI', 'Status', 'Action / Remarks']],
             body: tableRows,
             startY: 30,
             styles: { fontSize: 8 },
