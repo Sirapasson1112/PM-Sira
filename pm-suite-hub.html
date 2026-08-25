@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BUSBAR — ชุดเครื่องมือวางแผนบำรุงรักษาอุปกรณ์ไฟฟ้า</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0A101C;
+    --bg-panel: #101A2C;
+    --bg-panel-hover: #142238;
+    --line: #26374F;
+    --line-bright: #3A5170;
+    --amber: #F2A93B;
+    --cyan: #55D8C9;
+    --text: #E7EDF6;
+    --text-muted: #8697AF;
+    --text-faint: #536078;
+    --radius: 3px;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:var(--bg);
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-position: -1px -1px;
+    color:var(--text);
+    font-family:'IBM Plex Sans Thai', sans-serif;
+    font-weight:400;
+    line-height:1.6;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+
+  .mono{ font-family:'IBM Plex Mono', monospace; letter-spacing:0.02em; }
+  .display{ font-family:'Space Grotesk', sans-serif; }
+
+  a{ color:inherit; text-decoration:none; }
+  :focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+
+  /* ---------- topbar ---------- */
+  header{
+    position:sticky; top:0; z-index:20;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 40px;
+    background:rgba(10,16,28,0.88);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand-mark{ width:20px; height:20px; flex:none; }
+  .brand-name{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:16px; letter-spacing:0.06em; }
+  .brand-sub{ font-size:11px; color:var(--text-faint); }
+  .status-pill{
+    display:flex; align-items:center; gap:8px;
+    font-size:11px; color:var(--text-muted);
+    padding:6px 12px; border:1px solid var(--line); border-radius:20px;
+  }
+  .dot{ width:6px; height:6px; border-radius:50%; background:var(--cyan); box-shadow:0 0 6px var(--cyan); animation:blink 2.4s ease-in-out infinite; }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+
+  /* ---------- hero ---------- */
+  .hero{
+    max-width:1240px; margin:0 auto;
+    padding:88px 40px 60px;
+    display:grid; grid-template-columns: 1.05fr 0.95fr; gap:60px; align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; color:var(--amber); margin-bottom:22px;
+    padding:4px 0;
+  }
+  .eyebrow::before{ content:''; width:16px; height:1px; background:var(--amber); }
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:clamp(34px, 4.2vw, 52px);
+    line-height:1.14;
+    margin:0 0 22px;
+    letter-spacing:-0.01em;
+  }
+  h1 .accent{ color:var(--cyan); }
+  .lede{ color:var(--text-muted); font-size:16px; max-width:46ch; margin:0 0 32px; }
+  .hero-meta{ display:flex; gap:28px; flex-wrap:wrap; }
+  .meta-item .meta-val{ font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:600; color:var(--text); }
+  .meta-item .meta-label{ font-size:11px; color:var(--text-faint); margin-top:2px; }
+
+  /* schematic diagram */
+  .schematic{ position:relative; }
+  .schematic svg{ width:100%; height:auto; display:block; }
+  .bus-line{ stroke:var(--line-bright); stroke-width:2; fill:none; }
+  .feed-line{ stroke:var(--line-bright); stroke-width:1.5; fill:none; }
+  .pulse{
+    stroke:var(--cyan); stroke-width:2; fill:none;
+    stroke-dasharray: 6 10;
+    animation: flow 2.6s linear infinite;
+    opacity:0.9;
+  }
+  @keyframes flow{ to{ stroke-dashoffset:-160; } }
+  .node{ fill:var(--bg-panel); stroke:var(--line-bright); stroke-width:1.5; }
+  .node-core{ fill:var(--amber); }
+  .schematic-label{ font-family:'IBM Plex Mono', monospace; font-size:10px; fill:var(--text-faint); }
+
+  /* ---------- section divider ---------- */
+  .rail{
+    max-width:1240px; margin:0 auto; padding:0 40px;
+    display:flex; align-items:center; gap:16px;
+    color:var(--text-faint); font-size:11px;
+  }
+  .rail::before, .rail::after{ content:''; height:1px; flex:1; background:var(--line); }
+
+  /* ---------- tools ---------- */
+  .tools{ max-width:1240px; margin:0 auto; padding:56px 40px 100px; }
+  .tools-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:20px; margin-bottom:36px; flex-wrap:wrap; }
+  .tools-head h2{ font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:600; margin:0; }
+  .tools-head p{ color:var(--text-muted); font-size:14px; margin:6px 0 0; }
+  .source-tag{ font-size:11px; color:var(--text-muted); border:1px solid var(--line); padding:6px 12px; border-radius:20px; white-space:nowrap; }
+  .source-tag b{ color:var(--amber); font-weight:500; }
+
+  .grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:1px; background:var(--line); border:1px solid var(--line); }
+  .card{
+    background:var(--bg-panel);
+    padding:26px 24px 22px;
+    display:flex; flex-direction:column;
+    min-height:260px;
+    transition:background 0.2s ease;
+    position:relative;
+  }
+  .card:hover{ background:var(--bg-panel-hover); }
+  .card-top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; }
+  .breaker{
+    width:34px; height:34px; border:1.5px solid var(--line-bright); border-radius:4px;
+    display:flex; align-items:center; justify-content:center; flex:none;
+  }
+  .breaker .stem{ width:2px; height:16px; background:var(--cyan); transform:rotate(18deg); transition:transform 0.2s ease; }
+  .card:hover .breaker .stem{ transform:rotate(0deg); }
+  .card-index{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint); }
+  .card h3{ font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:600; margin:0 0 8px; line-height:1.35; }
+  .card p{ font-size:13.5px; color:var(--text-muted); margin:0 0 18px; flex:1; }
+  .card-tags{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px; }
+  .card-tags span{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--cyan);
+    border:1px solid rgba(85,216,201,0.35); padding:3px 8px; border-radius:3px;
+  }
+  .card-link{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:13px; font-weight:500; color:var(--text);
+    padding-top:14px; border-top:1px solid var(--line);
+  }
+  .card-link svg{ width:13px; height:13px; transition:transform 0.2s ease; }
+  .card:hover .card-link svg{ transform:translate(3px,-3px); }
+
+  @media (max-width: 920px){
+    .hero{ grid-template-columns:1fr; padding-top:56px; }
+    .grid{ grid-template-columns:1fr; }
+    header{ padding:16px 20px; }
+    .hero, .tools, .rail{ padding-left:20px; padding-right:20px; }
+  }
+
+  footer{
+    border-top:1px solid var(--line);
+    padding:26px 40px; max-width:1240px; margin:0 auto;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    font-size:12px; color:var(--text-faint);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 20 20" fill="none">
+      <path d="M10 1V8M10 8L4 8M10 8L16 8M4 8V19M16 8V19" stroke="#55D8C9" stroke-width="1.6"/>
+      <circle cx="10" cy="8" r="2" fill="#F2A93B"/>
+    </svg>
+    <div>
+      <div class="brand-name">BUSBAR</div>
+      <div class="brand-sub mono">MAINTENANCE PLANNING SUITE</div>
+    </div>
+  </div>
+  <div class="status-pill">
+    <span class="dot"></span>
+    <span class="mono">ALL SYSTEMS ONLINE · IN-BROWSER</span>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="eyebrow mono">6 MODULES · MAXIMO EXPORT · NO INSTALL</div>
+    <h1>วางแผนบำรุงรักษาอุปกรณ์ไฟฟ้า<br>เหมือนอ่าน<span class="accent">แผนผังวงจร</span>เดียว</h1>
+    <p class="lede">
+      โหลดไฟล์จาก Maximo แล้วปล่อยให้แต่ละโมดูลต่อสายงานให้เอง — ตั้งแต่จัดลำดับ PM ตามความเสี่ยง
+      ไปจนถึงนำทีมช่างไปยังจุดตรวจ ทุกอย่างประมวลผลอยู่ในเบราว์เซอร์ ไม่มีข้อมูลไหนถูกส่งขึ้นเซิร์ฟเวอร์
+    </p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-val mono">06</div>
+        <div class="meta-label mono">TOOLS</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-val mono">.XLSX / .CSV</div>
+        <div class="meta-label mono">INPUT FORMAT</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-val mono">0</div>
+        <div class="meta-label mono">SERVER UPLOADS</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="schematic" aria-hidden="true">
+    <svg viewBox="0 0 420 300">
+      <!-- main bus -->
+      <line x1="30" y1="40" x2="30" y2="260" class="bus-line"/>
+      <line x1="30" y1="40" x2="30" y2="260" class="pulse"/>
+      <circle cx="30" cy="40" r="5" class="node node-core"/>
+
+      <!-- 6 feeder taps -->
+      <g>
+        <line x1="30" y1="60"  x2="120" y2="60"  class="feed-line"/>
+        <line x1="30" y1="60"  x2="120" y2="60"  class="pulse"/>
+        <circle cx="120" cy="60" r="4" class="node"/>
+        <text x="132" y="64" class="schematic-label">PM SCHEDULING</text>
+
+        <line x1="30" y1="104" x2="120" y2="104" class="feed-line"/>
+        <line x1="30" y1="104" x2="120" y2="104" class="pulse"/>
+        <circle cx="120" cy="104" r="4" class="node"/>
+        <text x="132" y="108" class="schematic-label">FEEDER OUTAGE</text>
+
+        <line x1="30" y1="148" x2="120" y2="148" class="feed-line"/>
+        <line x1="30" y1="148" x2="120" y2="148" class="pulse"/>
+        <circle cx="120" cy="148" r="4" class="node"/>
+        <text x="132" y="152" class="schematic-label">GPS ROUTE</text>
+
+        <line x1="30" y1="192" x2="120" y2="192" class="feed-line"/>
+        <line x1="30" y1="192" x2="120" y2="192" class="pulse"/>
+        <circle cx="120" cy="192" r="4" class="node"/>
+        <text x="132" y="196" class="schematic-label">FIELD INSPECTION</text>
+
+        <line x1="30" y1="236" x2="120" y2="236" class="feed-line"/>
+        <line x1="30" y1="236" x2="120" y2="236" class="pulse"/>
+        <circle cx="120" cy="236" r="4" class="node"/>
+        <text x="132" y="240" class="schematic-label">ROUTE NAVIGATOR</text>
+
+        <line x1="30" y1="260" x2="70" y2="260" class="feed-line"/>
+        <line x1="30" y1="260" x2="70" y2="260" class="pulse"/>
+        <circle cx="70" cy="260" r="4" class="node"/>
+        <text x="82" y="264" class="schematic-label">WO ANOMALY</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<div class="rail">EXPORT → BROWSER → FIELD</div>
+
+<section class="tools" id="tools">
+  <div class="tools-head">
+    <div>
+      <h2>เลือกโมดูลที่จะเปิดใช้งาน</h2>
+      <p>แต่ละโมดูลอ่านไฟล์ export ชุดเดียวกัน ไม่ต้องแปลงข้อมูลซ้ำระหว่างเครื่องมือ</p>
+    </div>
+    <div class="source-tag mono">SOURCE: <b>MAXIMO EXPORT</b></div>
+  </div>
+
+  <div class="grid">
+
+    <article class="card">
+      <div class="card-top">
+        <div class="breaker"><div class="stem"></div></div>
+        <span class="card-index mono">01 / 06</span>
+      </div>
+      <h3>ตารางวางแผน PM อุปกรณ์ไฟฟ้า</h3>
+      <p>สรุปกำหนดการบำรุงรักษาเชิงป้องกันจากไฟล์ Maximo กรองตาม Work Center และช่วงวันที่ พร้อมเรียงงานที่ใกล้ครบกำหนดไว้บนสุดให้อัตโนมัติ</p>
+      <div class="card-tags"><span>PMNUM</span><span>ROUTE</span><span>NEXTDATE</span></div>
+      <a class="card-link" href="https://dr-psi.github.io/PM/pm_scheduling" target="_blank" rel="noopener">
+        เปิดเครื่องมือ
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+      </a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <div class="breaker"><div class="stem"></div></div>
+        <span class="card-index mono">02 / 06</span>
+      </div>
+      <h3>สถิติไฟฟ้าดับรายสายป้อน</h3>
+      <p>ไขว้ข้อมูล outage log กับสายป้อนแต่ละเส้น เพื่อชี้เป้าว่าสายป้อนไหนควรได้คิว PM ก่อน จากความถี่และความรุนแรงของไฟดับที่ผ่านมา</p>
+      <div class="card-tags"><span>FEEDER</span><span>OUTAGE LOG</span></div>
+      <a class="card-link" href="https://dr-psi.github.io/PM/Feeder_Outage_PM" target="_blank" rel="noopener">
+        เปิดเครื่องมือ
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+      </a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <div class="breaker"><div class="stem"></div></div>
+        <span class="card-index mono">03 / 06</span>
+      </div>
+      <h3>จัดกลุ่มอุปกรณ์ตามพิกัด GPS</h3>
+      <p>รวมกลุ่มอุปกรณ์ที่อยู่ใกล้กันตามพิกัดและประเภท ดูตำแหน่งบนแผนที่ แล้วส่งออกเป็น Route พร้อมนำเข้า Maximo ได้ทันที</p>
+      <div class="card-tags"><span>ASSETNUM</span><span>ZLATITUDE</span><span>ZLONGITUDE</span></div>
+      <a class="card-link" href="https://dr-psi.github.io/PM/asset_gps_grouping.html" target="_blank" rel="noopener">
+        เปิดเครื่องมือ
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+      </a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <div class="breaker"><div class="stem"></div></div>
+        <span class="card-index mono">04 / 06</span>
+      </div>
+      <h3>ฟอร์มตรวจสอบภาคสนาม</h3>
+      <p>กรอกผลตรวจและบันทึกการบำรุงรักษาอุปกรณ์หน้างานแบบดิจิทัล ใช้งานสะดวกบนมือถือหรือแท็บเล็ต เก็บประวัติไว้ส่งต่อเข้า Maximo ภายหลัง</p>
+      <div class="card-tags"><span>FIELD RECORDS</span></div>
+      <a class="card-link" href="https://dr-psi.github.io/INSPEC-PM/" target="_blank" rel="noopener">
+        เปิดเครื่องมือ
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+      </a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <div class="breaker"><div class="stem"></div></div>
+        <span class="card-index mono">05 / 06</span>
+      </div>
+      <h3>นำทางเส้นทางตรวจ PM ภาคสนาม</h3>
+      <p>พาทีมช่างไปตามเส้นทางที่วางแผนไว้ทีละจุด แสดงจุดตรวจถัดไปและนำทางไปยังตำแหน่งอุปกรณ์จากมือถือ ไม่ต้องกลัวหลงเส้นทาง</p>
+      <div class="card-tags"><span>NAVIGATION</span><span>ROUTE EXECUTION</span></div>
+      <a class="card-link" href="https://dr-psi.github.io/route/" target="_blank" rel="noopener">
+        เปิดเครื่องมือ
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+      </a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <div class="breaker"><div class="stem"></div></div>
+        <span class="card-index mono">06 / 06</span>
+      </div>
+      <h3>วิเคราะห์ความผิดปกติของ Work Order</h3>
+      <p>ตรวจงานตามแผนและงานแก้ไขจาก CMMS เพื่อหาจุดที่ซ่อมซ้ำผิดปกติ งานที่ใช้เวลาผิดจากปกติ และแนวโน้มที่เบี่ยงเบน ก่อนปัญหาจะลุกลาม</p>
+      <div class="card-tags"><span>TRxP</span><span>TRxC</span><span>WO LOG</span></div>
+      <a class="card-link" href="https://dr-psi.github.io/wo/" target="_blank" rel="noopener">
+        เปิดเครื่องมือ
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+      </a>
+    </article>
+
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 BUSBAR MAINTENANCE PLANNING SUITE</span>
+  <span class="mono">PROCESSED LOCALLY · NO DATA LEAVES YOUR BROWSER</span>
+</footer>
+
+</body>
+</html>
