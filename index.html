@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AERO POWER CMMS - High Voltage Substation PM System</title>
+  <title>AERO QUANTUM CMMS - Next-Gen Substation Engineering OS</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -29,21 +29,21 @@
             mono: ['JetBrains Mono', 'monospace']
           },
           colors: {
-            soft: {
-              50: '#f8fafc',
-              100: '#f1f5f9',
-              200: '#e2e8f0',
-              300: '#cbd5e1',
-              700: '#334155',
-              800: '#1e293b',
-              900: '#0f172a',
+            slate: {
+              850: '#172033',
+              950: '#0b1120'
             },
             brand: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985'
+            },
+            accent: {
+              teal: '#0d9488',
+              amber: '#d97706',
+              rose: '#e11d48'
             }
           }
         }
@@ -52,10 +52,32 @@
   </script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Prompt:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap');
-    body { background-color: #f8fafc; color: #1e293b; }
-    .modern-card { background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05); }
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Prompt:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      background-color: #f1f5f9;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(13, 148, 136, 0.05) 0px, transparent 50%);
+      color: #0f172a;
+    }
+
+    .neo-card {
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.04), 0 4px 6px -2px rgba(15, 23, 42, 0.02);
+    }
+
+    .neo-card-interactive {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .neo-card-interactive:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 35px -8px rgba(15, 23, 42, 0.08);
+      border-color: #bae6fd;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
@@ -64,129 +86,146 @@
 <body class="antialiased font-sans selection:bg-brand-500 selection:text-white">
   <div id="app" class="flex h-screen overflow-hidden">
     
-    <!-- SIDEBAR -->
-    <aside class="w-64 bg-white border-r border-soft-200 flex flex-col justify-between flex-shrink-0 z-20">
+    <!-- LUXURY LIGHT SIDEBAR -->
+    <aside class="w-68 bg-white/95 backdrop-blur-md border-r border-slate-200 flex flex-col justify-between flex-shrink-0 z-20 shadow-sm">
       <div>
-        <div class="p-6 border-b border-soft-200 flex items-center justify-between">
+        <!-- Brand Header -->
+        <div class="p-6 border-b border-slate-100 flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-50 text-brand-600 border border-brand-100 shadow-sm">
-              <i data-lucide="zap" class="w-5 h-5"></i>
+            <div class="relative flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-teal-500 text-white shadow-lg shadow-brand-500/20">
+              <i data-lucide="zap" class="w-6 h-6"></i>
+              <span class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white"></span>
             </div>
             <div>
-              <h1 class="font-display font-bold text-base text-soft-900 tracking-tight">SUBSTATION PM</h1>
-              <p class="text-[11px] text-slate-400 font-mono tracking-wider">Enterprise CMMS</p>
+              <h1 class="font-display font-bold text-base text-slate-900 tracking-tight leading-tight">QUANTUM PM</h1>
+              <p class="text-[10px] text-brand-600 font-mono font-semibold tracking-wider uppercase">Substation OS v7.0</p>
             </div>
           </div>
         </div>
 
+        <!-- Navigation Menu -->
         <nav class="p-4 space-y-1.5">
-          <button @click="currentTab = 'dashboard'" :class="navClass('dashboard')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition group">
+          <button @click="currentTab = 'dashboard'" :class="navClass('dashboard')" class="w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-semibold transition group">
             <div class="flex items-center gap-3">
-              <i data-lucide="layout-dashboard" class="w-4 h-4 transition group-hover:scale-110"></i>
-              <span>แดชบอร์ดภาพรวม</span>
+              <i data-lucide="layout-grid" class="w-4 h-4 transition group-hover:scale-110"></i>
+              <span>แดชบอร์ด & Analytics</span>
             </div>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-50 text-brand-600 font-bold border border-brand-100">Live</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-50 text-brand-600 font-bold border border-brand-200">LIVE</span>
           </button>
 
-          <button @click="currentTab = 'assets'" :class="navClass('assets')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition group">
+          <button @click="currentTab = 'assets'" :class="navClass('assets')" class="w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-semibold transition group">
             <div class="flex items-center gap-3">
-              <i data-lucide="server" class="w-4 h-4 transition group-hover:scale-110"></i>
+              <i data-lucide="cpu" class="w-4 h-4 transition group-hover:scale-110"></i>
               <span>ทะเบียนอุปกรณ์ไฟฟ้า</span>
             </div>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-soft-100 text-soft-700 font-bold">{{ assets.length }}</span>
+            <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 font-bold">{{ assets.length }}</span>
           </button>
 
-          <button @click="currentTab = 'pm-form'" :class="navClass('pm-form')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition group">
-            <i data-lucide="clipboard-check" class="w-4 h-4 transition group-hover:scale-110"></i>
+          <button @click="currentTab = 'pm-form'" :class="navClass('pm-form')" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition group">
+            <i data-lucide="clipboard-pen" class="w-4 h-4 transition group-hover:scale-110"></i>
             <span>ออกใบงาน PM & ทดสอบ</span>
           </button>
 
-          <button @click="currentTab = 'history'" :class="navClass('history')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition group">
+          <button @click="currentTab = 'history'" :class="navClass('history')" class="w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-semibold transition group">
             <div class="flex items-center gap-3">
               <i data-lucide="history" class="w-4 h-4 transition group-hover:scale-110"></i>
-              <span>ประวัติ & ดูการปรับปรุง</span>
+              <span>ประวัติ & บันทึกปรับปรุง</span>
             </div>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-soft-100 text-soft-700 font-bold">{{ pmRecords.length }}</span>
+            <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 font-bold">{{ pmRecords.length }}</span>
           </button>
         </nav>
       </div>
 
-      <div class="p-4 border-t border-soft-200 bg-soft-50/50 space-y-2 text-xs">
-        <div class="flex items-center justify-between font-mono">
-          <span class="text-slate-400">DATABASE SYNC</span>
+      <!-- Footer Quick Status -->
+      <div class="p-5 border-t border-slate-100 bg-slate-50/70 space-y-3">
+        <div class="flex items-center justify-between text-xs font-mono">
+          <span class="text-slate-500 font-semibold">GRID STABILITY</span>
           <span class="text-emerald-600 font-bold flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Active
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> 99.98%
           </span>
         </div>
-        <p class="text-[11px] text-slate-400">High Voltage Maintenance v6.5</p>
+        <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+          <div class="bg-gradient-to-r from-brand-600 to-teal-500 h-full w-[94%]"></div>
+        </div>
       </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col overflow-hidden bg-soft-50">
-      <header class="h-16 bg-white border-b border-soft-200 px-8 flex items-center justify-between z-10">
+    <!-- MAIN INTERFACE -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+      
+      <!-- Top Header -->
+      <header class="h-18 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-8 py-4 flex items-center justify-between z-10 shadow-sm">
         <div>
-          <h2 class="font-display font-bold text-base text-soft-900">{{ getTabTitle() }}</h2>
-          <p class="text-xs text-slate-400">ระบบบริหารจัดการและตรวจวิเคราะห์สุขภาพอุปกรณ์ไฟฟ้าแรงสูง</p>
+          <div class="flex items-center gap-2.5">
+            <h2 class="font-display font-bold text-lg text-slate-900 tracking-tight">{{ getTabTitle() }}</h2>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-50 text-brand-700 border border-brand-200 font-bold">GRID SENTINEL</span>
+          </div>
+          <p class="text-xs text-slate-500">Substation Asset Health Indexing & Predictive Diagnostics Platform</p>
         </div>
 
         <div class="flex items-center gap-3">
-          <button @click="showAddAssetModal = true" class="px-3.5 py-2 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-700 font-display font-semibold text-xs border border-brand-200 transition flex items-center gap-1.5 shadow-sm">
-            <i data-lucide="plus" class="w-4 h-4"></i> เพิ่มอุปกรณ์ใหม่
+          <button @click="showAddAssetModal = true" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-display font-semibold text-xs border border-slate-300 transition flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-4 h-4 text-brand-600"></i> เพิ่มอุปกรณ์
           </button>
-          <button @click="currentTab = 'pm-form'" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-display font-semibold text-xs transition flex items-center gap-1.5 shadow-sm">
-            <i data-lucide="file-plus" class="w-4 h-4"></i> บันทึกผล PM
+          <button @click="currentTab = 'pm-form'" class="px-4.5 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-700 hover:to-teal-700 text-white font-display font-semibold text-xs transition flex items-center gap-2 shadow-md shadow-brand-500/20">
+            <i data-lucide="file-plus-2" class="w-4 h-4"></i> บันทึกผล PM
           </button>
         </div>
       </header>
 
-      <!-- Canvas Body -->
+      <!-- Scrollable Main Canvas -->
       <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar space-y-6">
         
         <!-- ================= 1. DASHBOARD ================= -->
         <section v-if="currentTab === 'dashboard'" class="space-y-6">
+          
+          <!-- Key Metric Gauges -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div class="modern-card p-5 rounded-2xl">
+            <div class="neo-card p-5 rounded-2xl relative overflow-hidden border-l-4 border-l-brand-600">
               <div class="flex items-center justify-between text-slate-400">
-                <span class="text-xs font-mono uppercase font-bold tracking-wider">อุปกรณ์ทั้งหมด</span>
-                <div class="p-2.5 bg-brand-50 text-brand-600 rounded-xl"><i data-lucide="cpu" class="w-5 h-5"></i></div>
+                <span class="text-xs font-mono uppercase font-bold tracking-wider text-slate-500">อุปกรณ์ในระบบ</span>
+                <div class="p-2 bg-brand-50 text-brand-600 rounded-xl"><i data-lucide="server" class="w-5 h-5"></i></div>
               </div>
-              <h3 class="font-display font-bold text-3xl text-soft-900 mt-2">{{ assets.length }} <span class="text-xs font-normal text-slate-400">ชุด</span></h3>
-              <p class="text-[11px] text-brand-600 font-mono mt-1 font-semibold">TR: {{ getCountByType('Transformer') }} | LBS: {{ getCountByType('LBS') }}</p>
+              <h3 class="font-display font-bold text-3xl text-slate-900 mt-2">{{ assets.length }} <span class="text-xs font-normal text-slate-400 font-sans">ยูนิต</span></h3>
+              <div class="flex items-center gap-2 mt-1 text-[11px] font-mono text-slate-500">
+                <span class="text-brand-600 font-bold">TR: {{ getCountByType('Transformer') }}</span> • 
+                <span class="text-teal-600 font-bold">LBS: {{ getCountByType('LBS') }}</span>
+              </div>
             </div>
 
-            <div class="modern-card p-5 rounded-2xl border-l-4 border-l-emerald-500">
+            <div class="neo-card p-5 rounded-2xl border-l-4 border-l-emerald-500">
               <div class="flex items-center justify-between text-slate-400">
-                <span class="text-xs font-mono uppercase font-bold tracking-wider">สุขภาพปกติ (Grade A)</span>
-                <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
+                <span class="text-xs font-mono uppercase font-bold tracking-wider text-emerald-700">สุขภาพปกติ (Grade A)</span>
+                <div class="p-2 bg-emerald-50 text-emerald-600 rounded-xl"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
               </div>
               <h3 class="font-display font-bold text-3xl text-emerald-600 mt-2">{{ getStatusCount('Pass') }}</h3>
-              <p class="text-[11px] text-slate-400 mt-1">พร้อมจ่ายไฟฟ้าเสถียร 100%</p>
+              <p class="text-[11px] text-slate-500 mt-1">พร้อมจ่ายกระแสไฟฟ้า 100%</p>
             </div>
 
-            <div class="modern-card p-5 rounded-2xl border-l-4 border-l-amber-500">
+            <div class="neo-card p-5 rounded-2xl border-l-4 border-l-amber-500">
               <div class="flex items-center justify-between text-slate-400">
-                <span class="text-xs font-mono uppercase font-bold tracking-wider">เฝ้าระวัง (Grade B)</span>
-                <div class="p-2.5 bg-amber-50 text-amber-600 rounded-xl"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
+                <span class="text-xs font-mono uppercase font-bold tracking-wider text-amber-700">เฝ้าระวัง (Grade B)</span>
+                <div class="p-2 bg-amber-50 text-amber-600 rounded-xl"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
               </div>
               <h3 class="font-display font-bold text-3xl text-amber-600 mt-2">{{ getStatusCount('Pass with Condition') }}</h3>
-              <p class="text-[11px] text-slate-400 mt-1">พบความชื้น / คราบน้ำมันซึม</p>
+              <p class="text-[11px] text-slate-500 mt-1">พบคราบน้ำมันซึม / ซิลิกาเปลี่ยนสี</p>
             </div>
 
-            <div class="modern-card p-5 rounded-2xl border-l-4 border-l-rose-500">
+            <div class="neo-card p-5 rounded-2xl border-l-4 border-l-rose-500">
               <div class="flex items-center justify-between text-slate-400">
-                <span class="text-xs font-mono uppercase font-bold tracking-wider">ต้องซ่อมด่วน (Grade D)</span>
-                <div class="p-2.5 bg-rose-50 text-rose-600 rounded-xl"><i data-lucide="alert-octagon" class="w-5 h-5"></i></div>
+                <span class="text-xs font-mono uppercase font-bold tracking-wider text-rose-700">ต้องซ่อมด่วน (Grade D)</span>
+                <div class="p-2 bg-rose-50 text-rose-600 rounded-xl"><i data-lucide="alert-octagon" class="w-5 h-5"></i></div>
               </div>
               <h3 class="font-display font-bold text-3xl text-rose-600 mt-2">{{ getStatusCount('Fail') }}</h3>
-              <p class="text-[11px] text-slate-400 mt-1">ค่าฉนวนหรือความต้านทานตกเกณฑ์</p>
+              <p class="text-[11px] text-slate-500 mt-1">ค่าฉนวนหรือความต้านทานเกินเกณฑ์</p>
             </div>
           </div>
 
+          <!-- Charts Row -->
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 modern-card p-6 rounded-2xl space-y-4">
-              <div class="flex items-center justify-between border-b border-soft-200 pb-3">
-                <h3 class="font-display font-bold text-sm text-soft-900 flex items-center gap-2">
+            <div class="lg:col-span-2 neo-card p-6 rounded-2xl space-y-4">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
                   <i data-lucide="bar-chart-3" class="w-4 h-4 text-brand-600"></i> สัดส่วนผลการทดสอบ PM รายอุปกรณ์ (Health Analysis)
                 </h3>
                 <span class="text-xs font-mono text-slate-400">Active Telemetry</span>
@@ -196,9 +235,9 @@
               </div>
             </div>
 
-            <div class="modern-card p-6 rounded-2xl space-y-4">
-              <div class="flex items-center justify-between border-b border-soft-200 pb-3">
-                <h3 class="font-display font-bold text-sm text-soft-900 flex items-center gap-2">
+            <div class="neo-card p-6 rounded-2xl space-y-4">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
                   <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-600"></i> สัดส่วนเกรดสุขภาพรวม (AHI)
                 </h3>
               </div>
@@ -208,33 +247,34 @@
             </div>
           </div>
 
-          <div class="modern-card p-6 rounded-2xl space-y-4">
+          <!-- Recent Log Table -->
+          <div class="neo-card p-6 rounded-2xl space-y-4">
             <div class="flex items-center justify-between">
-              <h3 class="font-display font-bold text-sm text-soft-900 flex items-center gap-2">
+              <h3 class="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
                 <i data-lucide="history" class="w-4 h-4 text-brand-600"></i> รายการผลการทดสอบและวินิจฉัยล่าสุด
               </h3>
-              <button @click="currentTab = 'history'" class="text-xs text-brand-600 hover:underline font-semibold">ดูทั้งหมด →</button>
+              <button @click="currentTab = 'history'" class="text-xs text-brand-600 hover:underline font-semibold font-mono">ดูทั้งหมด →</button>
             </div>
 
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
-                <thead class="border-b border-soft-200 text-slate-400 font-mono uppercase bg-soft-50">
+                <thead class="border-b border-slate-200 text-slate-400 font-mono uppercase bg-slate-50/80">
                   <tr>
                     <th class="p-3">วันที่</th>
                     <th class="p-3">Permit No.</th>
                     <th class="p-3">รหัสอุปกรณ์</th>
                     <th class="p-3">ประเภทงาน</th>
                     <th class="p-3">ผู้ตรวจเช็ก</th>
-                    <th class="p-3">ดัชนี AHI</th>
+                    <th class="p-3">สุขภาพ (AHI)</th>
                     <th class="p-3">ผลการตรวจ</th>
                     <th class="p-3 text-center">ดูรายละเอียด</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-soft-200">
-                  <tr v-for="r in pmRecords.slice(0, 5)" :key="r.id" class="hover:bg-soft-50/80 transition">
+                <tbody class="divide-y divide-slate-100">
+                  <tr v-for="r in pmRecords.slice(0, 5)" :key="r.id" class="hover:bg-slate-50/80 transition">
                     <td class="p-3 font-mono text-slate-600">{{ r.date }}</td>
                     <td class="p-3 font-mono font-bold text-brand-600">{{ r.permitNo || '-' }}</td>
-                    <td class="p-3 font-bold text-soft-900 font-mono">{{ r.assetId }}</td>
+                    <td class="p-3 font-bold text-slate-900 font-mono">{{ r.assetId }}</td>
                     <td class="p-3 text-slate-600">{{ r.pmType }}</td>
                     <td class="p-3 text-slate-700">{{ r.technician }}</td>
                     <td class="p-3">
@@ -268,9 +308,9 @@
             <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
               <div class="relative w-full sm:w-80">
                 <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400"></i>
-                <input v-model="searchAsset" type="text" placeholder="ค้นหารหัส, ชื่ออุปกรณ์, สถานีย่อย..." class="w-full pl-10 pr-4 py-2 bg-white border border-soft-200 rounded-xl text-xs text-soft-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100 shadow-sm">
+                <input v-model="searchAsset" type="text" placeholder="ค้นหารหัส, ชื่ออุปกรณ์, สถานีย่อย..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100 shadow-sm">
               </div>
-              <select v-model="filterType" class="p-2 bg-white border border-soft-200 rounded-xl text-xs text-soft-900 focus:border-brand-500 focus:outline-none shadow-sm">
+              <select v-model="filterType" class="p-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:border-brand-500 focus:outline-none shadow-sm">
                 <option value="ALL">ทุกประเภทอุปกรณ์ ({{ assets.length }} ชุด)</option>
                 <option value="Transformer">หม้อแปลงไฟฟ้า (Transformer)</option>
                 <option value="LBS">Load Break Switch (LBS)</option>
@@ -282,20 +322,22 @@
             </div>
           </div>
 
+          <!-- Asset Grid Cards -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <div v-for="a in paginatedAssets" :key="a.id" class="modern-card p-5 rounded-2xl space-y-4 hover:border-brand-300 transition group">
+            <div v-for="a in paginatedAssets" :key="a.id" class="neo-card neo-card-interactive p-5 rounded-2xl space-y-4 group">
               <div class="flex items-start justify-between">
                 <div>
                   <span class="text-xs font-mono font-bold text-brand-600 tracking-wider">{{ a.id }}</span>
-                  <h4 class="font-display font-bold text-base text-soft-900 mt-0.5 group-hover:text-brand-600 transition">{{ a.name }}</h4>
-                  <p class="text-[11px] text-slate-400 flex items-center gap-1 mt-1">
+                  <h4 class="font-display font-bold text-base text-slate-900 mt-0.5 group-hover:text-brand-600 transition">{{ a.name }}</h4>
+                  <p class="text-[11px] text-slate-500 flex items-center gap-1 mt-1">
                     <i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i> {{ a.location }}
                   </p>
                 </div>
                 <span :class="badgeClass(a.type)">{{ a.type }}</span>
               </div>
 
-              <div class="grid grid-cols-2 gap-2 bg-soft-50 p-3 rounded-xl text-xs font-mono border border-soft-200">
+              <!-- Tech Specs Grid -->
+              <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl text-xs font-mono border border-slate-200">
                 <div>
                   <span class="text-slate-400 block text-[10px]">RATING</span>
                   <span class="text-slate-700 font-semibold truncate block">{{ a.rating || '-' }}</span>
@@ -314,7 +356,7 @@
                 </div>
               </div>
 
-              <div class="flex items-center justify-between pt-2 border-t border-soft-200">
+              <div class="flex items-center justify-between pt-2 border-t border-slate-100">
                 <button @click="viewAssetDetails(a)" class="text-xs text-brand-600 hover:text-brand-700 font-display font-semibold flex items-center gap-1 transition">
                   <i data-lucide="eye" class="w-3.5 h-3.5"></i> ตรวจสอบประวัติเชิงลึก
                 </button>
@@ -325,21 +367,51 @@
             </div>
           </div>
 
-          <div class="p-4 modern-card rounded-2xl flex items-center justify-between text-xs font-mono text-slate-500">
+          <!-- Pagination -->
+          <div class="p-4 neo-card rounded-2xl flex items-center justify-between text-xs font-mono text-slate-500">
             <div>หน้า {{ currentPage }} จาก {{ totalPages }}</div>
             <div class="flex gap-2">
-              <button :disabled="currentPage === 1" @click="currentPage--" class="px-3 py-1.5 rounded-lg bg-soft-100 disabled:opacity-40 hover:bg-soft-200 transition font-semibold">ก่อนหน้า</button>
-              <button :disabled="currentPage === totalPages" @click="currentPage++" class="px-3 py-1.5 rounded-lg bg-soft-100 disabled:opacity-40 hover:bg-soft-200 transition font-semibold">ถัดไป</button>
+              <button :disabled="currentPage === 1" @click="currentPage--" class="px-3.5 py-1.5 rounded-lg bg-slate-100 disabled:opacity-40 hover:bg-slate-200 transition font-semibold">ก่อนหน้า</button>
+              <button :disabled="currentPage === totalPages" @click="currentPage++" class="px-3.5 py-1.5 rounded-lg bg-slate-100 disabled:opacity-40 hover:bg-slate-200 transition font-semibold">ถัดไป</button>
             </div>
           </div>
         </section>
 
         <!-- ================= 3. PM FORM ================= -->
         <section v-if="currentTab === 'pm-form'" class="max-w-5xl mx-auto space-y-6">
-          <div class="modern-card p-6 md:p-8 rounded-2xl space-y-6">
-            <div class="border-b border-soft-200 pb-4 flex justify-between items-center">
+          
+          <!-- Intelligent File Import -->
+          <div class="neo-card p-6 rounded-2xl border-l-4 border-l-brand-600 space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
-                <h3 class="font-display font-bold text-base text-soft-900">ใบงานบันทึกผลการทดสอบทางวิศวกรรมไฟฟ้า (High Voltage Diagnostics PM)</h3>
+                <h4 class="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
+                  <i data-lucide="file-up" class="w-4 h-4 text-brand-600"></i> นำเข้าไฟล์ผลตรวจหน้างาน (Excel / CSV / JSON)
+                </h4>
+                <p class="text-xs text-slate-500 mt-0.5">
+                  อัปโหลดไฟล์รายงานผลทดสอบเพื่อดึงพารามิเตอร์เข้าฟอร์มและบันทึกสถิติ AHI อัตโนมัติ
+                </p>
+              </div>
+              <button @click="downloadTemplate" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition font-semibold">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i> ดาวน์โหลด Template Excel
+              </button>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 pt-1">
+              <label class="cursor-pointer bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl text-xs font-display font-semibold flex items-center gap-2 shadow-sm transition">
+                <i data-lucide="folder-open" class="w-4 h-4"></i> อัปโหลดไฟล์ผลตรวจ
+                <input type="file" accept=".xlsx, .xls, .csv, .json" @change="handleImportFile" class="hidden">
+              </label>
+              <span v-if="importedFileName" class="text-xs text-emerald-700 font-mono flex items-center gap-1.5 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+                <i data-lucide="check-circle" class="w-4 h-4"></i> ไฟล์ที่โหลด: {{ importedFileName }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Main Diagnostic Work Order Form -->
+          <div class="neo-card p-6 md:p-8 rounded-2xl space-y-6">
+            <div class="border-b border-slate-200 pb-4 flex justify-between items-center">
+              <div>
+                <h3 class="font-display font-bold text-base text-slate-900">ใบงานบันทึกผลการทดสอบทางวิศวกรรมไฟฟ้า (High Voltage Diagnostics PM)</h3>
                 <p class="text-xs text-slate-500">กรอกข้อมูลพารามิเตอร์ตามมาตรฐาน IEEE C57 / IEC 60076 / IEC 62271</p>
               </div>
               <span class="text-xs font-mono px-3 py-1 rounded-full bg-brand-50 text-brand-700 border border-brand-200 font-semibold">IEEE / IEC Standard</span>
@@ -348,29 +420,29 @@
             <form @submit.prevent="savePmRecord" class="space-y-6">
               
               <!-- Permit Info -->
-              <div class="bg-soft-50 p-5 rounded-2xl border border-soft-200 space-y-4">
-                <h4 class="font-display font-bold text-xs text-soft-800 uppercase tracking-wider flex items-center gap-2">
+              <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+                <h4 class="font-display font-bold text-xs text-slate-800 uppercase tracking-wider flex items-center gap-2">
                   <i data-lucide="shield-alert" class="w-4 h-4 text-brand-600"></i> ข้อมูลใบอนุญาตทำงานและสภาวะแวดล้อม
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
                   <div>
                     <label class="block font-semibold text-slate-700 mb-1">เลขที่ใบงาน (Permit No.) *</label>
-                    <input v-model="formData.permitNo" type="text" placeholder="เช่น PM-HV-2026-088" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl font-mono focus:border-brand-500 focus:outline-none">
+                    <input v-model="formData.permitNo" type="text" placeholder="เช่น PM-HV-2026-088" required class="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-mono focus:border-brand-500 focus:outline-none">
                   </div>
                   <div>
                     <label class="block font-semibold text-slate-700 mb-1">วันที่เข้าตรวจเช็ก *</label>
-                    <input v-model="formData.date" type="date" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl font-mono focus:border-brand-500 focus:outline-none">
+                    <input v-model="formData.date" type="date" required class="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-mono focus:border-brand-500 focus:outline-none">
                   </div>
                   <div>
                     <label class="block font-semibold text-slate-700 mb-1">เลือกอุปกรณ์ *</label>
-                    <select v-model="formData.assetId" @change="onAssetSelect" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl font-medium focus:border-brand-500 focus:outline-none">
+                    <select v-model="formData.assetId" @change="onAssetSelect" required class="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-medium focus:border-brand-500 focus:outline-none">
                       <option value="" disabled>-- เลือกอุปกรณ์ --</option>
                       <option v-for="a in assets" :key="a.id" :value="a.id">[{{ a.type }}] {{ a.id }} - {{ a.name }}</option>
                     </select>
                   </div>
                   <div>
                     <label class="block font-semibold text-slate-700 mb-1">ประเภทงาน PM</label>
-                    <select v-model="formData.pmType" class="w-full p-2.5 bg-white border border-soft-300 rounded-xl focus:border-brand-500 focus:outline-none">
+                    <select v-model="formData.pmType" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl focus:border-brand-500 focus:outline-none">
                       <option value="Annual PM (บำรุงรักษารายปี)">Annual PM (บำรุงรักษารายปี)</option>
                       <option value="Half-Year PM (ราย 6 เดือน)">Half-Year PM (ราย 6 เดือน)</option>
                       <option value="Thermography & Visual (ตรวจความร้อน)">Thermography & Visual (ตรวจความร้อน)</option>
@@ -389,15 +461,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                   <div>
                     <label class="block font-medium text-slate-700 mb-1">Insulation Pri-Gnd 1 min (MΩ)</label>
-                    <input v-model.number="formData.checks.irPriGnd1m" type="number" placeholder="เกณฑ์ > 100 MΩ" class="w-full p-2 bg-white border border-soft-300 rounded-xl font-mono">
+                    <input v-model.number="formData.checks.irPriGnd1m" type="number" placeholder="เกณฑ์ > 100 MΩ" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-mono">
                   </div>
                   <div>
                     <label class="block font-medium text-slate-700 mb-1">Dielectric Breakdown Oil (kV)</label>
-                    <input v-model.number="formData.checks.oilDielectric" type="number" placeholder="เกณฑ์ > 30 kV" class="w-full p-2 bg-white border border-soft-300 rounded-xl font-mono">
+                    <input v-model.number="formData.checks.oilDielectric" type="number" placeholder="เกณฑ์ > 30 kV" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-mono">
                   </div>
                   <div>
                     <label class="block font-medium text-slate-700 mb-1">จุดร้อน Thermo Scan (°C)</label>
-                    <input v-model.number="formData.checks.thermoMaxTemp" type="number" placeholder="เช่น 48.5 °C" class="w-full p-2 bg-white border border-soft-300 rounded-xl font-mono">
+                    <input v-model.number="formData.checks.thermoMaxTemp" type="number" placeholder="เช่น 48.5 °C" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-mono">
                   </div>
                 </div>
               </div>
@@ -410,29 +482,29 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                   <div>
                     <label class="block font-medium text-slate-700 mb-1">แรงดันก๊าซ SF6 (MPa)</label>
-                    <input v-model="formData.checks.sf6Pressure" type="text" placeholder="เช่น 0.05 MPa" class="w-full p-2 bg-white border border-soft-300 rounded-xl font-mono">
+                    <input v-model="formData.checks.sf6Pressure" type="text" placeholder="เช่น 0.05 MPa" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-mono">
                   </div>
                   <div>
                     <label class="block font-medium text-slate-700 mb-1">Contact Resistance เฟส A (µΩ)</label>
-                    <input v-model.number="formData.checks.contactResA" type="number" placeholder="เกณฑ์ < 80 µΩ" class="w-full p-2 bg-white border border-soft-300 rounded-xl font-mono">
+                    <input v-model.number="formData.checks.contactResA" type="number" placeholder="เกณฑ์ < 80 µΩ" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-mono">
                   </div>
                   <div>
                     <label class="block font-medium text-slate-700 mb-1">Insulation Phase-to-Phase (MΩ)</label>
-                    <input v-model.number="formData.checks.lbsIR" type="number" placeholder="เกณฑ์ > 1000 MΩ" class="w-full p-2 bg-white border border-soft-300 rounded-xl font-mono">
+                    <input v-model.number="formData.checks.lbsIR" type="number" placeholder="เกณฑ์ > 1000 MΩ" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-mono">
                   </div>
                 </div>
               </div>
 
               <!-- Sign-off & Remarks -->
-              <div class="bg-soft-50 p-5 rounded-2xl border border-soft-200 space-y-4">
+              <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                   <div>
                     <label class="block font-semibold text-slate-700 mb-1">ผู้ตรวจเช็ก *</label>
-                    <input v-model="formData.technician" type="text" placeholder="ชื่อผู้ตรวจ" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl">
+                    <input v-model="formData.technician" type="text" placeholder="ชื่อผู้ตรวจ" required class="w-full p-2.5 bg-white border border-slate-300 rounded-xl">
                   </div>
                   <div>
                     <label class="block font-semibold text-slate-700 mb-1">ผู้อนุมัติ</label>
-                    <input v-model="formData.approvedBy" type="text" placeholder="ชื่อผู้อนุมัติ" class="w-full p-2.5 bg-white border border-soft-300 rounded-xl">
+                    <input v-model="formData.approvedBy" type="text" placeholder="ชื่อผู้อนุมัติ" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl">
                   </div>
                   <div>
                     <label class="block font-semibold text-slate-700 mb-1">ผลการตรวจ *</label>
@@ -445,12 +517,12 @@
                 </div>
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">บันทึกการปรับปรุง / งานแก้ไข / ข้อเสนอแนะ *</label>
-                  <textarea v-model="formData.remarks" rows="2" placeholder="ระบุรายละเอียดสิ่งที่ได้ดำเนินการแก้ไข หรือรายการที่ต้องปรับปรุง..." class="w-full p-2.5 bg-white border border-soft-300 rounded-xl focus:border-brand-500 focus:outline-none"></textarea>
+                  <textarea v-model="formData.remarks" rows="2" placeholder="ระบุรายละเอียดสิ่งที่ได้ดำเนินการแก้ไข หรือรายการที่ต้องปรับปรุง..." class="w-full p-2.5 bg-white border border-slate-300 rounded-xl focus:border-brand-500 focus:outline-none"></textarea>
                 </div>
               </div>
 
-              <div class="flex justify-end gap-3 pt-4 border-t border-soft-200">
-                <button type="button" @click="resetForm" class="px-5 py-2.5 border border-soft-300 rounded-xl text-xs font-semibold text-slate-600 hover:bg-soft-100 transition">
+              <div class="flex justify-end gap-3 pt-4 border-t border-slate-200">
+                <button type="button" @click="resetForm" class="px-5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">
                   ล้างข้อมูล
                 </button>
                 <button type="submit" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-display font-semibold flex items-center gap-2 shadow-sm transition">
@@ -466,7 +538,7 @@
         <section v-if="currentTab === 'history'" class="space-y-6">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h3 class="font-display font-bold text-base text-soft-900">ประวัติงาน PM และรายงานผลการตรวจเช็กทั้งหมด</h3>
+              <h3 class="font-display font-bold text-base text-slate-900">ประวัติงาน PM และรายงานผลการตรวจเช็กทั้งหมด</h3>
               <p class="text-xs text-slate-500">สามารถกดดูรายละเอียดการปรับปรุงแก้ไขของแต่ละใบงานได้</p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
@@ -476,16 +548,16 @@
               <button @click="exportToPDF" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl text-xs font-display font-semibold flex items-center gap-2 shadow-sm transition">
                 <i data-lucide="file-text" class="w-4 h-4"></i> Export PDF
               </button>
-              <button @click="confirmClearLogs" class="bg-soft-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-soft-200 px-4 py-2 rounded-xl text-xs font-mono transition">
+              <button @click="confirmClearLogs" class="bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200 px-4 py-2 rounded-xl text-xs font-mono transition">
                 CLEAR ALL LOGS
               </button>
             </div>
           </div>
 
-          <div class="modern-card rounded-2xl overflow-hidden">
+          <div class="neo-card rounded-2xl overflow-hidden">
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
-                <thead class="border-b border-soft-200 text-slate-400 font-mono uppercase bg-soft-50">
+                <thead class="border-b border-slate-200 text-slate-400 font-mono uppercase bg-slate-50">
                   <tr>
                     <th class="p-4">วันที่ตรวจ</th>
                     <th class="p-4">Permit No.</th>
@@ -498,11 +570,11 @@
                     <th class="p-4 text-center">ลบ</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-soft-200">
-                  <tr v-for="r in pmRecords" :key="r.id" class="hover:bg-soft-50 transition">
+                <tbody class="divide-y divide-slate-100">
+                  <tr v-for="r in pmRecords" :key="r.id" class="hover:bg-slate-50 transition">
                     <td class="p-4 font-mono text-slate-600">{{ r.date }}</td>
                     <td class="p-4 font-mono font-bold text-brand-600">{{ r.permitNo || '-' }}</td>
-                    <td class="p-4 font-bold text-soft-900 font-mono">{{ r.assetId }}</td>
+                    <td class="p-4 font-bold text-slate-900 font-mono">{{ r.assetId }}</td>
                     <td class="p-4"><span :class="badgeClass(r.type)">{{ r.type }}</span></td>
                     <td class="p-4">
                       {{ r.technician }}
@@ -545,14 +617,14 @@
 
     <!-- ================= MODAL: VIEW IMPROVEMENT & DIAGNOSTIC DETAILS ================= -->
     <div v-if="selectedImprovementRecord" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div class="bg-white max-w-3xl w-full p-6 space-y-5 rounded-2xl max-h-[90vh] overflow-y-auto custom-scrollbar border border-soft-200 shadow-2xl">
+      <div class="bg-white max-w-3xl w-full p-6 space-y-5 rounded-2xl max-h-[90vh] overflow-y-auto custom-scrollbar border border-slate-200 shadow-2xl">
         
         <!-- Header -->
-        <div class="flex justify-between items-start border-b border-soft-200 pb-3">
+        <div class="flex justify-between items-start border-b border-slate-200 pb-3">
           <div>
             <div class="flex items-center gap-2">
               <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-brand-50 text-brand-700 border border-brand-200">{{ selectedImprovementRecord.permitNo }}</span>
-              <h3 class="font-display font-bold text-base text-soft-900">
+              <h3 class="font-display font-bold text-base text-slate-900">
                 รายละเอียดการตรวจและบันทึกการปรับปรุง: {{ selectedImprovementRecord.assetId }}
               </h3>
             </div>
@@ -574,7 +646,7 @@
         </div>
 
         <!-- 2. ข้อมูลผลการประเมินและดัชนีสุขภาพ (Health & Inspector) -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-soft-50 p-4 rounded-xl text-xs font-mono border border-soft-200">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl text-xs font-mono border border-slate-200">
           <div>
             <span class="text-slate-400 block text-[10px]">ผลการตรวจ</span>
             <span :class="statusBadge(selectedImprovementRecord.status)" class="px-2 py-0.5 rounded-full font-bold border text-[11px] inline-block mt-0.5">
@@ -601,7 +673,7 @@
             <i data-lucide="activity" class="w-4 h-4 text-brand-600"></i> ผลการวัดพารามิเตอร์ทางไฟฟ้า & กายภาพ
           </h4>
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
-            <div v-for="(val, key) in selectedImprovementRecord.details" :key="key" class="p-2.5 bg-soft-50 rounded-lg border border-soft-200">
+            <div v-for="(val, key) in selectedImprovementRecord.details" :key="key" class="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
               <span class="text-slate-400 block text-[10px] font-mono">{{ formatKeyName(key) }}</span>
               <span class="font-bold text-slate-800 font-mono">{{ val || '-' }}</span>
             </div>
@@ -614,15 +686,15 @@
             <i data-lucide="camera" class="w-4 h-4 text-brand-600"></i> รูปภาพประกอบการปรับปรุงหน้างาน
           </h4>
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <div v-for="(p, idx) in selectedImprovementRecord.photos" :key="idx" class="rounded-xl overflow-hidden border border-soft-200 aspect-video bg-black shadow-sm">
+            <div v-for="(p, idx) in selectedImprovementRecord.photos" :key="idx" class="rounded-xl overflow-hidden border border-slate-200 aspect-video bg-black shadow-sm">
               <img :src="p.url" class="w-full h-full object-cover">
             </div>
           </div>
         </div>
 
         <!-- Footer -->
-        <div class="flex justify-end pt-3 border-t border-soft-200">
-          <button @click="selectedImprovementRecord = null" class="px-5 py-2 bg-soft-800 text-white rounded-xl text-xs font-semibold hover:bg-soft-900 transition">
+        <div class="flex justify-end pt-3 border-t border-slate-200">
+          <button @click="selectedImprovementRecord = null" class="px-5 py-2 bg-slate-800 text-white rounded-xl text-xs font-semibold hover:bg-slate-900 transition">
             ปิดหน้าต่าง
           </button>
         </div>
@@ -632,9 +704,9 @@
 
     <!-- MODAL: ADD ASSET -->
     <div v-if="showAddAssetModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div class="bg-white max-w-lg w-full p-6 space-y-4 rounded-2xl shadow-2xl border border-soft-200">
-        <div class="flex justify-between items-center border-b border-soft-200 pb-3">
-          <h3 class="font-display font-bold text-base text-soft-900 flex items-center gap-2">
+      <div class="bg-white max-w-lg w-full p-6 space-y-4 rounded-2xl shadow-2xl border border-slate-200">
+        <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+          <h3 class="font-display font-bold text-base text-slate-900 flex items-center gap-2">
             <i data-lucide="plus-circle" class="w-5 h-5 text-brand-600"></i> เพิ่มอุปกรณ์ใหม่เข้าระบบ
           </h3>
           <button @click="showAddAssetModal = false" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -644,11 +716,11 @@
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block font-semibold text-slate-700 mb-1">รหัสอุปกรณ์ *</label>
-              <input v-model="newAssetForm.id" placeholder="เช่น TR-26" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl font-mono">
+              <input v-model="newAssetForm.id" placeholder="เช่น TR-26" required class="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-mono">
             </div>
             <div>
               <label class="block font-semibold text-slate-700 mb-1">ประเภท *</label>
-              <select v-model="newAssetForm.type" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl">
+              <select v-model="newAssetForm.type" required class="w-full p-2.5 bg-white border border-slate-300 rounded-xl">
                 <option value="Transformer">Transformer</option>
                 <option value="LBS">Load Break Switch</option>
               </select>
@@ -656,14 +728,14 @@
           </div>
           <div>
             <label class="block font-semibold text-slate-700 mb-1">ชื่ออุปกรณ์ *</label>
-            <input v-model="newAssetForm.name" placeholder="ชื่ออุปกรณ์" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl">
+            <input v-model="newAssetForm.name" placeholder="ชื่ออุปกรณ์" required class="w-full p-2.5 bg-white border border-slate-300 rounded-xl">
           </div>
           <div>
             <label class="block font-semibold text-slate-700 mb-1">สถานที่ *</label>
-            <input v-model="newAssetForm.location" placeholder="สถานที่ติดตั้ง" required class="w-full p-2.5 bg-white border border-soft-300 rounded-xl">
+            <input v-model="newAssetForm.location" placeholder="สถานที่ติดตั้ง" required class="w-full p-2.5 bg-white border border-slate-300 rounded-xl">
           </div>
-          <div class="flex justify-end gap-2 pt-3 border-t border-soft-200">
-            <button type="button" @click="showAddAssetModal = false" class="px-4 py-2 border border-soft-300 rounded-xl text-slate-600">ยกเลิก</button>
+          <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
+            <button type="button" @click="showAddAssetModal = false" class="px-4 py-2 border border-slate-300 rounded-xl text-slate-600">ยกเลิก</button>
             <button type="submit" class="px-5 py-2 bg-brand-600 text-white font-semibold rounded-xl">บันทึก</button>
           </div>
         </form>
@@ -672,10 +744,10 @@
 
     <!-- MODAL: ASSET DETAILS -->
     <div v-if="selectedAssetForModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div class="bg-white max-w-3xl w-full p-6 space-y-5 rounded-2xl max-h-[90vh] overflow-y-auto custom-scrollbar border border-soft-200 shadow-2xl">
-        <div class="flex justify-between items-start border-b border-soft-200 pb-3">
+      <div class="bg-white max-w-3xl w-full p-6 space-y-5 rounded-2xl max-h-[90vh] overflow-y-auto custom-scrollbar border border-slate-200 shadow-2xl">
+        <div class="flex justify-between items-start border-b border-slate-200 pb-3">
           <div>
-            <h3 class="font-display font-bold text-base text-soft-900 flex items-center gap-2">
+            <h3 class="font-display font-bold text-base text-slate-900 flex items-center gap-2">
               <i data-lucide="server" class="w-5 h-5 text-brand-600"></i> {{ selectedAssetForModal.id }} - {{ selectedAssetForModal.name }}
             </h3>
             <p class="text-xs text-slate-500 font-mono">{{ selectedAssetForModal.location }} | {{ selectedAssetForModal.type }}</p>
@@ -683,7 +755,7 @@
           <button @click="selectedAssetForModal = null" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-soft-50 p-4 rounded-xl text-xs font-mono border border-soft-200">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl text-xs font-mono border border-slate-200">
           <div><span class="text-slate-400 block text-[10px]">RATING</span> <span class="font-bold text-slate-700">{{ selectedAssetForModal.rating || '-' }}</span></div>
           <div><span class="text-slate-400 block text-[10px]">BRAND</span> <span class="font-semibold text-slate-700">{{ selectedAssetForModal.brand || '-' }}</span></div>
           <div><span class="text-slate-400 block text-[10px]">SERIAL NO.</span> <span class="text-slate-700">{{ selectedAssetForModal.serial || '-' }}</span></div>
@@ -693,8 +765,8 @@
         <div>
           <h4 class="font-display font-bold text-xs text-slate-700 uppercase tracking-wider mb-3">ประวัติการเข้าตรวจ PM ของอุปกรณ์ชิ้นนี้</h4>
           <div v-if="getAssetRecords(selectedAssetForModal.id).length > 0" class="space-y-3">
-            <div v-for="rec in getAssetRecords(selectedAssetForModal.id)" :key="rec.id" class="p-4 bg-soft-50 rounded-xl border border-soft-200 text-xs space-y-2">
-              <div class="flex justify-between items-center border-b border-soft-200 pb-2">
+            <div v-for="rec in getAssetRecords(selectedAssetForModal.id)" :key="rec.id" class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2">
+              <div class="flex justify-between items-center border-b border-slate-200 pb-2">
                 <span class="font-bold font-mono text-slate-700">วันที่: {{ rec.date }} (Permit: {{ rec.permitNo || '-' }})</span>
                 <span :class="statusBadge(rec.status)" class="px-2.5 py-0.5 rounded-full font-bold border text-[11px]">{{ rec.status }}</span>
               </div>
@@ -702,11 +774,11 @@
               <div class="text-slate-600"><span class="font-semibold text-slate-700">การปรับปรุง:</span> {{ rec.remarks || '-' }}</div>
             </div>
           </div>
-          <div v-else class="p-6 bg-soft-50 rounded-xl text-center text-slate-400 text-xs font-mono">ไม่มีประวัติการเข้าตรวจ</div>
+          <div v-else class="p-6 bg-slate-50 rounded-xl text-center text-slate-400 text-xs font-mono">ไม่มีประวัติการเข้าตรวจ</div>
         </div>
 
-        <div class="flex justify-end pt-3 border-t border-soft-200">
-          <button @click="selectedAssetForModal = null" class="px-5 py-2 bg-soft-800 text-white rounded-xl text-xs font-semibold hover:bg-soft-900 transition">ปิด</button>
+        <div class="flex justify-end pt-3 border-t border-slate-200">
+          <button @click="selectedAssetForModal = null" class="px-5 py-2 bg-slate-800 text-white rounded-xl text-xs font-semibold hover:bg-slate-900 transition">ปิด</button>
         </div>
       </div>
     </div>
@@ -955,8 +1027,8 @@
         },
         navClass(tab) {
           return this.currentTab === tab 
-            ? 'bg-brand-50 text-brand-700 font-bold border border-brand-100 shadow-sm' 
-            : 'text-slate-600 hover:bg-soft-100 hover:text-slate-900 border border-transparent';
+            ? 'bg-brand-50 text-brand-700 font-bold border border-brand-200 shadow-sm' 
+            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-transparent';
         },
         badgeClass(type) {
           return type === 'Transformer' 
@@ -1040,7 +1112,7 @@
                   this.pmRecords.filter(r => r.type === 'LBS' && r.status === 'Pass with Condition').length,
                   this.pmRecords.filter(r => r.type === 'LBS' && r.status === 'Fail').length
                 ],
-                backgroundColor: ['#10b981', '#f59e0b', '#f43f5e', '#3b82f6', '#f59e0b', '#f43f5e'],
+                backgroundColor: ['#10b981', '#f59e0b', '#f43f5e', '#0284c7', '#f59e0b', '#f43f5e'],
                 borderRadius: 8
               }]
             },
@@ -1191,7 +1263,7 @@
           const ws = XLSX.utils.json_to_sheet(exportRows);
           const wb = XLSX.utils.book_new();
           XLSX.utils.book_append_sheet(wb, ws, "PM_Records");
-          XLSX.writeFile(wb, `SUBSTATION_PM_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
+          XLSX.writeFile(wb, `QUANTUM_PM_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
         },
 
         exportToPDF() {
@@ -1212,10 +1284,10 @@
             body: tableRows,
             startY: 30,
             styles: { fontSize: 8 },
-            headStyles: { fillColor: [30, 41, 59] }
+            headStyles: { fillColor: [3, 105, 161] }
           });
 
-          doc.save(`SUBSTATION_PM_Report_${Date.now()}.pdf`);
+          doc.save(`QUANTUM_PM_Report_${Date.now()}.pdf`);
         }
       }
     }).mount('#app');
