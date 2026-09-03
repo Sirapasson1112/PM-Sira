@@ -13,14 +13,13 @@
 
     <style>
         :root {
-            /* โทนสีนวลตา สไตล์ Warm Neutral / Soft Minimal */
-            --bg-body: #f1f5f9;
+            --bg-body: #f4f6f8;
             --card-bg: #ffffff;
             --panel-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border-soft: #cbd5e1;
-            --border-focus: #94a3b8;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border-soft: #e2e8f0;
+            --border-focus: #cbd5e1;
             
             --primary-warm: #d97706;
             --primary-light: #fef3c7;
@@ -37,8 +36,8 @@
 
             --radius-md: 10px;
             --radius-lg: 14px;
-            --shadow-soft: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
-            --shadow-hover: 0 10px 25px -5px rgba(15, 23, 42, 0.1);
+            --shadow-soft: 0 4px 15px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+            --shadow-hover: 0 8px 20px -3px rgba(0, 0, 0, 0.07), 0 4px 10px -2px rgba(0, 0, 0, 0.03);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -46,7 +45,7 @@
         body {
             background-color: var(--bg-body);
             color: var(--text-main);
-            padding: 12px;
+            padding: 10px;
             font-size: 13px;
             line-height: 1.45;
         }
@@ -56,13 +55,13 @@
         .no-print {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 12px;
+            gap: 10px;
+            margin-bottom: 10px;
         }
 
         .control-hub {
             background: var(--card-bg);
-            padding: 16px 20px;
+            padding: 14px 16px;
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-soft);
             box-shadow: var(--shadow-soft);
@@ -72,31 +71,30 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--border-soft);
         }
 
         .app-brand {
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 700;
-            color: #0f172a;
+            color: #1e293b;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .brand-icon {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             background: var(--primary-light);
             color: var(--primary-dark);
-            border-radius: 10px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            box-shadow: 0 2px 6px rgba(217, 119, 6, 0.15);
+            font-size: 1.1rem;
         }
 
         .google-pill {
@@ -105,28 +103,28 @@
             gap: 6px;
             background: #f8fafc;
             border: 1px solid var(--border-soft);
-            padding: 6px 14px;
+            padding: 5px 14px;
             border-radius: 20px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 600;
             cursor: pointer;
             color: var(--text-muted);
             transition: all 0.2s;
         }
-        .google-pill:hover { background: #f1f5f9; color: var(--text-main); border-color: var(--border-focus); }
+        .google-pill:hover { background: #f1f5f9; color: var(--text-main); }
 
         .main-nav-bar {
             display: flex;
             gap: 6px;
-            margin-bottom: 14px;
-            background: #e2e8f0;
-            padding: 5px;
+            margin-bottom: 12px;
+            background: #eef2f6;
+            padding: 4px;
             border-radius: var(--radius-md);
         }
 
         .main-nav-btn {
             flex: 1;
-            padding: 10px 14px;
+            padding: 9px 12px;
             border: none;
             border-radius: 8px;
             font-size: 0.85rem;
@@ -141,19 +139,19 @@
         .main-nav-btn.active {
             background: #ffffff;
             color: #0f172a;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
             font-weight: 700;
         }
 
         .action-toolbar {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
-            gap: 8px;
-            margin-bottom: 14px;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 6px;
+            margin-bottom: 12px;
         }
 
         .btn {
-            padding: 8px 12px;
+            padding: 7px 12px;
             border-radius: 8px;
             font-size: 0.8rem;
             font-weight: 600;
@@ -162,36 +160,36 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
             transition: all 0.15s ease;
         }
         .btn:active { transform: scale(0.97); }
 
-        .btn-primary { background: #d97706; color: #ffffff; box-shadow: 0 2px 6px rgba(217, 119, 6, 0.2); }
+        .btn-primary { background: #d97706; color: #ffffff; }
         .btn-primary:hover { background: #b45309; }
         .btn-secondary { background: #f8fafc; color: #334155; border: 1px solid var(--border-soft); }
-        .btn-secondary:hover { background: #f1f5f9; border-color: var(--border-focus); }
+        .btn-secondary:hover { background: #f1f5f9; }
         .btn-danger { background: #fff1f2; color: #e11d48; border: 1px solid #ffe4e6; }
         .btn-danger:hover { background: #ffe4e6; }
-        .btn-print { background: #0f172a; color: white; }
+        .btn-print { background: #334155; color: white; }
         .btn-print:hover { background: #1e293b; }
-        .btn-excel { background: #059669; color: white; box-shadow: 0 2px 6px rgba(5, 150, 105, 0.2); }
+        .btn-excel { background: #059669; color: white; }
         .btn-excel:hover { background: #047857; }
-        .btn-geo { background: #059669; color: white; font-size: 0.72rem; padding: 4px 10px; border-radius: 6px; cursor: pointer; border: none; margin-left: 6px; }
+        .btn-geo { background: #059669; color: white; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; cursor: pointer; border: none; margin-left: 4px; }
 
         .tab-scroller {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             overflow-x: auto;
-            padding-bottom: 6px;
+            padding-bottom: 4px;
             scrollbar-width: thin;
         }
 
         .tab-btn {
-            padding: 7px 14px;
+            padding: 6px 12px;
             background: #f8fafc;
             border-radius: 8px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             cursor: pointer;
             border: 1px solid var(--border-soft);
             white-space: nowrap;
@@ -201,28 +199,27 @@
         }
 
         .tab-btn.active {
-            background: #0f172a;
+            background: #334155;
             color: white;
-            border-color: #0f172a;
-            box-shadow: 0 2px 5px rgba(15, 23, 42, 0.2);
+            border-color: #334155;
         }
 
         .sub-tab-box {
             display: flex;
-            gap: 6px;
-            margin-bottom: 8px;
+            gap: 4px;
+            margin-bottom: 6px;
             background: #f8fafc;
-            padding: 4px;
-            border-radius: 8px;
+            padding: 3px;
+            border-radius: 6px;
             border: 1px solid var(--border-soft);
         }
 
         .sub-tab-btn {
             flex: 1;
-            padding: 7px;
+            padding: 6px;
             background: transparent;
-            border-radius: 6px;
-            font-size: 0.78rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
             cursor: pointer;
             border: none;
             color: var(--text-muted);
@@ -233,12 +230,12 @@
         .sub-tab-btn.active {
             background: #ffffff;
             color: #0f172a;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
         .extra-panel {
             background: var(--card-bg);
-            padding: 16px 18px;
+            padding: 14px 16px;
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-soft);
             font-size: 0.8rem;
@@ -251,58 +248,56 @@
             align-items: center;
             font-weight: 700;
             margin-bottom: 10px;
-            color: #1e293b;
+            color: #334155;
         }
 
         .extra-grid {
             display: grid;
             grid-template-columns: 1fr 1fr auto;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
 
         .saved-records-list {
-            max-height: 190px;
+            max-height: 180px;
             overflow-y: auto;
-            margin-top: 10px;
+            margin-top: 8px;
             border: 1px solid var(--border-soft);
             border-radius: 8px;
-            background: #f8fafc;
         }
 
         .saved-item {
-            padding: 9px 12px;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 8px 10px;
+            border-bottom: 1px solid #f1f5f9;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
             transition: background 0.15s;
-            background: #ffffff;
         }
-        .saved-item:hover { background: #f1f5f9; }
-        .saved-item.active-item { background: #f0fdf4; border-left: 4px solid #10b981; }
+        .saved-item:hover { background: #f8fafc; }
+        .saved-item.active-item { background: #f0fdf4; border-left: 3px solid #10b981; }
 
         .criticality-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
-            gap: 10px;
-            margin-top: 8px;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+            margin-top: 6px;
         }
 
         .cost-calc-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-            gap: 12px;
-            margin-top: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
             background: #f8fafc;
-            padding: 14px;
-            border-radius: 10px;
+            padding: 12px;
+            border-radius: 8px;
             border: 1px solid var(--border-soft);
         }
 
         .badge-priority {
-            padding: 3px 10px;
+            padding: 3px 9px;
             border-radius: 20px;
             font-size: 0.72rem;
             font-weight: 700;
@@ -312,12 +307,9 @@
         .p2-badge { background: var(--soft-amber-bg); color: var(--soft-amber-text); border: 1px solid #fde68a; }
         .p3-badge { background: var(--soft-green-bg); color: var(--soft-green-text); border: 1px solid #bbf7d0; }
 
-        /* ------------------------------------------------------------- */
-        /* ออกแบบหน้าแบบฟอร์มให้มี "เส้นตารางชัดเจน" สไตล์เอกสารวิศวกรรม */
-        /* ------------------------------------------------------------- */
         .official-sheet {
             background: var(--card-bg);
-            padding: 22px 26px;
+            padding: 18px 22px;
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-soft);
             box-shadow: var(--shadow-soft);
@@ -328,123 +320,108 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #0f172a;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
         }
 
-        .sheet-title-container h1 { font-size: 1.15rem; font-weight: 700; color: #0f172a; }
-        .sheet-code { font-size: 0.8rem; font-weight: 700; background: #0f172a; color: white; padding: 3px 10px; border-radius: 4px; }
+        .sheet-title-container h1 { font-size: 1.05rem; font-weight: 700; color: #1e293b; }
+        .sheet-code { font-size: 0.78rem; font-weight: 700; background: #334155; color: white; padding: 2px 8px; border-radius: 4px; }
 
         .section-header {
-            background-color: #e2e8f0;
+            background-color: #f8fafc;
             font-weight: 700;
-            padding: 6px 10px;
-            font-size: 0.82rem;
-            border: 1px solid #94a3b8;
-            margin-top: 12px;
+            padding: 5px 8px;
+            font-size: 0.8rem;
+            border: 1px solid var(--border-soft);
+            margin-top: 8px;
             margin-bottom: 4px;
-            border-radius: 4px;
-            color: #0f172a;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .section-num {
-            background: #0f172a;
-            color: #fff;
-            padding: 1px 6px;
-            border-radius: 3px;
-            font-size: 0.72rem;
+            border-radius: 6px;
+            color: #1e293b;
+            border-left: 4px solid var(--primary-warm);
         }
 
-        /* ตารางข้อมูลทั่วไป มีเส้นขอบชัดเจน */
         .info-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-size: 0.75rem;
-            border: 1px solid #94a3b8;
         }
 
         .info-table th, .info-table td {
-            border: 1px solid #94a3b8;
+            border: 1px solid var(--border-soft);
             padding: 5px 8px;
-            background-color: #ffffff;
+            background-color: #f8fafc;
         }
 
-        .info-table th { text-align: left; color: #334155; font-weight: 600; background-color: #f1f5f9; }
+        .info-table th { text-align: left; color: var(--text-muted); font-weight: 600; }
+        .info-table td { background-color: #fff; }
         .info-table input { border: none; background: transparent; width: 100%; padding: 2px; font-size: 0.78rem; color: var(--text-main); }
         .info-table input:focus { outline: none; background: #fffdf5; }
 
-        /* ตารางเช็กลิสต์การตรวจ มีเส้น Grid ครบถ้วน */
         table.inspection-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 8px;
-            border: 1px solid #94a3b8;
+            margin-bottom: 6px;
         }
 
         table.inspection-table th, table.inspection-table td {
-            border: 1px solid #94a3b8;
-            padding: 5px 8px;
-            font-size: 0.76rem;
+            border: 1px solid var(--border-soft);
+            padding: 4px 6px;
+            font-size: 0.74rem;
         }
 
-        table.inspection-table th { background-color: #e2e8f0; text-align: center; font-weight: 700; color: #0f172a; }
+        table.inspection-table th { background-color: #f8fafc; text-align: center; font-weight: 700; color: #334155; }
         
-        input[type="radio"], input[type="checkbox"] { transform: scale(1.15); accent-color: var(--primary-warm); cursor: pointer; }
+        input[type="radio"], input[type="checkbox"] { transform: scale(1.1); accent-color: var(--primary-warm); cursor: pointer; }
         .form-control { padding: 5px 8px; border: 1px solid var(--border-soft); border-radius: 6px; font-size: 0.78rem; background-color: #ffffff; width: 100%; color: var(--text-main); }
-        .form-control:focus { outline: none; border-color: var(--border-focus); background: #fffdf5; }
-        textarea.form-control { resize: vertical; height: 36px; }
+        .form-control:focus { outline: none; border-color: #cbd5e1; background: #fffdf5; }
+        textarea.form-control { resize: vertical; height: 32px; }
 
         .signature-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 12px;
+            gap: 8px;
+            margin-top: 8px;
             border-top: 1px dashed var(--border-soft);
-            padding-top: 10px;
+            padding-top: 6px;
         }
 
         .sig-box {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
             background: #f8fafc;
-            padding: 10px 12px;
+            padding: 8px 10px;
             border: 1px solid var(--border-soft);
-            border-radius: 8px;
+            border-radius: 6px;
         }
 
         .sheet-footer-note {
             display: flex;
             justify-content: space-between;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
-            margin-top: 8px;
+            margin-top: 6px;
             border-top: 1px solid var(--border-soft);
-            padding-top: 6px;
+            padding-top: 4px;
         }
 
-        /* ------------------------------------------------------------- */
-        /* หน้า Dashboard แผนงาน PM (KPI Bento Box & Table) */
-        /* ------------------------------------------------------------- */
         .planning-view {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
         }
 
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
         }
 
         .kpi-card {
             background: #ffffff;
-            padding: 18px;
+            padding: 16px;
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-soft);
             box-shadow: var(--shadow-soft);
@@ -456,23 +433,25 @@
         }
 
         .kpi-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: var(--shadow-hover);
-            border-color: #94a3b8;
+            border-color: #cbd5e1;
         }
 
-        .kpi-card:active { transform: scale(0.98); }
+        .kpi-card:active {
+            transform: scale(0.98);
+        }
 
         .kpi-card.kpi-active {
-            border: 2px solid #0f172a !important;
+            border: 2px solid #334155 !important;
             background: #f8fafc !important;
-            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.1) !important;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
         }
 
         .kpi-card::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; bottom: 0; width: 5px;
+            top: 0; left: 0; bottom: 0; width: 4px;
         }
         .kpi-p1::before { background: #f43f5e; }
         .kpi-cost::before { background: #f59e0b; }
@@ -480,14 +459,14 @@
         .kpi-total::before { background: #0284c7; }
 
         .kpi-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; justify-content: space-between; }
-        .kpi-value { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-top: 6px; }
-        .kpi-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; }
+        .kpi-value { font-size: 1.45rem; font-weight: 700; color: #1e293b; margin-top: 4px; }
+        .kpi-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
 
         .plan-table-box {
             background: #ffffff;
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-soft);
-            padding: 16px;
+            padding: 14px;
             box-shadow: var(--shadow-soft);
             overflow-x: auto;
         }
@@ -495,21 +474,21 @@
         .plan-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.78rem;
-            min-width: 850px;
+            font-size: 0.75rem;
+            min-width: 820px;
         }
 
         .plan-table th {
             background: #f8fafc;
             color: #334155;
             text-align: left;
-            padding: 11px 12px;
+            padding: 10px 12px;
             border-bottom: 2px solid var(--border-soft);
             font-weight: 700;
         }
 
         .plan-table td {
-            padding: 10px 12px;
+            padding: 9px 12px;
             border-bottom: 1px solid #f1f5f9;
         }
 
@@ -518,7 +497,7 @@
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.5);
+            background: rgba(15, 23, 42, 0.4);
             backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
@@ -532,24 +511,26 @@
             border-radius: var(--radius-lg);
             max-width: 500px;
             width: 100%;
-            padding: 22px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            padding: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
         }
 
-        /* Print Settings A4 หน้าเดียว (บังคับให้มีเส้นตารางตอนพิมพ์) */
         @media print {
-            @page { size: A4 portrait; margin: 6mm; }
+            @page { size: A4 portrait; margin: 4mm; }
             body { background: white !important; padding: 0; font-size: 8.5px; }
             .no-print, .planning-view, .main-nav-bar, .modal-overlay { display: none !important; }
             .official-sheet { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important; width: 100% !important; }
-            .sheet-title-container { margin-bottom: 4px; padding-bottom: 3px; border-bottom: 1px solid #000; }
-            .sheet-title-container h1 { font-size: 11px; color: #000; }
-            .info-table th, .info-table td, table.inspection-table th, table.inspection-table td { border: 1px solid #000 !important; padding: 2px 4px; font-size: 8px; color: #000; }
-            .section-header { padding: 2px 5px; margin-top: 4px; margin-bottom: 2px; font-size: 8.5px; background: #e2e8f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #000; }
-            input[type="radio"], input[type="checkbox"] { transform: scale(0.8); }
-            textarea.form-control, .form-control { height: 18px; padding: 1px 3px; font-size: 8px; border: none; background: transparent; }
-            .signature-grid { gap: 4px; margin-top: 6px; padding-top: 4px; border-top: 1px dashed #000; }
-            .sig-box { padding: 4px; border: 1px solid #000; background: #fff; }
+            .sheet-title-container { margin-bottom: 4px; padding-bottom: 2px; }
+            .sheet-title-container h1 { font-size: 11px; }
+            .info-table th, .info-table td { padding: 1px 3px; font-size: 8px; }
+            .section-header { padding: 2px 4px; margin-top: 4px; margin-bottom: 2px; font-size: 8.5px; }
+            table.inspection-table th, table.inspection-table td { padding: 1px 3px; font-size: 8px; }
+            input[type="radio"], input[type="checkbox"] { transform: scale(0.85); }
+            textarea.form-control { height: 18px; padding: 1px 3px; font-size: 8px; }
+            .form-control { padding: 1px 3px; font-size: 8px; height: 18px; }
+            .signature-grid { gap: 4px; margin-top: 4px; padding-top: 2px; }
+            .sig-box { padding: 3px; gap: 1px; }
+            .sheet-footer-note { margin-top: 3px; }
         }
     </style>
 </head>
@@ -569,7 +550,6 @@
                 </div>
             </div>
 
-            <!-- แถบสลับหน้าหลัก -->
             <div class="main-nav-bar">
                 <button class="main-nav-btn active" id="navFormBtn" onclick="switchMainView('form')">
                     📋 แบบฟอร์มตรวจสอบหน้างาน (Inspection Forms)
@@ -579,7 +559,6 @@
                 </button>
             </div>
 
-            <!-- กล่องปุ่มฟังก์ชันครบทุกปุ่ม -->
             <div class="action-toolbar">
                 <button class="btn btn-primary" onclick="saveNewRecord()">💾 บันทึกใหม่</button>
                 <button class="btn btn-secondary" onclick="saveCurrentRecord()">🔄 บันทึกทับ</button>
@@ -587,10 +566,10 @@
                 <button class="btn btn-secondary" onclick="newForm()">➕ ฟอร์มใหม่</button>
                 <button class="btn btn-danger" onclick="clearForm()">🗑️ ล้าง</button>
                 <button class="btn btn-excel" onclick="exportPlanToExcel()">📗 ส่งออก Excel</button>
-                <button class="btn btn-print" onclick="window.print()">🖨️ พิมพ์ A4 หน้าเดียว</button>
+                <!-- เปลี่ยนข้อความตามที่ขอ -->
+                <button class="btn btn-print" onclick="window.print()">🖨️ พิมพ์/PDF</button>
             </div>
 
-            <!-- แท็บเลือกรหัสฟอร์ม SF-07-0-015 ถึง 025 -->
             <div id="formTabSection">
                 <div class="tab-scroller" id="tabContainer">
                     <button class="tab-btn active" onclick="switchTab(this, 'SF-07-0-015')">SF-07-0-015 หม้อแปลงจำหน่าย</button>
@@ -608,7 +587,6 @@
             </div>
         </div>
 
-        <!-- แผงประวัติข้อมูลที่บันทึกไว้ -->
         <div class="extra-panel" id="savedRecordsPanel">
             <div class="extra-panel-header">
                 <span id="savedCountText">📁 ข้อมูลที่บันทึกไว้ (6 รายการ)</span>
@@ -622,7 +600,6 @@
             <div class="saved-records-list" id="savedRecordsContainer"></div>
         </div>
 
-        <!-- แผงรูปภาพประกอบ -->
         <div class="extra-panel" id="photoPanel">
             <div class="extra-panel-header">
                 <span>📷 รูปภาพประกอบการตรวจสอบ</span>
@@ -631,15 +608,14 @@
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
                 <span id="photoStatusText" style="font-size:0.78rem; color:var(--text-muted);">ยังไม่มีรูปภาพประกอบ</span>
                 <input type="file" id="actualFileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
-                <button class="btn btn-primary" style="font-size:0.75rem; padding:4px 12px;" onclick="triggerUpload()">+ เพิ่มรูป</button>
+                <button class="btn btn-primary" style="font-size:0.75rem; padding:3px 10px;" onclick="triggerUpload()">+ เพิ่มรูป</button>
             </div>
             <div id="imagePreviewBox" style="display:none; margin-top:8px; text-align:center;">
-                <img id="previewImg" src="" style="max-height:130px; border-radius:6px; border:1px solid var(--border-soft);">
-                <button class="btn btn-danger" style="font-size:0.65rem; padding:2px 8px; margin:4px auto 0;" onclick="removeImage()">ลบรูปภาพ</button>
+                <img id="previewImg" src="" style="max-height:120px; border-radius:6px; border:1px solid var(--border-soft);">
+                <button class="btn btn-danger" style="font-size:0.65rem; padding:2px 6px; margin:4px auto 0;" onclick="removeImage()">ลบรูปภาพ</button>
             </div>
         </div>
 
-        <!-- แผงประเมินความสำคัญ Criticality & งบประมาณ -->
         <div class="extra-panel" id="criticalityPanel">
             <div class="extra-panel-header">
                 <span>🎯 การประเมินความสำคัญของอุปกรณ์ (Criticality & Priority Ranking)</span>
@@ -1574,10 +1550,7 @@
 
     const formTemplates = {
         'SF-07-0-015': `
-            <div style="text-align: center; margin-bottom: 8px;">
-                <h1 style="font-size: 1.15rem; font-weight: 700; color: #1e293b; margin: 0;">แบบตรวจสอบบำรุงรักษาหม้อแปลงจำหน่าย</h1>
-            </div>
-            
+            <div style="text-align: center; font-weight: 700; font-size: 1.1rem; margin-bottom: 8px;">แบบตรวจสอบบำรุงรักษาหม้อแปลงจำหน่าย</div>
             <div class="section-header"><span class="section-num">1</span> ข้อมูลทั่วไป</div>
             <table class="info-table">
                 <tr>
@@ -1763,9 +1736,9 @@
                 </tbody>
             </table>
             <div class="section-header"><span class="section-num">3</span> สิ่งที่ต้องปรับปรุงหรือข้อมูลเพิ่มเติม :</div>
-            <div class="field-group" style="margin-bottom: 4px;"><input type="text" class="form-control" style="border:none; border-bottom:1px solid var(--border); background:transparent; border-radius:0;"></div>
+            <div class="field-group" style="margin-bottom: 3px;"><input type="text" class="form-control" style="border:none; border-bottom:1px solid var(--border); background:transparent; border-radius:0;"></div>
             <div class="section-header"><span class="section-num">4</span> การปรับปรุงข้อบกพร่อง :</div>
-            <div class="field-group" style="margin-bottom: 4px;"><input type="text" class="form-control" style="border:none; border-bottom:1px solid var(--border); background:transparent; border-radius:0;"></div>
+            <div class="field-group" style="margin-bottom: 3px;"><input type="text" class="form-control" style="border:none; border-bottom:1px solid var(--border); background:transparent; border-radius:0;"></div>
             <table class="info-table" style="margin-top: 6px;">
                 <tr><th style="width:12%;">ผู้ตรวจ</th><td style="width:38%;"><input type="text" placeholder="ชื่อ-นามสกุล"></td><th style="width:12%;">ผู้ตรวจสอบ</th><td style="width:38%;"><input type="text" placeholder="ชื่อ-นามสกุล"></td></tr>
                 <tr><th>ตำแหน่ง</th><td><input type="text" placeholder="ตำแหน่ง"></td><th>ตำแหน่ง</th><td><input type="text" placeholder="ตำแหน่ง"></td></tr>
