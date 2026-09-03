@@ -3,277 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ระบบบำรุงรักษาอุปกรณ์ไฟฟ้า - High Voltage Asset PM Workstation</title>
+    <title>ระบบบำรุงรักษาอุปกรณ์ไฟฟ้า - Asset Inspection & PM Planning App</title>
     
-    <!-- Google Fonts: Sarabun & Orbitron สำหรับตัวเลขนีออน -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- SheetJS CDN สำหรับ Export Excel -->
+    <!-- SheetJS CDN สำหรับ Export ไฟล์ Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
         :root {
-            --bg-base: #090d16;
-            --panel-bg: rgba(20, 27, 45, 0.7);
-            --panel-border: rgba(255, 255, 255, 0.08);
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-amber: #f59e0b;
-            --accent-glow: #d97706;
-            --neon-blue: #38bdf8;
-            --neon-cyan: #06b6d4;
-            --neon-emerald: #10b981;
-            --neon-rose: #f43f5e;
-            --glass-card: rgba(255, 255, 255, 0.03);
-            --glass-blur: blur(16px);
-            --radius-xl: 16px;
+            /* โทนสีนวลตา สไตล์ Warm Neutral / Soft Minimal */
+            --bg-body: #f4f6f8;
+            --card-bg: #ffffff;
+            --panel-bg: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border-soft: #e2e8f0;
+            --border-focus: #cbd5e1;
+            
+            --primary-warm: #d97706;
+            --primary-light: #fef3c7;
+            --primary-dark: #b45309;
+            
+            --soft-rose-bg: #ffe4e6;
+            --soft-rose-text: #e11d48;
+            --soft-amber-bg: #fef3c7;
+            --soft-amber-text: #b45309;
+            --soft-green-bg: #dcfce7;
+            --soft-green-text: #15803d;
+            --soft-blue-bg: #e0f2fe;
+            --soft-blue-text: #0369a1;
+
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow-soft: 0 4px 15px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+            --shadow-hover: 0 8px 20px -3px rgba(0, 0, 0, 0.07), 0 4px 10px -2px rgba(0, 0, 0, 0.03);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body {
-            background-color: var(--bg-base);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(245, 158, 11, 0.12) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.08) 0px, transparent 50%),
-                radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.5) 0px, transparent 100%);
-            background-attachment: fixed;
-            color: var(--text-primary);
-            padding: 12px;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding: 10px;
             font-size: 13px;
-            line-height: 1.5;
-            min-height: 100vh;
+            line-height: 1.45;
         }
 
-        .app-container { max-width: 1120px; margin: 0 auto; padding-bottom: 70px; }
+        .app-container { max-width: 1050px; margin: 0 auto; padding-bottom: 60px; }
 
-        /* Modern Glass Header */
-        .glass-panel {
-            background: var(--panel-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--panel-border);
-            border-radius: var(--radius-xl);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        .no-print {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 10px;
         }
 
+        /* กล่องคอนโทรลด้านบน สีขาวนวล */
         .control-hub {
-            padding: 16px;
-            margin-bottom: 12px;
+            background: var(--card-bg);
+            padding: 14px 16px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-soft);
         }
 
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-soft);
         }
 
         .app-brand {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1e293b;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .brand-icon-box {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, #f59e0b, #b45309);
-            border-radius: 10px;
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
-        }
-
-        .brand-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-            background: linear-gradient(to right, #ffffff, #cbd5e1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .brand-sub {
-            font-size: 0.72rem;
-            color: var(--neon-cyan);
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1px;
+            font-size: 1.1rem;
         }
 
         .google-pill {
             display: flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 6px 14px;
+            gap: 6px;
+            background: #f8fafc;
+            border: 1px solid var(--border-soft);
+            padding: 5px 14px;
             border-radius: 20px;
             font-size: 0.75rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-muted);
+            transition: all 0.2s;
         }
-        .google-pill:hover {
-            background: rgba(245, 158, 11, 0.15);
-            border-color: var(--accent-amber);
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
-        }
+        .google-pill:hover { background: #f1f5f9; color: var(--text-main); }
 
-        /* Nav Pills Modern */
+        /* แถบสลับเมนูหลัก นวลตา */
         .main-nav-bar {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            background: #eef2f6;
             padding: 4px;
-            border-radius: 12px;
-            margin-bottom: 14px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
         }
 
         .main-nav-btn {
-            padding: 10px;
+            flex: 1;
+            padding: 9px 12px;
             border: none;
-            border-radius: 9px;
+            border-radius: 8px;
             font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             background: transparent;
-            color: var(--text-secondary);
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            text-align: center;
         }
 
         .main-nav-btn.active {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.1));
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            font-weight: 700;
         }
 
-        /* Action Buttons Futuristic */
+        /* กล่องปุ่ม Action สบายตา */
         .action-toolbar {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
-            gap: 8px;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 6px;
             margin-bottom: 12px;
         }
 
         .btn {
-            padding: 8px 12px;
+            padding: 7px 12px;
             border-radius: 8px;
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            gap: 5px;
+            transition: all 0.15s ease;
         }
-        .btn:active { transform: scale(0.96); }
+        .btn:active { transform: scale(0.97); }
 
-        .btn-primary { 
-            background: linear-gradient(135deg, #f59e0b, #d97706); 
-            color: #000; 
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-        }
-        .btn-primary:hover { filter: brightness(1.1); box-shadow: 0 4px 18px rgba(245, 158, 11, 0.5); }
-        .btn-secondary { background: rgba(255,255,255,0.06); color: var(--text-primary); border: 1px solid rgba(255,255,255,0.1); }
-        .btn-secondary:hover { background: rgba(255,255,255,0.12); }
-        .btn-danger { background: rgba(244, 63, 94, 0.12); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
-        .btn-danger:hover { background: rgba(244, 63, 94, 0.25); }
-        .btn-excel { background: linear-gradient(135deg, #059669, #047857); color: white; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3); }
-        .btn-print { background: linear-gradient(135deg, #0284c7, #0369a1); color: white; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3); }
+        .btn-primary { background: #d97706; color: #ffffff; }
+        .btn-primary:hover { background: #b45309; }
+        .btn-secondary { background: #f8fafc; color: #334155; border: 1px solid var(--border-soft); }
+        .btn-secondary:hover { background: #f1f5f9; }
+        .btn-danger { background: #fff1f2; color: #e11d48; border: 1px solid #ffe4e6; }
+        .btn-danger:hover { background: #ffe4e6; }
+        .btn-print { background: #334155; color: white; }
+        .btn-print:hover { background: #1e293b; }
+        .btn-excel { background: #059669; color: white; }
+        .btn-excel:hover { background: #047857; }
+        .btn-geo { background: #059669; color: white; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; cursor: pointer; border: none; margin-left: 4px; }
 
-        /* Form Selector Scroller */
+        /* แถบเลื่อนฟอร์ม SF */
         .tab-scroller {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             overflow-x: auto;
             padding-bottom: 4px;
             scrollbar-width: thin;
         }
 
         .tab-btn {
-            padding: 6px 14px;
-            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 12px;
+            background: #f8fafc;
             border-radius: 8px;
             font-size: 0.75rem;
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid var(--border-soft);
             white-space: nowrap;
-            color: var(--text-secondary);
+            color: var(--text-muted);
+            font-weight: 600;
             transition: all 0.2s;
         }
 
         .tab-btn.active {
-            background: rgba(6, 182, 212, 0.15);
-            color: var(--neon-cyan);
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 10px rgba(6, 182, 212, 0.25);
-            font-weight: 600;
+            background: #334155;
+            color: white;
+            border-color: #334155;
         }
 
-        /* Bento Grid KPI Cards */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 12px;
-            margin-bottom: 12px;
+        .sub-tab-box {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 6px;
+            background: #f8fafc;
+            padding: 3px;
+            border-radius: 6px;
+            border: 1px solid var(--border-soft);
         }
 
-        .kpi-card {
-            background: var(--panel-bg);
-            backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--panel-border);
-            padding: 16px;
-            border-radius: var(--radius-xl);
-            position: relative;
-            overflow: hidden;
+        .sub-tab-btn {
+            flex: 1;
+            padding: 6px;
+            background: transparent;
+            border-radius: 4px;
+            font-size: 0.75rem;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-align: center;
         }
 
-        .kpi-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(255,255,255,0.2);
-            box-shadow: 0 12px 24px -10px rgba(0,0,0,0.5);
+        .sub-tab-btn.active {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
-        .kpi-card.kpi-active {
-            border-color: var(--accent-amber) !important;
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.25) !important;
-            background: rgba(30, 41, 59, 0.8) !important;
-        }
-
-        .kpi-card::after {
-            content: '';
-            position: absolute;
-            top: 0; right: 0; width: 4px; height: 100%;
-        }
-        .kpi-p1::after { background: var(--neon-rose); box-shadow: 0 0 8px var(--neon-rose); }
-        .kpi-cost::after { background: var(--accent-amber); box-shadow: 0 0 8px var(--accent-amber); }
-        .kpi-avoid::after { background: var(--neon-emerald); box-shadow: 0 0 8px var(--neon-emerald); }
-        .kpi-total::after { background: var(--neon-cyan); box-shadow: 0 0 8px var(--neon-cyan); }
-
-        .kpi-title { font-size: 0.72rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; display: flex; justify-content: space-between; }
-        .kpi-value { font-size: 1.6rem; font-weight: 700; color: #fff; font-family: 'Orbitron', sans-serif; margin-top: 6px; letter-spacing: 0.5px; }
-        .kpi-sub { font-size: 0.7rem; color: var(--text-secondary); margin-top: 4px; }
-
-        /* Panels Styles */
+        /* แผงข้อมูลสีนวล สบายตา */
         .extra-panel {
+            background: var(--card-bg);
             padding: 14px 16px;
-            margin-bottom: 12px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-soft);
+            font-size: 0.8rem;
+            box-shadow: var(--shadow-soft);
         }
 
         .extra-panel-header {
@@ -282,85 +254,99 @@
             align-items: center;
             font-weight: 700;
             margin-bottom: 10px;
-            color: #e2e8f0;
+            color: #334155;
         }
+
+        .extra-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .saved-records-list {
+            max-height: 160px;
+            overflow-y: auto;
+            margin-top: 8px;
+            border: 1px solid var(--border-soft);
+            border-radius: 8px;
+        }
+
+        .saved-item {
+            padding: 8px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .saved-item:hover { background: #f8fafc; }
+        .saved-item.active-item { background: #f0fdf4; border-left: 3px solid #10b981; }
 
         .criticality-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+            margin-top: 6px;
         }
 
         .cost-calc-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 10px;
             margin-top: 10px;
-            background: rgba(0, 0, 0, 0.25);
+            background: #f8fafc;
             padding: 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border: 1px solid var(--border-soft);
         }
 
-        .form-control {
-            padding: 6px 10px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 6px;
-            color: #f8fafc;
-            font-size: 0.8rem;
-            width: 100%;
-            outline: none;
-            transition: all 0.2s;
-        }
-        .form-control:focus {
-            border-color: var(--accent-amber);
-            box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
-        }
-
+        /* Badge สีนุ่ม ไม่แสบตา */
         .badge-priority {
-            padding: 3px 10px;
+            padding: 3px 9px;
             border-radius: 20px;
             font-size: 0.72rem;
             font-weight: 700;
             display: inline-block;
         }
-        .p1-badge { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
-        .p2-badge { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.4); }
-        .p3-badge { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .p1-badge { background: var(--soft-rose-bg); color: var(--soft-rose-text); border: 1px solid #fecdd3; }
+        .p2-badge { background: var(--soft-amber-bg); color: var(--soft-amber-text); border: 1px solid #fde68a; }
+        .p3-badge { background: var(--soft-green-bg); color: var(--soft-green-text); border: 1px solid #bbf7d0; }
 
-        /* Official Inspection Sheet Card on Screen */
+        /* แผ่นฟอร์มเอกสาร สีนวลตา */
         .official-sheet {
-            background: #ffffff;
-            color: #0f172a;
-            padding: 20px 24px;
-            border-radius: var(--radius-xl);
-            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
+            background: var(--card-bg);
+            padding: 18px 22px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-soft);
+            font-size: 0.8rem;
         }
 
         .sheet-title-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #0f172a;
+            border-bottom: 2px solid #334155;
             padding-bottom: 6px;
             margin-bottom: 8px;
         }
 
-        .sheet-title-container h1 { font-size: 1.1rem; font-weight: 700; color: #0f172a; }
-        .sheet-code { font-size: 0.8rem; font-weight: 700; background: #0f172a; color: white; padding: 3px 10px; border-radius: 4px; }
+        .sheet-title-container h1 { font-size: 1.05rem; font-weight: 700; color: #1e293b; }
+        .sheet-code { font-size: 0.78rem; font-weight: 700; background: #334155; color: white; padding: 2px 8px; border-radius: 4px; }
 
         .section-header {
-            background-color: #f1f5f9;
+            background-color: #f8fafc;
             font-weight: 700;
             padding: 5px 8px;
             font-size: 0.8rem;
-            border: 1px solid #cbd5e1;
+            border: 1px solid var(--border-soft);
             margin-top: 8px;
             margin-bottom: 4px;
-            border-radius: 4px;
-            color: #0f172a;
-            border-left: 4px solid var(--accent-amber);
+            border-radius: 6px;
+            color: #1e293b;
+            border-left: 4px solid var(--primary-warm);
         }
 
         .info-table {
@@ -371,14 +357,15 @@
         }
 
         .info-table th, .info-table td {
-            border: 1px solid #cbd5e1;
-            padding: 4px 6px;
+            border: 1px solid var(--border-soft);
+            padding: 5px 8px;
+            background-color: #f8fafc;
         }
 
-        .info-table th { text-align: right; color: #475569; font-weight: 600; width: 18%; background: #f8fafc; }
-        .info-table td { background: #fff; width: 32%; }
-        .info-table input { border: none; background: transparent; width: 100%; padding: 2px; font-size: 0.78rem; color: #0f172a; outline: none; }
-        .info-table input:focus { background: #fffbeb; }
+        .info-table th { text-align: right; color: var(--text-muted); font-weight: 600; width: 18%; }
+        .info-table td { background-color: #fff; width: 32%; }
+        .info-table input { border: none; background: transparent; width: 100%; padding: 2px; font-size: 0.78rem; color: var(--text-main); }
+        .info-table input:focus { outline: none; background: #fffdf5; }
 
         table.inspection-table {
             width: 100%;
@@ -387,70 +374,24 @@
         }
 
         table.inspection-table th, table.inspection-table td {
-            border: 1px solid #cbd5e1;
-            padding: 4px 6px;
+            border: 1px solid var(--border-soft);
+            padding: 5px 8px;
             font-size: 0.74rem;
         }
 
-        table.inspection-table th { background: #f1f5f9; text-align: center; font-weight: 700; color: #0f172a; }
-
-        /* Modern Table for PM Planning */
-        .plan-table-box {
-            padding: 16px;
-            overflow-x: auto;
-        }
-
-        .plan-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.75rem;
-            min-width: 850px;
-        }
-
-        .plan-table th {
-            background: rgba(0, 0, 0, 0.4);
-            color: var(--neon-cyan);
-            text-align: left;
-            padding: 10px 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .plan-table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            color: var(--text-primary);
-        }
-
-        .plan-table tr:hover { background: rgba(255,255,255,0.03); }
-
-        .saved-records-list {
-            max-height: 160px;
-            overflow-y: auto;
-            margin-top: 8px;
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 8px;
-        }
-
-        .saved-item {
-            padding: 8px 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .saved-item:hover { background: rgba(255,255,255,0.04); }
-        .saved-item.active-item { background: rgba(6, 182, 212, 0.1); border-left: 3px solid var(--neon-cyan); }
+        table.inspection-table th { background-color: #f8fafc; text-align: center; font-weight: 700; color: #334155; }
+        
+        input[type="radio"], input[type="checkbox"] { transform: scale(1.1); accent-color: var(--primary-warm); cursor: pointer; }
+        .form-control { padding: 5px 8px; border: 1px solid var(--border-soft); border-radius: 6px; font-size: 0.78rem; background-color: #ffffff; width: 100%; color: var(--text-main); }
+        .form-control:focus { outline: none; border-color: #cbd5e1; background: #fffdf5; }
+        textarea.form-control { resize: vertical; height: 32px; }
 
         .signature-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 8px;
             margin-top: 8px;
-            border-top: 1px dashed #cbd5e1;
+            border-top: 1px dashed var(--border-soft);
             padding-top: 6px;
         }
 
@@ -459,16 +400,117 @@
             flex-direction: column;
             gap: 3px;
             background: #f8fafc;
-            padding: 6px 8px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
+            padding: 8px 10px;
+            border: 1px solid var(--border-soft);
+            border-radius: 6px;
         }
+
+        .sheet-footer-note {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            border-top: 1px solid var(--border-soft);
+            padding-top: 4px;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* กล่อง 4 อัน (KPI Bento Box) สไตล์นวลตา กดได้ มี Feedback ชัดเจน */
+        /* ------------------------------------------------------------- */
+        .planning-view {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .kpi-card {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            border-color: #cbd5e1;
+        }
+
+        .kpi-card:active {
+            transform: scale(0.98);
+        }
+
+        .kpi-card.kpi-active {
+            border: 2px solid #334155 !important;
+            background: #f8fafc !important;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; bottom: 0; width: 4px;
+        }
+        .kpi-p1::before { background: #f43f5e; }
+        .kpi-cost::before { background: #f59e0b; }
+        .kpi-avoid::before { background: #10b981; }
+        .kpi-total::before { background: #0284c7; }
+
+        .kpi-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; justify-content: space-between; }
+        .kpi-value { font-size: 1.45rem; font-weight: 700; color: #1e293b; margin-top: 4px; }
+        .kpi-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+
+        /* ตารางในหน้าแผนงาน PM */
+        .plan-table-box {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-soft);
+            padding: 14px;
+            box-shadow: var(--shadow-soft);
+            overflow-x: auto;
+        }
+
+        .plan-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+            min-width: 820px;
+        }
+
+        .plan-table th {
+            background: #f8fafc;
+            color: #334155;
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 2px solid var(--border-soft);
+            font-weight: 700;
+        }
+
+        .plan-table td {
+            padding: 9px 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .plan-table tr:hover { background: #fafafa; }
 
         .modal-overlay {
             position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -477,37 +519,31 @@
         }
 
         .modal-card {
-            background: #1e293b;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: var(--radius-xl);
+            background: #ffffff;
+            border-radius: var(--radius-lg);
             max-width: 500px;
             width: 100%;
             padding: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .app-brand { flex-direction: column; align-items: flex-start; gap: 4px; }
-            .action-toolbar { grid-template-columns: 1fr 1fr; }
-        }
-
-        /* Print Override */
+        /* Print Settings A4 หน้าเดียว */
         @media print {
             @page { size: A4 portrait; margin: 4mm; }
-            body { background: white !important; color: black !important; padding: 0; font-size: 8.5px; }
+            body { background: white !important; padding: 0; font-size: 8.5px; }
             .no-print, .planning-view, .main-nav-bar, .modal-overlay { display: none !important; }
             .official-sheet { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important; width: 100% !important; }
             .sheet-title-container { margin-bottom: 4px; padding-bottom: 2px; }
-            .sheet-title-container h1 { font-size: 11px; color: black; }
-            .info-table th, .info-table td { padding: 1px 3px; font-size: 8px; color: black; }
-            .section-header { padding: 2px 4px; margin-top: 4px; margin-bottom: 2px; font-size: 8.5px; color: black; }
-            table.inspection-table th, table.inspection-table td { padding: 1px 3px; font-size: 8px; color: black; }
+            .sheet-title-container h1 { font-size: 11px; }
+            .info-table th, .info-table td { padding: 1px 3px; font-size: 8px; }
+            .section-header { padding: 2px 4px; margin-top: 4px; margin-bottom: 2px; font-size: 8.5px; }
+            table.inspection-table th, table.inspection-table td { padding: 1px 3px; font-size: 8px; }
             input[type="radio"], input[type="checkbox"] { transform: scale(0.85); }
-            textarea.form-control { height: 18px; padding: 1px 3px; font-size: 8px; color: black; background: transparent; }
-            .form-control { padding: 1px 3px; font-size: 8px; height: 18px; color: black; background: transparent; }
+            textarea.form-control { height: 18px; padding: 1px 3px; font-size: 8px; }
+            .form-control { padding: 1px 3px; font-size: 8px; height: 18px; }
             .signature-grid { gap: 4px; margin-top: 4px; padding-top: 2px; }
             .sig-box { padding: 3px; gap: 1px; }
+            .sheet-footer-note { margin-top: 3px; }
         }
     </style>
 </head>
@@ -515,33 +551,29 @@
 
 <div class="app-container">
     
-    <!-- ควบคุมส่วนบน -->
     <div class="no-print">
-        <div class="glass-panel control-hub">
+        <div class="control-hub">
             <div class="top-bar">
                 <div class="app-brand">
-                    <div class="brand-icon-box">⚡</div>
-                    <div>
-                        <div class="brand-title">ระบบบำรุงรักษาอุปกรณ์ไฟฟ้า</div>
-                        <div class="brand-sub">HIGH VOLTAGE ASSET PM WORKSTATION</div>
-                    </div>
+                    <div class="brand-icon">⚡</div>
+                    <span>ระบบบำรุงรักษาอุปกรณ์ไฟฟ้า</span>
                 </div>
                 <div class="google-pill" onclick="handleGoogleLogin()">
                     <span id="authStatus">👤 เข้าสู่ระบบ Google</span>
                 </div>
             </div>
 
-            <!-- สลับโหมดใช้งาน -->
+            <!-- แถบสลับหน้าหลัก -->
             <div class="main-nav-bar">
                 <button class="main-nav-btn active" id="navFormBtn" onclick="switchMainView('form')">
-                    📋 แบบฟอร์มตรวจหน้างาน (Inspection Forms)
+                    📋 แบบฟอร์มตรวจสอบหน้างาน (Inspection Forms)
                 </button>
                 <button class="main-nav-btn" id="navPlanBtn" onclick="switchMainView('planning')">
                     📊 แผนงาน PM & จัดลำดับงบประมาณ (PM Planning & Cost)
                 </button>
             </div>
 
-            <!-- ปุ่มคำสั่ง Action -->
+            <!-- กล่องปุ่มฟังก์ชันครบทุกปุ่ม -->
             <div class="action-toolbar">
                 <button class="btn btn-primary" onclick="saveNewRecord()">💾 บันทึกใหม่</button>
                 <button class="btn btn-secondary" onclick="saveCurrentRecord()">🔄 บันทึกทับ</button>
@@ -552,7 +584,7 @@
                 <button class="btn btn-print" onclick="window.print()">🖨️ พิมพ์ A4 หน้าเดียว</button>
             </div>
 
-            <!-- สลับรหัสฟอร์ม SF -->
+            <!-- แท็บเลือกรหัสฟอร์ม SF-07-0-015 ถึง 025 -->
             <div id="formTabSection">
                 <div class="tab-scroller" id="tabContainer">
                     <button class="tab-btn active" onclick="switchTab(this, 'SF-07-0-015')">SF-07-0-015 หม้อแปลงจำหน่าย</button>
@@ -570,8 +602,8 @@
             </div>
         </div>
 
-        <!-- แผงประวัติที่บันทึกไว้ -->
-        <div class="glass-panel extra-panel" id="savedRecordsPanel">
+        <!-- แผงประวัติข้อมูลที่บันทึกไว้ -->
+        <div class="extra-panel" id="savedRecordsPanel">
             <div class="extra-panel-header">
                 <span id="savedCountText">📁 ข้อมูลที่บันทึกไว้ (6 รายการ)</span>
                 <button class="btn btn-secondary" style="font-size:0.7rem; padding:2px 8px;" onclick="renderSavedRecordsList()">🔄 รีเฟรช</button>
@@ -585,31 +617,31 @@
         </div>
 
         <!-- แผงรูปภาพประกอบ -->
-        <div class="glass-panel extra-panel" id="photoPanel">
+        <div class="extra-panel" id="photoPanel">
             <div class="extra-panel-header">
                 <span>📷 รูปภาพประกอบการตรวจสอบ</span>
-                <span id="photoSizeLabel" style="font-size:0.75rem; color:var(--neon-cyan);">0 KB</span>
+                <span id="photoSizeLabel" style="font-size:0.75rem; color:var(--text-muted);">0 KB</span>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
-                <span id="photoStatusText" style="font-size:0.78rem; color:var(--text-secondary);">ยังไม่มีรูปภาพประกอบ</span>
+                <span id="photoStatusText" style="font-size:0.78rem; color:var(--text-muted);">ยังไม่มีรูปภาพประกอบ</span>
                 <input type="file" id="actualFileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
-                <button class="btn btn-primary" style="font-size:0.75rem; padding:4px 12px;" onclick="triggerUpload()">+ เพิ่มรูป</button>
+                <button class="btn btn-primary" style="font-size:0.75rem; padding:3px 10px;" onclick="triggerUpload()">+ เพิ่มรูป</button>
             </div>
             <div id="imagePreviewBox" style="display:none; margin-top:8px; text-align:center;">
-                <img id="previewImg" src="" style="max-height:130px; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
-                <button class="btn btn-danger" style="font-size:0.65rem; padding:2px 8px; margin:6px auto 0;" onclick="removeImage()">ลบรูปภาพ</button>
+                <img id="previewImg" src="" style="max-height:120px; border-radius:6px; border:1px solid var(--border-soft);">
+                <button class="btn btn-danger" style="font-size:0.65rem; padding:2px 6px; margin:4px auto 0;" onclick="removeImage()">ลบรูปภาพ</button>
             </div>
         </div>
 
-        <!-- แผง Criticality & Cost -->
-        <div class="glass-panel extra-panel" id="criticalityPanel">
+        <!-- แผงประเมินความสำคัญ Criticality & งบประมาณ -->
+        <div class="extra-panel" id="criticalityPanel">
             <div class="extra-panel-header">
-                <span>🎯 การประเมินความสำคัญของอุปกรณ์ (Criticality & Cost Optimization)</span>
-                <span id="priorityBadge" class="badge-priority p3-badge">P3 - ตามรอบปกติ</span>
+                <span>🎯 การประเมินความสำคัญของอุปกรณ์ (Criticality & Priority Ranking)</span>
+                <span id="priorityBadge" class="badge-priority p3-badge">P3 - ตามรอบปกติ (Routine)</span>
             </div>
             <div class="criticality-grid">
                 <div>
-                    <label style="font-size:0.7rem; color:var(--text-secondary); font-weight:600;">SAF (ความปลอดภัย)</label>
+                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">SAF (ความปลอดภัย)</label>
                     <select id="crit_saf" class="form-control" onchange="calculateCriticalityAndCost()">
                         <option value="1">1 - ต่ำมาก</option>
                         <option value="2">2 - ต่ำ</option>
@@ -619,121 +651,128 @@
                     </select>
                 </div>
                 <div>
-                    <label style="font-size:0.7rem; color:var(--text-secondary); font-weight:600;">REL (ความต่อเนื่อง)</label>
+                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">REL (ความต่อเนื่องการจ่ายไฟ)</label>
                     <select id="crit_rel" class="form-control" onchange="calculateCriticalityAndCost()">
                         <option value="1">1 - ลูกค้าน้อย</option>
-                        <option value="2">2 - ชุมชนเล็ก</option>
+                        <option value="2">2 - ชุมชนขนาดเล็ก</option>
                         <option value="3" selected>3 - ชุมชนหนาแน่น</option>
-                        <option value="4">4 - นิคมฯ/รพ.</option>
-                        <option value="5">5 - ลูกค้า VIP</option>
+                        <option value="4">4 - นิคมฯ / โรงพยาบาล</option>
+                        <option value="5">5 - ลูกค้ารายใหญ่ VIP</option>
                     </select>
                 </div>
                 <div>
-                    <label style="font-size:0.7rem; color:var(--text-secondary); font-weight:600;">OPR (ภารกิจ)</label>
+                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">OPR (ความสำคัญต่อภารกิจ)</label>
                     <select id="crit_opr" class="form-control" onchange="calculateCriticalityAndCost()">
-                        <option value="1">1 - มีสายสลับ</option>
-                        <option value="2">2 - สลับจ่ายไว</option>
-                        <option value="3" selected>3 - สลับปานกลาง</option>
-                        <option value="4">4 - ไม่มีสายสลับ</option>
-                        <option value="5">5 - ศูนย์กลาง</option>
+                        <option value="1">1 - มีสายป้อนสลับ</option>
+                        <option value="2">2 - สลับจ่ายได้ไว</option>
+                        <option value="3" selected>3 - สลับจ่ายปานกลาง</option>
+                        <option value="4">4 - ไม่มีสายป้อนสลับ</option>
+                        <option value="5">5 - สถานีศูนย์กลาง</option>
                     </select>
                 </div>
                 <div>
-                    <label style="font-size:0.7rem; color:var(--text-secondary); font-weight:600;">CON (สภาพชำรุด)</label>
+                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">CON (แนวโน้มขัดข้อง / สภาพ)</label>
                     <select id="crit_con" class="form-control" onchange="calculateCriticalityAndCost()">
-                        <option value="1">1 - ดีเยี่ยม</option>
-                        <option value="2">2 - ปกติ</option>
-                        <option value="3" selected>3 - เฝ้าระวัง</option>
-                        <option value="4">4 - เสื่อมสภาพ</option>
-                        <option value="5">5 - ใกล้พัง</option>
+                        <option value="1">1 - สภาพดีเยี่ยม</option>
+                        <option value="2">2 - ใช้งานได้ปกติ</option>
+                        <option value="3" selected>3 - เฝ้าระวังเล็กน้อย</option>
+                        <option value="4">4 - เริ่มเสื่อมสภาพ</option>
+                        <option value="5">5 - ชำรุดวิกฤต/ใกล้พัง</option>
                     </select>
                 </div>
                 <div>
-                    <label style="font-size:0.7rem; color:var(--text-secondary); font-weight:600;">REC (การกู้คืน)</label>
+                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">REC (ความยากในการกู้คืน)</label>
                     <select id="crit_rec" class="form-control" onchange="calculateCriticalityAndCost()">
-                        <option value="1">1 - &lt; 1 ชม.</option>
-                        <option value="2">2 - 1-2 ชม.</option>
-                        <option value="3" selected>3 - 2-4 ชม.</option>
-                        <option value="4">4 - สั่งอะไหล่</option>
-                        <option value="5">5 - ยกเปลี่ยน</option>
+                        <option value="1">1 - แก้ไข &lt; 1 ชม.</option>
+                        <option value="2">2 - แก้ไข 1-2 ชม.</option>
+                        <option value="3" selected>3 - แก้ไข 2-4 ชม.</option>
+                        <option value="4">4 - ต้องใช้อะไหล่สั่งทำ</option>
+                        <option value="5">5 - ต้องยกเปลี่ยนหม้อแปลง</option>
                     </select>
                 </div>
             </div>
 
             <div class="cost-calc-grid">
                 <div>
-                    <label style="font-size:0.7rem; color:var(--text-secondary); font-weight:600;">ค่าแรง (Labor Cost):</label>
+                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">ค่าแรง (Labor Cost):</label>
                     <input type="number" id="cost_labor" class="form-control" value="1500" onchange="calculateCriticalityAndCost()">
+                    <span style="font-size:0.65rem; color:var(--text-muted);">เช่น ช่าง 2 คน x 3 ชม.</span>
                 </div>
                 <div>
-                    <label style="font-size:0.7rem; color:var(--text-secondary); font-weight:600;">ค่าอะไหล่ (Material Cost):</label>
+                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">ค่าอะไหล่/วัสดุ (Material Cost):</label>
                     <input type="number" id="cost_material" class="form-control" value="2500" onchange="calculateCriticalityAndCost()">
+                    <span style="font-size:0.65rem; color:var(--text-muted);">เช่น น้ำมัน, ซิลิกาเจล, ฟิวส์</span>
                 </div>
                 <div>
-                    <label style="font-size:0.7rem; color:var(--text-secondary); font-weight:600;">ค่าเครื่องมือ (Tool Cost):</label>
+                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">ค่าเครื่องมือพิเศษ (Tool/Equipment):</label>
                     <input type="number" id="cost_tool" class="form-control" value="1000" onchange="calculateCriticalityAndCost()">
+                    <span style="font-size:0.65rem; color:var(--text-muted);">เช่น รถกรองน้ำมัน, กล้องเทอร์โม</span>
                 </div>
                 <div>
-                    <label style="font-size:0.7rem; color:var(--accent-amber); font-weight:700;">รวมต้นทุน PM:</label>
-                    <input type="text" id="cost_total" class="form-control" value="5,000 บาท" readonly style="font-weight:700; color:var(--accent-amber); background:rgba(0,0,0,0.4);">
-                    <span id="cost_avoid_label" style="font-size:0.68rem; color:var(--neon-emerald); font-weight:600; display:block; margin-top:2px;">ลดความเสียหายได้: ~150,000 บาท</span>
+                    <label style="font-size:0.7rem; font-weight:700; color:var(--primary-dark);">รวมต้นทุนทำ PM ทั้งหมด:</label>
+                    <input type="text" id="cost_total" class="form-control" value="5,000 บาท" readonly style="font-weight:700; background:#fefdf9; color:#b45309;">
+                    <span id="cost_avoid_label" style="font-size:0.65rem; color:#059669; font-weight:600;">มูลค่าความเสียหายที่ลดได้: ~150,000 บาท</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ส่วนใบตรวจสอบ -->
+    <!-- ส่วนที่ 1: หน้าแบบฟอร์มตรวจสอบ -->
     <div id="formContentArea">
         <div class="official-sheet" id="printArea"></div>
     </div>
 
-    <!-- ส่วน Dashboard แผนงาน PM + กล่อง Bento 4 กล่องที่คลิกได้ -->
+    <!-- ส่วนที่ 2: หน้า Dashboard วางแผนงาน PM (กล่อง 4 อัน สีนวลตา และคลิกกรองข้อมูลได้จริง) -->
     <div id="planningContentArea" class="planning-view" style="display: none;">
         <div class="kpi-grid">
-            <div class="kpi-card kpi-p1" id="kpiCardP1" onclick="filterByKpi('P1')" title="คลิกเพื่อกรองงาน P1">
+            <!-- กล่องที่ 1: P1 Urgent -->
+            <div class="kpi-card kpi-p1" id="kpiCardP1" onclick="filterByKpi('P1')" title="คลิกเพื่อกรองงานฉุกเฉิน P1">
                 <div class="kpi-title">
-                    <span>งานเร่งด่วนฉุกเฉิน (P1)</span>
-                    <span style="color:var(--neon-rose); font-size:0.75rem;">👆 แตะกรอง</span>
+                    <span>งานเร่งด่วนฉุกเฉิน (P1 Urgent)</span>
+                    <span style="font-size:0.7rem; color:#e11d48; font-weight:600;">👆 คลิกกรอง</span>
                 </div>
                 <div class="kpi-value" id="kpiP1Count">2 งาน</div>
                 <div class="kpi-sub">ต้องทำภายใน 24-48 ชม.</div>
             </div>
 
-            <div class="kpi-card kpi-cost" id="kpiCardCost" onclick="filterByKpi('COST')" title="คลิกเพื่อเรียงลำดับงบประมาณ">
+            <!-- กล่องที่ 2: งบประมาณรวม -->
+            <div class="kpi-card kpi-cost" id="kpiCardCost" onclick="filterByKpi('COST')" title="คลิกเพื่อเรียงลำดับงานตามงบประมาณ">
                 <div class="kpi-title">
-                    <span>งบประมาณ PM รวม</span>
-                    <span style="color:var(--accent-amber); font-size:0.75rem;">👆 เรียงงบ</span>
+                    <span>งบประมาณที่วางแผนไว้ทั้งหมด</span>
+                    <span style="font-size:0.7rem; color:#b45309; font-weight:600;">👆 เรียงงบ</span>
                 </div>
                 <div class="kpi-value" id="kpiTotalBudget">฿ 54,500</div>
-                <div class="kpi-sub">จากแผนงานทั้งหมด</div>
+                <div class="kpi-sub">จากแผนงาน PM ทั้งหมด</div>
             </div>
 
-            <div class="kpi-card kpi-avoid" id="kpiCardAvoid" onclick="filterByKpi('AVOID')" title="คลิกเพื่อดูความคุ้มค่าสูงสุด">
+            <!-- กล่องที่ 3: มูลค่าความเสียหายที่ป้องกันได้ -->
+            <div class="kpi-card kpi-avoid" id="kpiCardAvoid" onclick="filterByKpi('AVOID')" title="คลิกเพื่อดูความคุ้มค่าที่ป้องกันได้สูงสุด">
                 <div class="kpi-title">
-                    <span>ความเสียหายที่ลดได้</span>
-                    <span style="color:var(--neon-emerald); font-size:0.75rem;">👆 ความคุ้มค่า</span>
+                    <span>มูลค่าความเสียหายที่ป้องกันได้</span>
+                    <span style="font-size:0.7rem; color:#15803d; font-weight:600;">👆 ดูความคุ้มค่า</span>
                 </div>
                 <div class="kpi-value" id="kpiAvoidedLoss">฿ 1,450,000</div>
-                <div class="kpi-sub">Cost Avoidance รวม</div>
+                <div class="kpi-sub">Cost Avoidance จากการดักจับอาการเสีย</div>
             </div>
 
-            <div class="kpi-card kpi-total" id="kpiCardDone" onclick="filterByKpi('DONE')" title="คลิกเพื่อกรองงานที่เสร็จแล้ว">
+            <!-- กล่องที่ 4: สถานะงานเสร็จสิ้น -->
+            <div class="kpi-card kpi-total" id="kpiCardDone" onclick="filterByKpi('DONE')" title="คลิกเพื่อกรองเฉพาะงานที่เสร็จแล้ว">
                 <div class="kpi-title">
-                    <span>ความสำเร็จแผนงาน</span>
-                    <span style="color:var(--neon-cyan); font-size:0.75rem;">👆 งานเสร็จ</span>
+                    <span>สถานะแผนงานเสร็จสิ้น</span>
+                    <span style="font-size:0.7rem; color:#0369a1; font-weight:600;">👆 กรองงานเสร็จ</span>
                 </div>
                 <div class="kpi-value" id="kpiCompletion">66.7%</div>
                 <div class="kpi-sub">คลิกเพื่อดูกลุ่มงานเสร็จสิ้น</div>
             </div>
         </div>
 
-        <div class="glass-panel plan-table-box">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div class="plan-table-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <div>
-                    <h3 style="font-size:0.95rem; font-weight:700; color:#fff;" id="planTableTitle">📋 แผนงาน PM จัดลำดับตามความเสี่ยงและงบประมาณ</h3>
-                    <span style="font-size:0.72rem; color:var(--text-secondary);" id="planTableSubtitle">เรียงลำดับความเสี่ยง P1 ➔ P2 ➔ P3</span>
+                    <h3 style="font-size:0.95rem; font-weight:700; color:#1e293b;" id="planTableTitle">📋 แผนงาน PM จัดลำดับตามความเสี่ยงและงบประมาณ (Ranked Priority Queue)</h3>
+                    <span style="font-size:0.72rem; color:var(--text-muted);" id="planTableSubtitle">เรียงลำดับความเสี่ยง P1 (วิกฤต) ➔ P2 (สูง) ➔ P3 (ปกติ)</span>
                 </div>
-                <button id="resetKpiFilterBtn" class="btn btn-secondary" style="display:none; font-size:0.72rem;" onclick="filterByKpi('ALL')">✖ แสดงทั้งหมด</button>
+                <button id="resetKpiFilterBtn" class="btn btn-secondary" style="display:none; font-size:0.72rem; padding:3px 8px;" onclick="filterByKpi('ALL')">✖ ล้างการกรอง (แสดงทั้งหมด)</button>
             </div>
 
             <table class="plan-table">
@@ -759,30 +798,30 @@
     <!-- Modal หน้าต่างแก้ไขข้อมูลแผนงาน -->
     <div id="editModal" class="modal-overlay" style="display:none;">
         <div class="modal-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">
-                <h3 style="font-size:0.95rem; font-weight:700; color:var(--accent-amber);" id="modalTitle">✏️ แก้ไขข้อมูลใบงาน PM</h3>
-                <button onclick="closeEditModal()" style="background:none; border:none; font-size:1.1rem; color:var(--text-secondary); cursor:pointer;">✖</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-soft); padding-bottom:6px;">
+                <h3 style="font-size:0.95rem; font-weight:700; color:#1e293b;" id="modalTitle">✏️ แก้ไขข้อมูลใบงาน PM</h3>
+                <button onclick="closeEditModal()" style="background:none; border:none; font-size:1.1rem; cursor:pointer; color:var(--text-muted);">✖</button>
             </div>
-            <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; flex-direction:column; gap:8px;">
                 <div>
-                    <label style="font-size:0.75rem; font-weight:600; color:var(--text-secondary);">Work Order No.</label>
-                    <input type="text" id="modalWO" class="form-control" readonly style="background:rgba(0,0,0,0.3);">
+                    <label style="font-size:0.75rem; font-weight:600;">Work Order No.</label>
+                    <input type="text" id="modalWO" class="form-control" readonly style="background:#f8fafc;">
                 </div>
                 <div>
-                    <label style="font-size:0.75rem; font-weight:600; color:var(--text-secondary);">วันที่ดำเนินการ</label>
+                    <label style="font-size:0.75rem; font-weight:600;">วันที่ดำเนินการ</label>
                     <input type="date" id="modalDate" class="form-control">
                 </div>
                 <div>
-                    <label style="font-size:0.75rem; font-weight:600; color:var(--text-secondary);">Station ID / สถานที่</label>
+                    <label style="font-size:0.75rem; font-weight:600;">Station ID / สถานที่</label>
                     <input type="text" id="modalLoc" class="form-control">
                 </div>
                 <div>
-                    <label style="font-size:0.75rem; font-weight:600; color:var(--text-secondary);">ชื่ออุปกรณ์</label>
+                    <label style="font-size:0.75rem; font-weight:600;">ชื่ออุปกรณ์</label>
                     <input type="text" id="modalAsset" class="form-control">
                 </div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
                     <div>
-                        <label style="font-size:0.75rem; font-weight:600; color:var(--text-secondary);">ระดับความสำคัญ</label>
+                        <label style="font-size:0.75rem; font-weight:600;">ระดับความสำคัญ</label>
                         <select id="modalPriority" class="form-control">
                             <option value="P1">P1 - ฉุกเฉินเร่งด่วน</option>
                             <option value="P2">P2 - สำคัญสูง</option>
@@ -790,7 +829,7 @@
                         </select>
                     </div>
                     <div>
-                        <label style="font-size:0.75rem; font-weight:600; color:var(--text-secondary);">สถานะงาน</label>
+                        <label style="font-size:0.75rem; font-weight:600;">สถานะงาน</label>
                         <select id="modalStatus" class="form-control">
                             <option value="รอดำเนินการ">รอดำเนินการ</option>
                             <option value="กำลังทำ">กำลังทำ</option>
@@ -800,10 +839,10 @@
                     </div>
                 </div>
                 <div>
-                    <label style="font-size:0.75rem; font-weight:600; color:var(--text-secondary);">งบประมาณรวม (บาท)</label>
+                    <label style="font-size:0.75rem; font-weight:600;">งบประมาณรวม (บาท)</label>
                     <input type="number" id="modalTotalCost" class="form-control">
                 </div>
-                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+                <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:8px;">
                     <button class="btn btn-secondary" onclick="closeEditModal()">ยกเลิก</button>
                     <button class="btn btn-primary" onclick="saveModalChanges()">💾 บันทึกการแก้ไข</button>
                 </div>
@@ -961,7 +1000,7 @@
         }
     }
 
-    // ฟังก์ชันกรองและจัดเรียงเมื่อคลิกกล่องทั้ง 4
+    // ฟังก์ชันจัดการเมื่อคลิกกล่อง KPI ทั้ง 4
     function filterByKpi(type) {
         const cardP1 = document.getElementById('kpiCardP1');
         const cardCost = document.getElementById('kpiCardCost');
@@ -978,8 +1017,8 @@
         if(currentKpiFilter === type || type === 'ALL') {
             currentKpiFilter = null;
             resetBtn.style.display = 'none';
-            title.innerText = "📋 แผนงาน PM จัดลำดับตามความเสี่ยงและงบประมาณ";
-            subtitle.innerText = "เรียงลำดับความเสี่ยง P1 ➔ P2 ➔ P3";
+            title.innerText = "📋 แผนงาน PM จัดลำดับตามความเสี่ยงและงบประมาณ (Ranked Priority Queue)";
+            subtitle.innerText = "เรียงลำดับความเสี่ยง P1 (วิกฤต) ➔ P2 (สูง) ➔ P3 (ปกติ)";
             renderPlanningTable();
             return;
         }
@@ -992,23 +1031,23 @@
         if(type === 'P1') {
             cardP1.classList.add('kpi-active');
             listToRender = listToRender.filter(item => item.priority === 'P1');
-            title.innerText = "🚨 แผนงานเร่งด่วนฉุกเฉินระดับ P1";
-            subtitle.innerText = `พบ ${listToRender.length} รายการที่ต้องดำเนินการภายใน 24-48 ชั่วโมง`;
+            title.innerText = "🚨 แผนงานเร่งด่วนฉุกเฉินระดับ P1 (Priority 1 Queue)";
+            subtitle.innerText = `พบ ${listToRender.length} รายการที่ต้องดำเนินการทันทีภายใน 24-48 ชั่วโมง`;
         } else if(type === 'COST') {
             cardCost.classList.add('kpi-active');
             listToRender.sort((a, b) => b.totalCost - a.totalCost);
-            title.innerText = "💰 แผนงานเรียงตามงบประมาณ PM สูงสุด";
-            subtitle.innerText = "เรียงลำดับรายการที่มีค่าใช้จ่ายจากมากไปน้อย";
+            title.innerText = "💰 แผนงานเรียงตามงบประมาณ PM สูงสุด (Highest Budget First)";
+            subtitle.innerText = "เรียงลำดับรายการที่มีค่าใช้จ่าย (ค่าแรง + อะไหล่ + เครื่องมือ) จากมากไปน้อย";
         } else if(type === 'AVOID') {
             cardAvoid.classList.add('kpi-active');
             listToRender.sort((a, b) => b.avoidedCost - a.avoidedCost);
-            title.innerText = "🛡️ แผนงานเรียงตามความคุ้มค่าที่ป้องกันได้สูงสุด";
-            subtitle.innerText = "รายการที่มีมูลค่าความเสียหายที่จะลดได้สูงสุดจากการทำ PM";
+            title.innerText = "🛡️ แผนงานเรียงตามความคุ้มค่าและความเสียหายที่ป้องกันได้สูงสุด (Top Cost Avoidance)";
+            subtitle.innerText = "รายการที่มีมูลค่าความเสี่ยงและความเสียหายที่จะลดได้สูงที่สุดจากการเข้าบำรุงรักษา";
         } else if(type === 'DONE') {
             cardDone.classList.add('kpi-active');
             listToRender = listToRender.filter(item => item.status === 'เสร็จสิ้น');
-            title.innerText = "✅ แผนงานที่ดำเนินการเสร็จสิ้นแล้ว";
-            subtitle.innerText = `พบ ${listToRender.length} รายการที่ปฏิบัติงานเสร็จสมบูรณ์`;
+            title.innerText = "✅ แผนงานที่ดำเนินการเสร็จสิ้นแล้ว (Completed PM Jobs)";
+            subtitle.innerText = `พบ ${listToRender.length} รายการที่ปฏิบัติงานเสร็จสมบูรณ์แล้ว`;
         }
 
         renderPlanningTable(listToRender);
@@ -1131,7 +1170,7 @@
         document.getElementById('savedCountText').innerText = `📁 ข้อมูลที่บันทึกไว้ (${maintenancePlan.length} รายการ)`;
 
         if(list.length === 0) {
-            container.innerHTML = `<div style="padding:10px; text-align:center; color:var(--text-secondary);">ไม่พบรายการที่ค้นหา</div>`;
+            container.innerHTML = `<div style="padding:10px; text-align:center; color:var(--text-muted);">ไม่พบรายการที่ค้นหา</div>`;
             return;
         }
 
@@ -1144,15 +1183,15 @@
             div.className = `saved-item ${isSelected ? 'active-item' : ''}`;
             div.innerHTML = `
                 <div>
-                    <span style="font-weight:700; color:var(--text-primary);">${item.orderId}</span>
-                    <span style="color:var(--neon-cyan); font-weight:600; margin:0 4px;">[${item.formCode}]</span>
-                    <span style="color:var(--text-secondary); font-size:0.72rem;">${item.stationId} - ${item.location}</span>
+                    <span style="font-weight:700; color:#1e293b;">${item.orderId}</span>
+                    <span style="color:#0284c7; font-weight:600; margin:0 4px;">[${item.formCode}]</span>
+                    <span style="color:var(--text-muted); font-size:0.72rem;">${item.stationId} - ${item.location}</span>
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
                     <span class="badge-priority ${badgeClass}">${item.priority}</span>
-                    <span style="font-size:0.7rem; color:${item.status === 'เสร็จสิ้น' ? '#34d399' : '#fbbf24'}; font-weight:600;">${item.status}</span>
-                    <button class="btn btn-secondary" style="font-size:0.65rem; padding:3px 8px;" onclick="selectRecordToView(${originalIndex}, event)">✏️ ดู/แก้ไข</button>
-                    <button class="btn btn-danger" style="font-size:0.65rem; padding:3px 6px;" onclick="deleteRecord(${originalIndex}, event)">🗑️</button>
+                    <span style="font-size:0.7rem; color:${item.status === 'เสร็จสิ้น' ? '#15803d' : '#b45309'}; font-weight:600;">${item.status}</span>
+                    <button class="btn btn-secondary" style="font-size:0.65rem; padding:2px 6px;" onclick="selectRecordToView(${originalIndex}, event)">✏️ ดู/แก้ไข</button>
+                    <button class="btn btn-danger" style="font-size:0.65rem; padding:2px 6px;" onclick="deleteRecord(${originalIndex}, event)">🗑️</button>
                 </div>
             `;
             container.appendChild(div);
@@ -1302,7 +1341,7 @@
         const list = customList || maintenancePlan;
 
         if(list.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:18px; color:var(--text-secondary);">ไม่พบรายการที่ตรงกับเงื่อนไขการกรอง</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:15px; color:var(--text-muted);">ไม่พบรายการที่ตรงกับเงื่อนไข</td></tr>`;
             return;
         }
 
@@ -1312,19 +1351,19 @@
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td style="font-weight:700; color:var(--neon-cyan);">${item.orderId}</td>
+                <td style="font-weight:700; color:#1e293b;">${item.orderId}</td>
                 <td>${item.date}</td>
-                <td><span style="font-weight:600; color:var(--accent-amber);">${item.formCode}</span></td>
+                <td><span style="font-weight:600; color:#0284c7;">${item.formCode}</span></td>
                 <td>${item.stationId} - ${item.location}</td>
                 <td>${item.asset}</td>
-                <td style="font-weight:700; text-align:center; color:#fff;">${item.score}/100</td>
+                <td style="font-weight:700; text-align:center;">${item.score}/100</td>
                 <td><span class="badge-priority ${badgeClass}">${item.priority}</span></td>
-                <td style="font-weight:600; color:var(--neon-emerald);">฿${item.totalCost.toLocaleString()}</td>
-                <td><span style="font-weight:600; color:${item.status === 'เสร็จสิ้น' ? '#34d399' : '#fbbf24'}">${item.status}</span></td>
+                <td style="font-weight:600; color:#1e293b;">฿${item.totalCost.toLocaleString()}</td>
+                <td><span style="font-weight:600; color:${item.status === 'เสร็จสิ้น' ? '#15803d' : '#b45309'}">${item.status}</span></td>
                 <td>
-                    <div style="display:flex; gap:4px;">
-                        <button class="btn btn-secondary" style="font-size:0.68rem; padding:3px 8px;" onclick="loadRecordToForm(${originalIndex})">ดูฟอร์ม</button>
-                        <button class="btn btn-primary" style="font-size:0.68rem; padding:3px 8px;" onclick="openEditModal(${originalIndex})">✏️ แก้ไข</button>
+                    <div style="display:flex; gap:3px;">
+                        <button class="btn btn-secondary" style="font-size:0.68rem; padding:2px 6px;" onclick="loadRecordToForm(${originalIndex})">ดูฟอร์ม</button>
+                        <button class="btn btn-primary" style="font-size:0.68rem; padding:2px 6px;" onclick="openEditModal(${originalIndex})">✏️ แก้ไข</button>
                     </div>
                 </td>
             `;
@@ -1352,15 +1391,15 @@
         if(totalScore >= 75) {
             priority = "P1";
             badge.className = "badge-priority p1-badge";
-            badge.innerText = `P1 - วิกฤต/ด่วนมาก (${totalScore}/100)`;
+            badge.innerText = `P1 - วิกฤต/ด่วนมาก (คะแนน: ${totalScore}/100)`;
         } else if(totalScore >= 50) {
             priority = "P2";
             badge.className = "badge-priority p2-badge";
-            badge.innerText = `P2 - สำคัญสูง (${totalScore}/100)`;
+            badge.innerText = `P2 - สำคัญสูง (คะแนน: ${totalScore}/100)`;
         } else {
             priority = "P3";
             badge.className = "badge-priority p3-badge";
-            badge.innerText = `P3 - ตามรอบปกติ (${totalScore}/100)`;
+            badge.innerText = `P3 - ตามรอบปกติ (คะแนน: ${totalScore}/100)`;
         }
 
         const labor = parseFloat(document.getElementById('cost_labor').value) || 0;
@@ -1375,7 +1414,7 @@
         else if(priority === 'P2') estAvoided = 180000;
         else estAvoided = 80000;
 
-        document.getElementById('cost_avoid_label').innerText = `ลดความเสียหายได้: ~${estAvoided.toLocaleString()} บาท`;
+        document.getElementById('cost_avoid_label').innerText = `มูลค่าความเสียหายที่ลดได้: ~${estAvoided.toLocaleString()} บาท`;
         return { totalScore, priority, totalCost, estAvoided, labor, material, tool };
     }
 
@@ -1458,11 +1497,11 @@
             <table class="inspection-table">
                 <thead><tr><th style="text-align: left;">รายการตรวจสอบ</th><th>ปกติ</th><th>ชำรุด</th><th>ไม่มี</th><th>ข้อบกพร่อง / การดำเนินการแก้ไข</th></tr></thead>
                 <tbody>
-                    <tr><td colspan="5" style="background:#f5f5f4; font-weight:bold;">ตู้ครอบ Enclosure</td></tr>
+                    <tr><td colspan="5" style="background:#f8fafc; font-weight:bold;">ตู้ครอบ Enclosure</td></tr>
                     <tr><td>2.1 สภาพภายนอก</td><td><input type="radio" name="u1"></td><td><input type="radio" name="u1"></td><td><input type="radio" name="u1"></td><td><input type="text" class="form-control" style="border:none; background:transparent;"></td></tr>
                     <tr><td>2.2 ประตู</td><td><input type="radio" name="u2"></td><td><input type="radio" name="u2"></td><td><input type="radio" name="u2"></td><td><input type="text" class="form-control" style="border:none; background:transparent;"></td></tr>
                     <tr><td>2.3 ฐานตู้ / นั่งร้าน</td><td><input type="radio" name="u3"></td><td><input type="radio" name="u3"></td><td><input type="radio" name="u3"></td><td><input type="text" class="form-control" style="border:none; background:transparent;"></td></tr>
-                    <tr><td colspan="5" style="background:#f5f5f4; font-weight:bold;">RMU</td></tr>
+                    <tr><td colspan="5" style="background:#f8fafc; font-weight:bold;">RMU</td></tr>
                     <tr><td>2.4 สภาพ RMU</td><td><input type="radio" name="u4"></td><td><input type="radio" name="u4"></td><td><input type="radio" name="u4"></td><td><input type="text" class="form-control" style="border:none; background:transparent;"></td></tr>
                     <tr><td>2.5 ก๊าซ SF6</td><td><input type="radio" name="u5"></td><td><input type="radio" name="u5"></td><td><input type="radio" name="u5"></td><td><input type="text" class="form-control" style="border:none; background:transparent;"></td></tr>
                     <tr><td>2.6 ตัวแสดงสถานะสวิตช์</td><td><input type="radio" name="u6"></td><td><input type="radio" name="u6"></td><td><input type="radio" name="u6"></td><td><input type="text" class="form-control" style="border:none; background:transparent;"></td></tr>
@@ -1490,7 +1529,7 @@
             <table class="inspection-table">
                 <thead><tr><th style="text-align: left;">รายการตรวจสอบ</th><th>ปกติ</th><th>ชำรุด</th><th>ไม่มี</th><th>ข้อบกพร่อง / การดำเนินการแก้ไข</th></tr></thead>
                 <tbody>
-                    <tr><td colspan="5" style="background:#f5f5f4; font-weight:bold;">อุปกรณ์ด้านแรงต่ำ</td></tr>
+                    <tr><td colspan="5" style="background:#f8fafc; font-weight:bold;">อุปกรณ์ด้านแรงต่ำ</td></tr>
                     <tr><td>2.25 สภาพทั่วไป CB หรือ FUSE</td><td><input type="radio" name="u25"></td><td><input type="radio" name="u25"></td><td><input type="radio" name="u25"></td><td><input type="text" class="form-control" style="border:none; background:transparent;"></td></tr>
                     <tr><td>2.26 สายไฟฟ้า</td><td><input type="radio" name="u26"></td><td><input type="radio" name="u26"></td><td><input type="radio" name="u26"></td><td><input type="text" class="form-control" style="border:none; background:transparent;"></td></tr>
                     <tr><td>2.27 บัสบาร์</td><td><input type="radio" name="u27"></td><td><input type="radio" name="u27"></td><td><input type="radio" name="u27"></td><td><input type="text" class="form-control" style="border:none; background:transparent;"></td></tr>
@@ -1498,7 +1537,7 @@
                 </tbody>
             </table>
             <div class="section-header">3 ตรวจสอบวัดกระแสและแรงดันไฟฟ้า (ด้านแรงต่ำ)</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 4px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px; background: #f8fafc; border: 1px solid var(--border-soft); border-radius: 6px; margin-bottom: 4px;">
                 <div><strong>แรงดันไฟฟ้า (V)</strong><div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-top: 2px;"><input type="text" class="form-control" placeholder="V1-N"><input type="text" class="form-control" placeholder="V2-N"><input type="text" class="form-control" placeholder="V3-N"><input type="text" class="form-control" placeholder="V1-2"><input type="text" class="form-control" placeholder="V1-3"><input type="text" class="form-control" placeholder="V2-3"></div></div>
                 <div><strong>กระแสไฟฟ้า (A)</strong><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; margin-top: 2px;"><input type="text" class="form-control" placeholder="IN"><input type="text" class="form-control" placeholder="I1"><input type="text" class="form-control" placeholder="I2"><input type="text" class="form-control" placeholder="I3"></div></div>
             </div>
@@ -1543,7 +1582,7 @@
                 </tbody>
             </table>
             <div class="section-header">3 ตรวจสอบวัดกระแสและแรงดันไฟฟ้า</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 4px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px; background: #f8fafc; border: 1px solid var(--border-soft); border-radius: 6px; margin-bottom: 4px;">
                 <div><strong>แรงดันไฟฟ้า (V)</strong><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 2px;"><input type="text" class="form-control" placeholder="V1-N"><input type="text" class="form-control" placeholder="V1-2"><input type="text" class="form-control" placeholder="V2-N"><input type="text" class="form-control" placeholder="V1-3"><input type="text" class="form-control" placeholder="V3-N"><input type="text" class="form-control" placeholder="V2-3"></div></div>
                 <div><strong>กระแสไฟฟ้า (A)</strong><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 2px;"><input type="text" class="form-control" placeholder="IN"><input type="text" class="form-control" placeholder="I1"><input type="text" class="form-control" placeholder="I2"><input type="text" class="form-control" placeholder="I3"></div><input type="text" class="form-control" placeholder="ผลรวมกระแสทั้งหมด" style="margin-top:4px;"></div>
             </div>
@@ -1625,10 +1664,10 @@
             <table class="inspection-table">
                 <thead><tr><th style="width: 40px;">ระดับ</th><th>Delta T (°C)</th><th style="text-align: left;">ข้อเสนอแนะการดำเนินการ</th><th style="width: 50px;">เลือก</th></tr></thead>
                 <tbody>
-                    <tr><td style="text-align:center; font-weight:bold; color:#059669;">4</td><td>0 - 10°C</td><td>อุปกรณ์ปกติ</td><td style="text-align:center;"><input type="checkbox"></td></tr>
-                    <tr><td style="text-align:center; font-weight:bold; color:#d97706;">3</td><td>> 10 - 20°C</td><td>แก้ไขในการบำรุงรักษาครั้งต่อไป</td><td style="text-align:center;"><input type="checkbox"></td></tr>
-                    <tr><td style="text-align:center; font-weight:bold; color:#ea580c;">2</td><td>> 20 - 40°C</td><td>ควรแก้ไขภายใน 1 เดือน</td><td style="text-align:center;"><input type="checkbox"></td></tr>
-                    <tr><td style="text-align:center; font-weight:bold; color:#dc2626;">1</td><td>> 40°C</td><td>ควรได้รับการแก้ไขเร่งด่วน (Urgent)</td><td style="text-align:center;"><input type="checkbox"></td></tr>
+                    <tr><td style="text-align:center; font-weight:bold; color:#15803d;">4</td><td>0 - 10°C</td><td>อุปกรณ์ปกติ</td><td style="text-align:center;"><input type="checkbox"></td></tr>
+                    <tr><td style="text-align:center; font-weight:bold; color:#b45309;">3</td><td>> 10 - 20°C</td><td>แก้ไขในการบำรุงรักษาครั้งต่อไป</td><td style="text-align:center;"><input type="checkbox"></td></tr>
+                    <tr><td style="text-align:center; font-weight:bold; color:#c2410c;">2</td><td>> 20 - 40°C</td><td>ควรแก้ไขภายใน 1 เดือน</td><td style="text-align:center;"><input type="checkbox"></td></tr>
+                    <tr><td style="text-align:center; font-weight:bold; color:#b91c1c;">1</td><td>> 40°C</td><td>ควรได้รับการแก้ไขเร่งด่วน (Urgent)</td><td style="text-align:center;"><input type="checkbox"></td></tr>
                 </tbody>
             </table>
             <div class="signature-grid">
@@ -1651,7 +1690,7 @@
                 <tr><th>Station ID</th><td><input type="text" placeholder="Station ID"></td><th>อุปกรณ์</th><td><input type="text" placeholder="อุปกรณ์"></td></tr>
                 <tr><th>MEA No.</th><td><input type="text" placeholder="MEA No."></td><th>สายป้อน</th><td><input type="text" placeholder="สายป้อน"></td></tr>
             </table>
-            <div style="font-size: 0.78rem; margin: 4px 0; background:#f8fafc; padding:6px 10px; border:1px solid #cbd5e1; border-radius:6px;">
+            <div style="font-size: 0.78rem; margin: 4px 0; background:#f8fafc; padding:6px 10px; border:1px solid var(--border-soft); border-radius:6px;">
                 <b>ระดับความรุนแรง (NL CLOUD):</b>
                 <div style="display:flex; gap:12px; margin-top:2px;">
                     <label><input type="checkbox"> สูงมาก</label>
