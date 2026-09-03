@@ -389,6 +389,7 @@
             gap: 10px;
         }
 
+        /* ปรับปรุงกล่อง KPI ให้มี hover และ active state แสดงว่าคลิกได้ */
         .kpi-card {
             background: white;
             padding: 14px;
@@ -397,6 +398,25 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.02);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+            border-color: #94a3b8;
+        }
+
+        .kpi-card:active {
+            transform: scale(0.98);
+        }
+
+        .kpi-card.kpi-active {
+            border: 2px solid var(--accent) !important;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15) !important;
+            background: #f8fafc !important;
         }
 
         .kpi-card::before {
@@ -409,7 +429,7 @@
         .kpi-avoid::before { background: var(--success); }
         .kpi-total::before { background: var(--blue); }
 
-        .kpi-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+        .kpi-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; justify-content: space-between; }
         .kpi-value { font-size: 1.4rem; font-weight: 700; color: var(--accent); margin-top: 4px; }
         .kpi-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
 
@@ -647,34 +667,57 @@
         <div class="official-sheet" id="printArea"></div>
     </div>
 
+    <!-- ส่วนที่ 2: หน้า Dashboard วางแผนงาน PM และงบประมาณ (เพิ่มฟังก์ชันคลิกที่กล่องทั้ง 4) -->
     <div id="planningContentArea" class="planning-view" style="display: none;">
         <div class="kpi-grid">
-            <div class="kpi-card kpi-p1">
-                <div class="kpi-title">งานเร่งด่วนฉุกเฉิน (P1 Urgent)</div>
+            <!-- กล่องที่ 1: งานฉุกเฉิน P1 -->
+            <div class="kpi-card kpi-p1" id="kpiCardP1" onclick="filterByKpi('P1')" title="คลิกเพื่อกรองเฉพาะงานฉุกเฉิน P1">
+                <div class="kpi-title">
+                    <span>งานเร่งด่วนฉุกเฉิน (P1 Urgent)</span>
+                    <span style="font-size:0.7rem; color:var(--danger);">👆 คลิกกรอง</span>
+                </div>
                 <div class="kpi-value" id="kpiP1Count">2 งาน</div>
-                <div class="kpi-sub">ต้องทำภายใน 24-48 ชม.</div>
+                <div class="kpi-sub" id="kpiP1Sub">ต้องทำภายใน 24-48 ชม.</div>
             </div>
-            <div class="kpi-card kpi-cost">
-                <div class="kpi-title">งบประมาณที่วางแผนไว้ทั้งหมด</div>
+
+            <!-- กล่องที่ 2: งบประมาณรวม -->
+            <div class="kpi-card kpi-cost" id="kpiCardCost" onclick="filterByKpi('COST')" title="คลิกเพื่อเรียงลำดับงานตามงบประมาณ (มากไปน้อย)">
+                <div class="kpi-title">
+                    <span>งบประมาณที่วางแผนไว้ทั้งหมด</span>
+                    <span style="font-size:0.7rem; color:var(--primary);">👆 เรียงงบ</span>
+                </div>
                 <div class="kpi-value" id="kpiTotalBudget">฿ 54,500</div>
-                <div class="kpi-sub">จากแผนงาน PM 6 รายการ</div>
+                <div class="kpi-sub" id="kpiCostSub">จากแผนงาน PM ทั้งหมด</div>
             </div>
-            <div class="kpi-card kpi-avoid">
-                <div class="kpi-title">มูลค่าความเสียหายที่ป้องกันได้</div>
+
+            <!-- กล่องที่ 3: มูลค่าความเสียหายที่ป้องกันได้ -->
+            <div class="kpi-card kpi-avoid" id="kpiCardAvoid" onclick="filterByKpi('AVOID')" title="คลิกเพื่อเรียงงานตามความคุ้มค่าที่ป้องกันได้สูงสุด">
+                <div class="kpi-title">
+                    <span>มูลค่าความเสียหายที่ป้องกันได้</span>
+                    <span style="font-size:0.7rem; color:var(--success);">👆 ดูความคุ้มค่า</span>
+                </div>
                 <div class="kpi-value" id="kpiAvoidedLoss">฿ 1,450,000</div>
-                <div class="kpi-sub">Cost Avoidance จากการดักจับอาการเสีย</div>
+                <div class="kpi-sub" id="kpiAvoidSub">Cost Avoidance จากการดักจับอาการเสีย</div>
             </div>
-            <div class="kpi-card kpi-total">
-                <div class="kpi-title">สถานะแผนงานเสร็จสิ้น</div>
+
+            <!-- กล่องที่ 4: สถานะงานเสร็จสิ้น -->
+            <div class="kpi-card kpi-total" id="kpiCardDone" onclick="filterByKpi('DONE')" title="คลิกเพื่อกรองเฉพาะงานที่ทำเสร็จแล้ว">
+                <div class="kpi-title">
+                    <span>สถานะแผนงานเสร็จสิ้น</span>
+                    <span style="font-size:0.7rem; color:var(--blue);">👆 กรองงานเสร็จ</span>
+                </div>
                 <div class="kpi-value" id="kpiCompletion">66.7%</div>
-                <div class="kpi-sub">เสร็จ 4 จาก 6 แผนงาน</div>
+                <div class="kpi-sub" id="kpiDoneSub">คลิกเพื่อดูกลุ่มงานที่เสร็จสิ้น</div>
             </div>
         </div>
 
         <div class="plan-table-box">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <h3 style="font-size:0.95rem; font-weight:700; color:var(--accent);">📋 แผนงาน PM จัดลำดับตามความเสี่ยงและงบประมาณ (Ranked Priority Queue)</h3>
-                <span style="font-size:0.75rem; color:var(--text-muted);">เรียงลำดับความเสี่ยง P1 (วิกฤต) ➔ P2 (สูง) ➔ P3 (ปกติ)</span>
+                <div>
+                    <h3 style="font-size:0.95rem; font-weight:700; color:var(--accent);" id="planTableTitle">📋 แผนงาน PM จัดลำดับตามความเสี่ยงและงบประมาณ (Ranked Priority Queue)</h3>
+                    <span style="font-size:0.72rem; color:var(--text-muted);" id="planTableSubtitle">เรียงลำดับความเสี่ยง P1 (วิกฤต) ➔ P2 (สูง) ➔ P3 (ปกติ)</span>
+                </div>
+                <button id="resetKpiFilterBtn" class="btn btn-secondary" style="display:none; font-size:0.72rem; padding:3px 8px;" onclick="filterByKpi('ALL')">✖ ล้างการกรอง (แสดงทั้งหมด)</button>
             </div>
 
             <table class="plan-table">
@@ -862,6 +905,7 @@
     let maintenancePlan = JSON.parse(localStorage.getItem('mea_pm_plan')) || defaultData;
     let currentRecordIndex = -1;
     let currentActiveForm = 'SF-07-0-015';
+    let currentKpiFilter = null; // ตัวแปรเก็บสถานะการกรองจากกล่อง KPI 4 อัน
 
     function saveToLocalStorage() {
         localStorage.setItem('mea_pm_plan', JSON.stringify(maintenancePlan));
@@ -898,6 +942,63 @@
             photoPanel.style.display = 'block';
             renderSavedRecordsList();
         }
+    }
+
+    // -------------------------------------------------------------
+    // ฟังก์ชันใหม่: จัดการเมื่อคลิกกล่อง KPI ทั้ง 4 อัน
+    // -------------------------------------------------------------
+    function filterByKpi(type) {
+        const cardP1 = document.getElementById('kpiCardP1');
+        const cardCost = document.getElementById('kpiCardCost');
+        const cardAvoid = document.getElementById('kpiCardAvoid');
+        const cardDone = document.getElementById('kpiCardDone');
+        const resetBtn = document.getElementById('resetKpiFilterBtn');
+        const title = document.getElementById('planTableTitle');
+        const subtitle = document.getElementById('planTableSubtitle');
+
+        // รีเซ็ตคลาส active ของกล่องทั้งหมด
+        [cardP1, cardCost, cardAvoid, cardDone].forEach(card => {
+            if(card) card.classList.remove('kpi-active');
+        });
+
+        // หากคลิกซ้ำที่ตัวเดิม ให้ยกเลิกการกรอง
+        if(currentKpiFilter === type || type === 'ALL') {
+            currentKpiFilter = null;
+            resetBtn.style.display = 'none';
+            title.innerText = "📋 แผนงาน PM จัดลำดับตามความเสี่ยงและงบประมาณ (Ranked Priority Queue)";
+            subtitle.innerText = "เรียงลำดับความเสี่ยง P1 (วิกฤต) ➔ P2 (สูง) ➔ P3 (ปกติ)";
+            renderPlanningTable();
+            return;
+        }
+
+        currentKpiFilter = type;
+        resetBtn.style.display = 'inline-block';
+
+        let listToRender = [...maintenancePlan];
+
+        if(type === 'P1') {
+            cardP1.classList.add('kpi-active');
+            listToRender = listToRender.filter(item => item.priority === 'P1');
+            title.innerText = "🚨 แผนงานเร่งด่วนฉุกเฉินระดับ P1 (Priority 1 Queue)";
+            subtitle.innerText = `พบ ${listToRender.length} รายการที่ต้องดำเนินการทันทีภายใน 24-48 ชั่วโมง`;
+        } else if(type === 'COST') {
+            cardCost.classList.add('kpi-active');
+            listToRender.sort((a, b) => b.totalCost - a.totalCost);
+            title.innerText = "💰 แผนงานเรียงตามงบประมาณ PM สูงสุด (Highest Budget First)";
+            subtitle.innerText = "เรียงลำดับรายการที่มีค่าใช้จ่าย (ค่าแรง + อะไหล่ + เครื่องมือ) จากมากไปน้อย";
+        } else if(type === 'AVOID') {
+            cardAvoid.classList.add('kpi-active');
+            listToRender.sort((a, b) => b.avoidedCost - a.avoidedCost);
+            title.innerText = "🛡️ แผนงานเรียงตามความคุ้มค่าและความเสียหายที่ป้องกันได้สูงสุด (Top Cost Avoidance)";
+            subtitle.innerText = "รายการที่มีมูลค่าความเสี่ยงและความเสียหายที่จะลดได้สูงที่สุดจากการเข้าบำรุงรักษา";
+        } else if(type === 'DONE') {
+            cardDone.classList.add('kpi-active');
+            listToRender = listToRender.filter(item => item.status === 'เสร็จสิ้น');
+            title.innerText = "✅ แผนงานที่ดำเนินการเสร็จสิ้นแล้ว (Completed PM Jobs)";
+            subtitle.innerText = `พบ ${listToRender.length} รายการที่ปฏิบัติงานเสร็จสมบูรณ์แล้ว`;
+        }
+
+        renderPlanningTable(listToRender);
     }
 
     function collectCurrentFormData() {
@@ -1163,21 +1264,43 @@
         alert("💾 บันทึกการแก้ไขแผนงานเรียบร้อยแล้ว!");
     }
 
-    function renderPlanningTable() {
+    // -------------------------------------------------------------
+    // ฟังก์ชัน Render ตาราง Dashboard พร้อมคำนวณสรุป KPI และรองรับการกรอง
+    // -------------------------------------------------------------
+    function renderPlanningTable(customList = null) {
         const tbody = document.getElementById('planTableBody');
         tbody.innerHTML = '';
 
+        // คำนวณ KPI ภาพรวมจากข้อมูลทั้งหมดเสมอ
         let p1Count = 0;
         let totalBudget = 0;
         let totalAvoided = 0;
         let completedCount = 0;
 
-        maintenancePlan.forEach((item, index) => {
+        maintenancePlan.forEach(item => {
             if(item.priority === 'P1') p1Count++;
             totalBudget += item.totalCost;
             totalAvoided += item.avoidedCost;
             if(item.status === 'เสร็จสิ้น') completedCount++;
+        });
 
+        // อัปเดตตัวเลขในกล่อง 4 กล่อง
+        document.getElementById('kpiP1Count').innerText = `${p1Count} งาน`;
+        document.getElementById('kpiTotalBudget').innerText = `฿ ${totalBudget.toLocaleString()}`;
+        document.getElementById('kpiAvoidedLoss').innerText = `฿ ${totalAvoided.toLocaleString()}`;
+        const pct = maintenancePlan.length > 0 ? ((completedCount / maintenancePlan.length) * 100).toFixed(1) : 0;
+        document.getElementById('kpiCompletion').innerText = `${pct}%`;
+
+        // รายการที่จะแสดงในตาราง (ถ้ามีการกดกรองจาก KPI จะแสดงตาม customList)
+        const list = customList || maintenancePlan;
+
+        if(list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:15px; color:var(--text-muted);">ไม่พบรายการที่ตรงกับเงื่อนไข</td></tr>`;
+            return;
+        }
+
+        list.forEach((item) => {
+            const originalIndex = maintenancePlan.indexOf(item);
             let badgeClass = item.priority === 'P1' ? 'p1-badge' : (item.priority === 'P2' ? 'p2-badge' : 'p3-badge');
 
             const tr = document.createElement('tr');
@@ -1193,19 +1316,13 @@
                 <td><span style="font-weight:600; color:${item.status === 'เสร็จสิ้น' ? '#059669' : '#d97706'}">${item.status}</span></td>
                 <td>
                     <div style="display:flex; gap:3px;">
-                        <button class="btn btn-secondary" style="font-size:0.68rem; padding:2px 6px;" onclick="loadRecordToForm(${index})">ดูฟอร์ม</button>
-                        <button class="btn btn-primary" style="font-size:0.68rem; padding:2px 6px;" onclick="openEditModal(${index})">✏️ แก้ไข</button>
+                        <button class="btn btn-secondary" style="font-size:0.68rem; padding:2px 6px;" onclick="loadRecordToForm(${originalIndex})">ดูฟอร์ม</button>
+                        <button class="btn btn-primary" style="font-size:0.68rem; padding:2px 6px;" onclick="openEditModal(${originalIndex})">✏️ แก้ไข</button>
                     </div>
                 </td>
             `;
             tbody.appendChild(tr);
         });
-
-        document.getElementById('kpiP1Count').innerText = `${p1Count} งาน`;
-        document.getElementById('kpiTotalBudget').innerText = `฿ ${totalBudget.toLocaleString()}`;
-        document.getElementById('kpiAvoidedLoss').innerText = `฿ ${totalAvoided.toLocaleString()}`;
-        const pct = maintenancePlan.length > 0 ? ((completedCount / maintenancePlan.length) * 100).toFixed(1) : 0;
-        document.getElementById('kpiCompletion').innerText = `${pct}%`;
     }
 
     function loadRecordToForm(idx) {
